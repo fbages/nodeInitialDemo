@@ -1,9 +1,9 @@
 # Sprint 4.1: REST API
 
-Per executar la REST API:
-1 - Clona el repo de Github
-2 - Executar npm install per instal.lar totes les dependencies
-3 - Per arrancar la REST API, des del terminal: 
+Per executar la REST API:  
+1 - Clona el repo de Github  
+2 - Executar npm install per instal.lar totes les dependencies  
+3 - Per arrancar la REST API, des del terminal:   
 ```
 node app/app.js
 o
