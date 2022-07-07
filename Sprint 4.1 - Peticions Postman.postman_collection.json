@@ -1,0 +1,123 @@
+{
+	"info": {
+		"_postman_id": "6d6ffc5e-4bdb-4525-b9f4-388f210bd2bc",
+		"name": "Sprint 4.1 - Peticions Postman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Nivell 1 - Exercici 1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/user",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Nivell 1 - Exercici 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "imatge",
+							"type": "file",
+							"src": "/C:/Users/ANA/Francesc/ITACADEMY/NODE/SPRINT4/SPRINT 4.1/img/Imatge.PNG"
+						},
+						{
+							"key": "",
+							"value": "",
+							"type": "default",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/upload",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Nivell 2 - Exercici 1 i 2",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "jdfladjflñadjs",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "franncakdja",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "nom",
+							"value": "ana",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/time",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"time"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Nivell 3 - Exercici 1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/pokemon/12",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"pokemon",
+						"12"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

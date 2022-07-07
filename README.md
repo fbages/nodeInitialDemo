@@ -1,5 +1,36 @@
+# Sprint 4.1: REST API
 
-# Node Initial Project
+Per executar la REST API:
+1 - Clona el repo de Github
+2 - Executar npm install per instal.lar totes les dependencies
+3 - Per arrancar la REST API, des del terminal: 
+```
+node app/app.js
+o
+npm start
+```
+
+## Endpoints
+1 - Petició GET, que retorna un json amb el teu nom, edat i l'URL des d'on es fa la petició.
+ ```
+localhost:3000/user
+```
+
+2 - Peticio POST, que puja al servidor un arxiu de tipus png, jpg o gif i que retorna un missatge d'error en cas que l'extensió de l'arxiu no coincideixi amb aquestes.
+ ```
+localhost:3000/upload
+```
+
+3 - Petició POST que rebi com a paràmetre un JSON amb el nom d'usuari/ària i retorni un objecte JSON que contingui l'hora i data actual. Inclogui un middleware que afegeixi la capçalera Cache-control: no-cache. Habiliti CORS (Cross-Origin Resource Sharing) en les respostes, sigui mitjançant Express o mitjançant un altre middleware. i també té un middleware que retorna un HTTP Status 401 - Unauthorized si la capçalera de la petició no conté autenticació bàsica (usuari/ària i contrasenya).
+ ```
+localhost:3000/time
+```
+
+4 - Petició GET que rebi un número de Pokémon com Id, faci una cerca al Pokémon API i retorni el nom del Pokémon, la seva alçada i el seu pes.
+ ```
+localhost:3000/pokemon/:id
+```
+# INFO de les carpetes inicials - Node Initial Project
 
 ### Project Structure
 
