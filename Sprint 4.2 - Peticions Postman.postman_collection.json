@@ -1,0 +1,168 @@
+{
+	"info": {
+		"_postman_id": "249e503d-c5c8-4fc5-8e1c-864b6137b326",
+		"name": "Sprint 4.2 - Peticions Postman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Crear nou usuari",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/players/francesc",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"players",
+						"francesc"
+					],
+					"query": [
+						{
+							"key": "nom",
+							"value": "francesc",
+							"description": "nom del nou usuari",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modificar nom de l'usuari",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/2",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Llistat tots jugadors + percentatge de partides guanyades",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/players",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"players"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Jugador 3 tira els daus",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/games/3",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"games",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar les tirades d'un jugador",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/2",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Llistat jugades d'un jugador",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/games/3",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"games",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ranking guanyadors per percentatge i percentatge mig",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Perdedor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Guanyador",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/winner",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"winner"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
