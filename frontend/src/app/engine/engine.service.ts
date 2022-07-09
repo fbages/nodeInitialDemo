@@ -34,10 +34,11 @@ export class EngineService {
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
     // The first step is to get the reference of the canvas element from our HTML document
     this.canvas = canvas.nativeElement;
+    console.log(this.canvas);
     
     // Then, load the Babylon 3D engine:
     this.engine = new Engine(this.canvas,  true);
-    this.engine.resize();
+    this.engine.resize(true);
 
     // create a basic BJS Scene object
     this.scene = new Scene(this.engine);

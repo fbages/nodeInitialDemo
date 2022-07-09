@@ -74,6 +74,8 @@
           input.value = "";
         }
       });
+      
+      socket.emit("xatprincipal", "nou usuari conectat");
 
       socket.on("chat message", function (msg) {
         var item = document.createElement("li");

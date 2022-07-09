@@ -9,6 +9,7 @@ export class WindowRefService {
 
   public constructor() {
     this.windowObject = getWindow();
+    //console.log(this.windowObject);
   }
 
   public get window(): Window {
