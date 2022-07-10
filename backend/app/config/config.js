@@ -8,7 +8,7 @@ const jugadorSchema = require("../models/jugadorModel");
 const missatgeSchema = require("../models/missatgeModel");
 const xatgeSchema = require("../models/xatModel");
 
-db = {};//fa la variable global accessible a tot el programa 
+module.exports = db = {};//fa la variable global accessible a tot el programa 
 
 initialize();
 
@@ -21,6 +21,6 @@ async function initialize() {
 
     db.Jugadors = mongoose.model("Jugadors", jugadorSchema);
     db.Missatges = mongoose.model("Missatges", missatgeSchema);
-    db.Xats = mongoose.model("Xats", XatSchema);
+    db.Xats = mongoose.model("Xats", xatgeSchema);
 }
 require("../helpers/crudService");

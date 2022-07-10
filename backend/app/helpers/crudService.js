@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 
 module.exports = {
     crearXat,
@@ -18,9 +16,11 @@ async function crearXat(nomXat, jugadors){
     return xat;
 }
 
-async function crearJugador(nomJugador){
-    let jugador = await db.jugadors.create({
-        nom : nomJugador
+async function crearJugador(nomJugador, idSocket, idSocketMissatges){
+    let jugador = await db.Jugadors.create({
+        nom : nomJugador,
+        idsocket : idSocket,
+        idsocketmissatges : idSocketMissatges
     });
     return jugador;
 }

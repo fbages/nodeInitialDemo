@@ -63,21 +63,25 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
-
+      const jugadorsSocket = io("/jugadors");
+      const missatgesSocket = io("/missatges"); 
+      const xatsSocket = io("/xats"); 
+      console.log(jugadorsSocket);
       var form = document.getElementById("form");
       var input = document.getElementById("input");
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         if (input.value) {
-          socket.emit("chat message", input.value);
+          missatgesSocket.emit("chat message", input.value);
           input.value = "";
+          jugadorsSocket.emit("nouJugador", "Ana", missatgesSocket.id);
+          
         }
       });
       
-      socket.emit("xatprincipal", "nou usuari conectat");
 
-      socket.on("chat message", function (msg) {
+      missatgesSocket.on("chat message", function (msg) {
         var item = document.createElement("li");
         item.textContent = msg;
         messages.appendChild(item);

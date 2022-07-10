@@ -12,7 +12,10 @@
   <app-root></app-root>
   <script src="/socket.io/socket.io.js"></script>
 <script>
-  var socket = io();
+  const socket = io();
+  const jugadorsSocket = io("/jugadors");
+  const missatgesSocket = io("/missatges"); 
+  const xatsSocket = io("/xats"); 
 </script>
 </body>
 </html>

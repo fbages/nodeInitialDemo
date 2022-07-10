@@ -16,8 +16,9 @@ class XatClass {
 
 
 function socketsXats(io) {
-    const XatsNameSpace = io.of("/Xats");
-    XatsNameSpace.on('xatprincipal', (socket) => {
+    const xatsNameSpace = io.of("/xats");
+    
+    xatsNameSpace.on('xatprincipal', (socket) => {
         socket.on('nouJugador', (id) => {
             crudService.crearJugador(id);
             console.log("creat jugador");
@@ -25,25 +26,13 @@ function socketsXats(io) {
     })
 
     //Rebre missatges
-    XatsNameSpace.on('connection', (socket) => {
-        console.log('a user connected2a ' + socket.id);
+    xatsNameSpace.on('connection', (socket) => {
+        console.log('a user connected to xat ' + socket.id);
         socket.on('chat message', (msg) => {
             console.log('message: ' + msg);
         });
     });
-    //Divulgar missatges
-    // XatsNameSpace.on('connection', (socket) => {
-    //     socket.on('chat message', (msg) => {
-    //       io.emit('chat message', msg);
-    //     });
-    // });
 
-    XatsNameSpace.on('connection', (socket) => {
-        console.log('a user connected2b ' + socket.id);
-        socket.on('chat message', (msg) => {
-            socket.broadcast.emit('chat message', msg);
-        });
-    });
 }
 
 module.exports = socketsXats;

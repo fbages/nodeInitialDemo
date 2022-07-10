@@ -1,26 +1,12 @@
-const { Server } = require("socket.io");
 
-function ioMissatges(server) {
-    const ioMissatges = new Server(server);
+function ioMissatges(io) {
+    const missatgesNameSpace = io.of("/missatges");
 
-
-    //Rebre missatges
-    ioMissatges.on('connection', (socket) => {
-        console.log('a user connected3 ' + socket.id);
+    //Rebre missatges i reenviarlos a la resta d'usuaris globals
+    missatgesNameSpace.on('connection', (socket) => {
+        console.log('a user connected to missatges ' + socket.id);
         socket.on('chat message', (msg) => {
             console.log('message: ' + msg);
-        });
-    });
-    //Divulgar missatges
-    // ioMissatges.on('connection', (socket) => {
-    //     socket.on('chat message', (msg) => {
-    //       io.emit('chat message', msg);
-    //     });
-    // });
-
-    ioMissatges.on('connection', (socket) => {
-        console.log('a user connected3 ' + socket.id);
-        socket.on('chat message', (msg) => {
             socket.broadcast.emit('chat message', msg);
         });
     });

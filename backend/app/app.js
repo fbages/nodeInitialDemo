@@ -7,6 +7,10 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+//Arrancar la base de dades mongodb
+require('./config/config');
+
+//Rutes sockets
 require('./sockets/socketsXats')(io);
 require('./sockets/socketsJugadors')(io);
 require('./sockets/socketsMissatges')(io);
@@ -22,12 +26,6 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index2.html');
     // res.sendFile(__dirname + '/public/index.html');
 });
-
-//Rutes sockets
-socketsJugadors(server);
-//socketsXats(server);
-//socketsMissatges(server);
-
 
 
 const PORT = process.env.PORT || 3000;
