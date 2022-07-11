@@ -7,11 +7,16 @@ const mongoose = require("mongoose");
 const jugadorSchema = require("../models/jugadorModel");
 const missatgeSchema = require("../models/missatgeModel");
 const xatgeSchema = require("../models/xatModel");
-//require("../helpers/crudService");
+const crudService = require("../helpers/crudService");
 
 module.exports = db = {};//fa la variable global accessible a tot el programa 
 
-initialize();
+initialize().then(()=>{
+    //Creacio XAT PRINCIPAL
+    console.log('Creat xat principal'),
+    crudService.crearXat('Principal') //sense jugadors, queda un null al primer  
+}
+);
 
 async function initialize() {
     const { host, port, databaseName } = config.dbmongo;
@@ -20,7 +25,8 @@ async function initialize() {
     await mongoose.connect("mongodb://" + host + ":" + port + "/" + databaseName);
     console.log("Conectat a la base de dades de MongoDB");
 
-     db.Jugadors = mongoose.model("Jugadors", jugadorSchema);
-     db.Missatges = mongoose.model("Missatges", missatgeSchema);
-     db.Xats = mongoose.model("Xats", xatgeSchema);
+    db.Jugadors = mongoose.model("Jugadors", jugadorSchema);
+    db.Missatges = mongoose.model("Missatges", missatgeSchema);
+    db.Xats = mongoose.model("Xats", xatgeSchema);
+
 }
