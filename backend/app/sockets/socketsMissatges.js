@@ -1,3 +1,4 @@
+const crudService = require('../helpers/crudService');
 
 function ioMissatges(io) {
     const missatgesNameSpace = io.of("/missatges");
@@ -6,6 +7,7 @@ function ioMissatges(io) {
     missatgesNameSpace.on('connection', (socket) => {
         console.log('a user connected to missatges ' + socket.id);
         socket.on('chat message', (msg) => {
+            crudService.guardarMissatge("Ana",msg,"Principal");
             console.log('message: ' + msg);
             socket.broadcast.emit('chat message', msg);
         });

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = require('mongoose');
 
 const xatSchema = new Schema({
-    nomXat : String,
+    nomxat : String,
     jugadors : [{
         type: mongoose.ObjectId,
     }],

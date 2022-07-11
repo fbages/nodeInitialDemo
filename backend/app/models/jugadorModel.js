@@ -2,8 +2,9 @@ const { Schema } = require('mongoose');
 
 const jugadorSchema = new Schema({
     nom : String,
-    idsocket : String,
-    idsocketmissatges : String
+    idsocketjugador : String,
+    idsocketmissatge : String,
+    idsocketxat : String
 });
 
 module.exports = jugadorSchema;

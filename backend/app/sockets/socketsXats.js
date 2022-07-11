@@ -1,4 +1,5 @@
 const crudService = require('../helpers/crudService');
+const mongoose = require('mongoose');
 
 class XatClass {
     constructor(nomXat,jugadors){
@@ -26,11 +27,23 @@ function socketsXats(io) {
     })
 
     //Rebre missatges
+    xatsNameSpace.once('connection', (socket) => {
+        console.log('Creat xat principal');
+        crudService.crearXat('Principal') //sense jugadors, queda un null al primer
+    });
+
     xatsNameSpace.on('connection', (socket) => {
-        console.log('a user connected to xat ' + socket.id);
+        console.log('a user connected to xat principal' + socket.id); 
+        crudService.afegirJugadorAlXatPrincipal("Ana");
+
         socket.on('chat message', (msg) => {
             console.log('message: ' + msg);
         });
+        
+        socket.on('disconnect', (socket)=>{
+            console.log('a user connected to xat principal' + socket.id); 
+            crudService.treureJugadorAlXatPrincipal("Ana");
+        } )
     });
 
 }

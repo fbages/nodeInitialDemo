@@ -7,14 +7,14 @@ function socketsJugadors(io){
     JugadorsNameSpace.on('connection', (socket) => {
         console.log('a user connected to jugadors ' + socket.id);
 
-        socket.on('nouJugador', (nom, missatgeidsocket) => {
-            console.log(nom, missatgeidsocket);
-            crudService.crearJugador(nom, socket.id, missatgeidsocket);
+        socket.on('nouJugador', (nom, jugadoridsocket, missatgeidsocket, xatidsocket) => {
+            console.log(nom, jugadoridsocket, missatgeidsocket, xatidsocket);
+            crudService.crearJugador(nom, jugadoridsocket, missatgeidsocket, xatidsocket);
         })
 
         socket.on('disconnect', () => {
             console.log('user disconnected');
-            socket.emit('foraJugador', socket.id);
+            crudService.eliminarJugador(socket.id);
         });
     });
     

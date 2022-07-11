@@ -63,10 +63,11 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
+
       const jugadorsSocket = io("/jugadors");
       const missatgesSocket = io("/missatges"); 
       const xatsSocket = io("/xats"); 
-      console.log(jugadorsSocket);
+      
       var form = document.getElementById("form");
       var input = document.getElementById("input");
 
@@ -75,11 +76,12 @@
         if (input.value) {
           missatgesSocket.emit("chat message", input.value);
           input.value = "";
-          jugadorsSocket.emit("nouJugador", "Ana", missatgesSocket.id);
+          jugadorsSocket.emit("nouJugador", "Ana", jugadorsSocket.id, missatgesSocket.id, xatsSocket.id);
           
         }
       });
       
+
 
       missatgesSocket.on("chat message", function (msg) {
         var item = document.createElement("li");
