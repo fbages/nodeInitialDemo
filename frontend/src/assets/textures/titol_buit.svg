@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" width="833" height="833" viewBox="0 0 833 833">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        font-size: 125px;
+      }
+
+      .cls-2 {
+        fill: #7f7f7f;
+        text-anchor: middle;
+        font-family: "a Atos";
+      }
+    </style>
+  </defs>
+  <image xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAA0EAAANBAQMAAAAcMyeaAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAA1BMVEUAAACnej3aAAAAAWJLR0QAiAUdSAAAAAlwSFlzAABM5QAATOUBdc7wlQAAAGxJREFUeNrtwTEBAAAAwqD1T20IX6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4DFY+QABBMKOFgAAAABJRU5ErkJggg==" width="1200" height="1200"/>
+  <text transform="translate(423 455) scale(1.67)" class="cls-1"><tspan x="0" class="cls-2">Abyss</tspan></text>
+</svg>

@@ -2,7 +2,6 @@ import { WindowRefService } from './../services/window-ref.service';
 import {ElementRef, Injectable, NgZone} from '@angular/core';
 import {
   Engine,
-  FreeCamera,
   Scene,
   Light,
   Mesh,
@@ -13,18 +12,24 @@ import {
   StandardMaterial,
   Texture,
   DynamicTexture,
-  Space
+  Space,
+  ArcRotateCamera
 } from '@babylonjs/core';
+import "@babylonjs/loaders/glTF";
+import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import "@babylonjs/core/Debug/debugLayer";
+import "@babylonjs/inspector";
 
 @Injectable({ providedIn: 'root' })
 export class EngineService {
   private canvas: HTMLCanvasElement;
   private engine: Engine;
-  private camera: FreeCamera;
+  private camera: ArcRotateCamera;
   private scene: Scene;
   private light: Light;
 
   private sphere: Mesh;
+  private base: Mesh;
 
   public constructor(
     private ngZone: NgZone,
@@ -42,10 +47,13 @@ export class EngineService {
 
     // create a basic BJS Scene object
     this.scene = new Scene(this.engine);
-    this.scene.clearColor = new Color4(0, 0, 0, 0);
+    this.scene.clearColor = new Color4(0.5, 0.5, 0.5, 0);
+
+    //debug
+    //this.scene.debugLayer.show();
 
     // create a FreeCamera, and set its position to (x:5, y:10, z:-20 )
-    this.camera = new FreeCamera('camera1', new Vector3(5, 10, -20), this.scene);
+    this.camera = new ArcRotateCamera('camera1', 0, 0, 5, new Vector3(0, 0, 0), this.scene);
 
     // target the camera to scene origin
     this.camera.setTarget(Vector3.Zero());
@@ -54,15 +62,24 @@ export class EngineService {
     this.camera.attachControl(this.canvas, false);
 
     // create a basic light, aiming 0,1,0 - meaning, to the sky
-    this.light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene);
+    this.light = new HemisphericLight('light1', new Vector3(1, 1, 0), this.scene);
 
     // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene
     this.sphere = Mesh.CreateSphere('sphere1', 16, 2, this.scene);
 
+    //material de la base
+    var materialBase = new StandardMaterial("materialBase", this.scene);
+    // materialBase.diffuseColor = new Color3(1, 0, 1);
+    // materialBase.specularColor = new Color3(0.5, 0.6, 0.87);
+    // materialBase.ambientColor = new Color3(0.23, 0.98, 0.53);
+
+    var materialSphere1 = new StandardMaterial("texture1", this.scene);
+    materialSphere1.wireframe = true;
+
     // create the material with its texture for the sphere and assign it to the sphere
     const spherMaterial = new StandardMaterial('sun_surface', this.scene);
     spherMaterial.diffuseTexture = new Texture('assets/textures/sun.jpg', this.scene);
-    this.sphere.material = spherMaterial;
+    this.sphere.material = materialBase;
 
     // move the sphere upward 1/2 of its height
     this.sphere.position.y = 1;
@@ -75,6 +92,26 @@ export class EngineService {
         Space.LOCAL
       );
     });
+       
+        
+    // SceneLoader.AppendAsync("https://models.babylonjs.com/", "alien.glb", this.scene);
+    SceneLoader.AppendAsync("/assets/","basePoly.glb", this.scene).then(result=>{
+      for(let i=0;i<result.meshes.length;i++){
+        //console.log(result.meshes[i]);
+        let nomdescargat = result.meshes[i].name;
+        console.log(nomdescargat);
+      
+        if(result.meshes[i].name == "Cylinder"){
+          result.meshes[i].material = materialBase;
+          console.log('Aplicat material')
+          result.meshes[i].name = 'Base';
+                 
+          
+        }
+      }
+
+      });
+
 
     // generates the world x-y-z axis for better understanding
     this.showWorldAxis(8);

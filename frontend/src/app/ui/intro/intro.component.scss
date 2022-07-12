@@ -1,11 +1,21 @@
 .container {
-display: flex;
-background-color: blue;
-flex-direction: column;
-align-self: center;
-height: 100%;
+    visibility:visible;
+    position: absolute;
+    max-width: none;
+    width: 100vw;
+    height: 100vh;
+    background: rgb(0, 0, 0); //passar a negre
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
 
-.titol {
-
+.titolhidden {
+    //visibility: hidden;
+    display: none;
+    width: 0px;
+    height: 0px;
 }
+
+

@@ -6,11 +6,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./intro.component.scss']
 })
 export class IntroComponent implements OnInit {
-
+  titolClass:string;
+  
   constructor() { }
 
   ngOnInit(): void {
-    
+    setTimeout(() => {
+      console.log("hola han passat 5 segons");
+      this.titolClass = "titolhidden";
+    }, 5000);
   }
 
 }
