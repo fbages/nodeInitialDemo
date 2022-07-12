@@ -9,6 +9,13 @@ import { UiInfobarTopComponent } from './ui/ui-infobar-top/ui-infobar-top.compon
 import { UiSidebarLeftComponent } from './ui/ui-sidebar-left/ui-sidebar-left.component';
 import { UiSidebarRightComponent } from './ui/ui-sidebar-right/ui-sidebar-right.component';
 import { UiComponent } from './ui/ui.component';
+import { IntroComponent } from './ui/intro/intro.component'
+import { RouterModule, Routes } from '@angular/router';
+
+const appRoutes:Routes=[
+
+  {path:'', component:IntroComponent}
+]
 
 @NgModule({
   declarations: [
@@ -19,10 +26,12 @@ import { UiComponent } from './ui/ui.component';
     UiInfobarTopComponent,
     UiComponent,
     UiInfobarBottomComponent,
+    IntroComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [
     WindowRefService
