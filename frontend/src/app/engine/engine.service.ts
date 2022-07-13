@@ -65,7 +65,7 @@ export class EngineService {
     this.light = new HemisphericLight('light1', new Vector3(1, 1, 0), this.scene);
 
     // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene
-    this.sphere = Mesh.CreateSphere('sphere1', 16, 2, this.scene);
+    this.sphere = Mesh.CreateSphere('sphere1', 16, 0.4, this.scene);
 
     //material de la base
     var materialBase = new StandardMaterial("materialBase", this.scene);
@@ -82,7 +82,7 @@ export class EngineService {
     this.sphere.material = materialBase;
 
     // move the sphere upward 1/2 of its height
-    this.sphere.position.y = 1;
+    this.sphere.position.y = 0.2;
 
     // simple rotation along the y axis
     this.scene.registerAfterRender(() => {

@@ -37,9 +37,11 @@ function socketsXats(io) {
         //socket.join(socket.id);
         
         //Peticio per conectar amb un altre usuari a parlar en el meu room
-        socket.on('Peticio', altreusuari => {
-            console.log("S'ha rebut una petició de " + socket.id + "per parlar amb " + altreusuari);
-            socket.to(altreusuari).emit("Aceptacio parlar", "Puc parlar amb tu?", socket.id);
+        socket.on('Peticio', async nomAltreUsuari => {
+            //buscar nom a la bd per trobar el socket.id de Xats
+            console.log("S'ha rebut una petició de " + socket.id + "per parlar amb " + nomAltreUsuari);
+            let socketAltreUsuari = await crudService.buscarSocketAmbNom(nomAltreUsuari,"idsocketxat");
+            socket.to(socketAltreUsuari).emit("Aceptacio parlar", "Puc parlar amb tu?", nomAltreUsuari);
         });
 
         //Confirmació d'acceptacio de l'altre usuari 

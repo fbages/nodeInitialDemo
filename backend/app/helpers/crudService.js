@@ -8,6 +8,7 @@ module.exports = {
     eliminarJugador,
     //llistatJugadors, //Usuari que es conectar ha de tenir llistat dels jugadors anteriors
     guardarMissatge,
+    buscarSocketAmbNom
 
 }
 
@@ -83,3 +84,8 @@ async function guardarMissatge(socketMissatge,missatgeEnviat,nomXat){
     })
     return missatge;
 };
+
+async function buscarSocketAmbNom(nomUsuari, nameSpace){
+     let socket = await db.Jugadors.findOne({nom:nomUsuari});
+     return socket[nameSpace];
+}

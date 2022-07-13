@@ -7,7 +7,7 @@ async function socketsJugadors(io){
     JugadorsNameSpace.on('connection', (socket) => {
         console.log('a user connected to jugadors ' + socket.id);
 
-        socket.on('nouJugador', (nom, jugadoridsocket, missatgeidsocket, xatidsocket) => {
+        socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket) => {
             
             crudService.crearJugador(nom, jugadoridsocket, missatgeidsocket, xatidsocket).then( ()=>{
                 console.log("afegir jugador a mongodb xat principal amb socket jugador :" + socket.id);
@@ -16,9 +16,9 @@ async function socketsJugadors(io){
             );
         })
 
-        socket.on('disconnect', () => {
+        socket.on('disconnect', async () => {
             console.log('user disconnected, ' + socket.id);
-            crudService.eliminarJugador(socket.id);
+            await crudService.eliminarJugador(socket.id);
         });
     });
     

@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const app = express();
-const http = require('http')
+const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
@@ -17,7 +17,7 @@ require('./sockets/socketsMissatges')(io);
 
 //middlewares
 app.use(cors());
-//app.use(helmet()); //No funcionar amb Angular, s'ha de configurar
+app.use(helmet()); //No funcionar amb Angular, s'ha de configurar o modificar els scripts per separat
 app.use(express.static('public'));
 
 
