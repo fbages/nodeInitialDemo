@@ -41,24 +41,33 @@ function socketsXats(io) {
             //buscar nom a la bd per trobar el socket.id de Xats
             console.log("S'ha rebut una petició de " + socket.id + "per parlar amb " + nomAltreUsuari);
             let socketAltreUsuari = await crudService.buscarSocketAmbNom(nomAltreUsuari,"idsocketxat");
-            socket.to(socketAltreUsuari).emit("Aceptacio parlar", "Puc parlar amb tu?", nomAltreUsuari);
+            //buscar nom del usuari que fa la peticio
+            let socketUsuariPeticio = await crudService.buscarNomAmbSocket(socket.id, "idsocketxat")
+            socket.to(socketAltreUsuari).emit("Aceptacio parlar", "Puc parlar amb tu?", socketUsuariPeticio);
         });
 
         //Confirmació d'acceptacio de l'altre usuari 
-        socket.on('Si accepto', altreusuarisocket =>{
-            console.log('sala privada : '+ altreusuarisocket);
-            socket.join(altreusuarisocket);
+        socket.on('Si accepto', async invitador =>{
+            console.log('sala privada : '+ invitador);
+            let invitadorSocket = await crudService.buscarSocketAmbNom(invitador,"idsocketxat");
+            socket.join(invitadorSocket);
             // const rooms = xatsNameSpace.adapter.rooms;
             // const sids = xatsNameSpace.adapter.sids;
-            socket.to(altreusuarisocket).emit('Acceptat');
-            console.log('Server ha unit ' + socket.id +' la sala del usuari ' + altreusuarisocket)
+            socket.to(invitadorSocket).emit('Acceptat', invitador);
+            console.log('Server ha unit ' + socket.id +" a la sala de l'usuari " + invitador)
         });
 
         //Missatge privat rebut i reenviat en el xat privat
-        socket.on('Missatge privat', (socketroom, msg)=>{
-            console.log(`Missatge privat : ${msg} de ${socket.id} enviat a la room ${socketroom}`);
-            xatsNameSpace.to(socketroom).emit(`Missatge privat reenviat`, socket.id, msg); //socket or xatsNameSpace
+        socket.on('Missatge privat', async (anfitrioRoom, nomMissatger, msg)=>{
+            console.log(`Sala: ${anfitrioRoom}  Missatger: ${nomMissatger}  Msg: ${msg}`);
+            let anfitrioSocket = await crudService.buscarSocketAmbNom(anfitrioRoom,"idsocketxat");
+            let missatgerSocket = await crudService.buscarSocketAmbNom(nomMissatger,"idsocketxat");
+            console.log(`Missatge privat : ${msg} de ${missatgerSocket} enviat a la room ${anfitrioSocket}`);
+            xatsNameSpace.to(anfitrioSocket).emit(`Missatge privat distribuit`, anfitrioRoom, nomMissatger, msg); //socket or xatsNameSpace
         });
+        socket.on("connect_error", (err) => {
+            console.log(`connect_error due to ${err.message}`);
+          });
     });
 
     xatsNameSpace.adapter.on("create-room", (room) => {

@@ -11,6 +11,10 @@ var inputReg = document.getElementById("inputregistre");
 var form = document.getElementById("form");
 var input = document.getElementById("input");
 
+let nomJugador = "";
+let xatPrivat = "";
+
+
 form.addEventListener("submit", function (e) {
   e.preventDefault();
   console.log(input.value);
@@ -23,8 +27,17 @@ form.addEventListener("submit", function (e) {
 document.getElementById("registerbutton").addEventListener("click", ()=>{
   console.log(inputReg.value);
   jugadorsSocket.emit("nouJugador", inputReg.value, jugadorsSocket.id, missatgesSocket.id, xatsSocket.id);
+  nomJugador = inputReg.value;
 })
 
+
+function prova(){
+  setTimeout(() => {
+    jugadorsSocket.emit("prova", "Hola aixo es una prova");
+    console.log("enviada prova");
+  }, 3000);
+}
+prova();
 
 
 missatgesSocket.on("chat message", function (msg) {
@@ -48,25 +61,27 @@ xatsSocket.on('Aceptacio parlar', (msg, usuariPeticio) =>{
 
 //Confirmar peticio exterior
 document.getElementById("peticioxat").addEventListener("click", ()=>{
-  let socketinvitat = document.getElementById("peticiosocket").value;
-  console.log("invitat per: " + socketinvitat);
-  xatsSocket.emit('Si accepto', socketinvitat);
+  let invitador = document.getElementById("peticiosocket").value;
+  console.log("invitat per: " + invitador);
+  xatsSocket.emit('Si accepto', invitador);
+  xatPrivat = invitador;
 })
 
 //Informat que has sigut acceptat
-xatsSocket.on('Acceptat', ()=>{
+xatsSocket.on('Acceptat', (invitador)=>{
   document.getElementById("privatsocket").style.backgroundColor = "green";
+  xatPrivat = invitador;
 })
 
 //Enviar missatge privat
 document.getElementById('missatgeprivat').addEventListener("click", ()=>{
   let text = document.getElementById("enviamissatgeprivat").value;
-  let socketroom = document.getElementById("peticiosocket").value || xatsSocket.id;
-  xatsSocket.emit('Missatge privat', socketroom, text )
+  //let socketRoom = document.getElementById("peticiosocket").value || xatsSocket.id;
+  xatsSocket.emit('Missatge privat',xatPrivat, nomJugador, text )
 });
 
 //rebre missatge privat
-xatsSocket.on('Missatge privat reenviat', (socketid, msg)=>{
-  console.log("Missatge enviat per "+ socketid, msg);
+xatsSocket.on('Missatge privat distribuit', (anfitrioRoom, nomMissatger, msg)=>{
+  console.log(`Missatge: ${msg}, enviat per ${nomMissatger}, distribuit a la sala socket de ${anfitrioRoom}`);
 })
 

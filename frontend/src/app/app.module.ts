@@ -12,10 +12,13 @@ import { HeaderComponent } from './ui/header/header.component';
 import { StatsComponent } from './ui/stats/stats.component';
 import { XatPrivatComponent } from './ui/xat-privat/xat-privat.component';
 import { XatComponent } from './ui/xat/xat.component';
+import { SocketsIoService } from './services/sockets-io/sockets-io.service';
 
 const appRoutes:Routes=[
 
-  {path:'', component:IntroComponent}
+  {path:'', component:IntroComponent},
+  {path:'xat', component:UiComponent}
+
 ]
 
 @NgModule({
@@ -36,7 +39,8 @@ const appRoutes:Routes=[
     RouterModule.forRoot(appRoutes)
   ],
   providers: [
-    WindowRefService
+    WindowRefService,
+    SocketsIoService
   ],
   bootstrap: [
     AppComponent

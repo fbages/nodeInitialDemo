@@ -1,21 +1,52 @@
 .container {
-    visibility:visible;
+
     position: absolute;
     max-width: none;
-    width: 100vw;
-    height: 100vh;
-    background: rgb(0, 0, 0); //passar a negre
+   
+    //width: 100vw;
+    //height: 100vh;
+    
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-
+    z-index :0;
 }
 
-.titolhidden {
-    //visibility: hidden;
-    display: none;
-    width: 0px;
-    height: 0px;
+#fondo{
+    width: 833px;
+    background-color: rgb(255, 255, 255); 
 }
 
+#registerMenu{
+    position: absolute;
+    max-width: none;
+    width: 100%;
+    //background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    top:550px;
+    z-index :10;
+}
+input{
+    width: 300px;
+    border-radius: 25px;
+    margin:5px;
+    background-color:#232323;
+    color:#fff;
+    padding:2px 5px;
+    border:5px solid #151515;
+    -webkit-border-radius: 15px;
+}
 
+button{
+    border-radius: 25px;
+    margin:5px;
+    background-color:#232323;
+    color:#fff;
+    padding:2px 5px;
+    border:5px solid #151515;
+    -webkit-border-radius: 15px;
+}

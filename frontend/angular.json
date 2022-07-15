@@ -54,7 +54,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "50mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -77,7 +77,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ng-babylon-template:build"
+            "browserTarget": "ng-babylon-template:build",
+            "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {
             "production": {

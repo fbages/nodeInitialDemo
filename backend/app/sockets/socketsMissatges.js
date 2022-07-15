@@ -11,6 +11,10 @@ function ioMissatges(io) {
             console.log('message: ' + msg);
             socket.broadcast.emit('chat message', msg);
         });
+
+        socket.on("connect_error", (err) => {
+            console.log(`connect_error due to ${err.message}`);
+          });
     });
 }
 

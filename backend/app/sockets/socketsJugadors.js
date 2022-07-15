@@ -7,8 +7,11 @@ async function socketsJugadors(io){
     JugadorsNameSpace.on('connection', (socket) => {
         console.log('a user connected to jugadors ' + socket.id);
 
-        socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket) => {
-            
+        socket.on("prova", msg =>{
+            console.log(msg);
+        })
+        
+        socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket) => { 
             crudService.crearJugador(nom, jugadoridsocket, missatgeidsocket, xatidsocket).then( ()=>{
                 console.log("afegir jugador a mongodb xat principal amb socket jugador :" + socket.id);
                 crudService.afegirJugadorAlXatPrincipal(socket.id);
@@ -20,6 +23,10 @@ async function socketsJugadors(io){
             console.log('user disconnected, ' + socket.id);
             await crudService.eliminarJugador(socket.id);
         });
+
+        socket.on("connect_error", (err) => {
+            console.log(`connect_error due to ${err.message}`);
+          });
     });
     
 }

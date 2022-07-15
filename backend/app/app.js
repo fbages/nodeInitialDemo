@@ -5,7 +5,9 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server,{
+    cors: {
+        origins: ['http://localhost:4200','ws://localhost:4200']}});
 
 //Arrancar la base de dades mongodb
 require('./config/config');
@@ -17,14 +19,18 @@ require('./sockets/socketsMissatges')(io);
 
 //middlewares
 app.use(cors());
-app.use(helmet()); //No funcionar amb Angular, s'ha de configurar o modificar els scripts per separat
-app.use(express.static('public'));
+//app.use(helmet()); //No funcionar amb Angular, s'ha de configurar o modificar els scripts per separat
+//Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline';
+app.use(express.static('public/angular'));
 
 
 //Ruta per conseguir html
 app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/angular/index.html');
+});
+app.get('/angular', (req, res) => {
     res.sendFile(__dirname + '/public/index2.html');
-    // res.sendFile(__dirname + '/public/index.html');
+   
 });
 
 

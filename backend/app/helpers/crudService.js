@@ -8,7 +8,8 @@ module.exports = {
     eliminarJugador,
     //llistatJugadors, //Usuari que es conectar ha de tenir llistat dels jugadors anteriors
     guardarMissatge,
-    buscarSocketAmbNom
+    buscarSocketAmbNom,
+    buscarNomAmbSocket
 
 }
 
@@ -85,7 +86,14 @@ async function guardarMissatge(socketMissatge,missatgeEnviat,nomXat){
     return missatge;
 };
 
-async function buscarSocketAmbNom(nomUsuari, nameSpace){
-     let socket = await db.Jugadors.findOne({nom:nomUsuari});
-     return socket[nameSpace];
+async function buscarSocketAmbNom(nomUsuari, nameSpaceSocket){
+     let jugador = await db.Jugadors.findOne({nom:nomUsuari});
+     console.log(jugador[nameSpaceSocket]);
+     return jugador[nameSpaceSocket];
+}
+
+async function buscarNomAmbSocket(socket, nameSpaceSocket){
+    let jugador = await db.Jugadors.findOne({[`${nameSpaceSocket}`]:socket});
+    console.log(jugador.nom);
+    return jugador.nom
 }
