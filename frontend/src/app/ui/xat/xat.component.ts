@@ -33,7 +33,7 @@ cssmissatgesEnviats='cssmissatgesEnviats';
  }
 
  rebreMissatge(){
-
+  
  }
 
 }

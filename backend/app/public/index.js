@@ -20,6 +20,7 @@ form.addEventListener("submit", function (e) {
   console.log(input.value);
   if (input.value) {
     missatgesSocket.emit("chat message", input.value);
+    console.log(input.value);
     input.value = "";
   }
 });

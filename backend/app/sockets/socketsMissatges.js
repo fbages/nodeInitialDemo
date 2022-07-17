@@ -9,7 +9,7 @@ function ioMissatges(io) {
         socket.on('chat message', async (msg) => {
             await crudService.guardarMissatge(socket.id, msg, "Principal");
             console.log('message: ' + msg);
-            socket.broadcast.emit('chat message', msg);
+            socket.broadcast.emit('chat message', msg,"francesc");
         });
 
         socket.on("connect_error", (err) => {

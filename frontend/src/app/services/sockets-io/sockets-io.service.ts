@@ -25,6 +25,10 @@ export class SocketsIoService {
         console.log('enviada prova');
       }, 1000);
     }, 2000);
+  
+    this.missatgesSocket.on('chat message', (msg:string)=> {
+      console.log(msg);
+    });
   }
 
   getJugadorsocket(): object {
@@ -46,9 +50,6 @@ export class SocketsIoService {
       if (missatge) {
         this.missatgesSocket.emit('chat message', missatge);
       }
-
-
-
   }
 
   crearSockets() {
@@ -67,12 +68,7 @@ export class SocketsIoService {
 
 
 
-    // this.missatgesSocket.on('chat message', function (msg) {
-    //   var item = document.createElement('li');
-    //   item.textContent = msg;
-    //   messages.appendChild(item);
-    //   window.scrollTo(0, document.body.scrollHeight);
-    // });
+   
 
     // //Peticio de conectar-se a un xat privat
     // document.getElementById('privatxat').addEventListener('click', () => {
@@ -109,13 +105,13 @@ export class SocketsIoService {
     // });
 
     //rebre missatge privat
-    this.xatsSocket.on(
-      'Missatge privat distribuit',
-      (anfitrioRoom, nomMissatger, msg) => {
-        console.log(
-          `Missatge: ${msg}, enviat per ${nomMissatger}, distribuit a la sala socket de ${anfitrioRoom}`
-        );
-      }
-    );
+    // this.xatsSocket.on(
+    //   'Missatge privat distribuit',
+    //   (anfitrioRoom, nomMissatger, msg) => {
+    //     console.log(
+    //       `Missatge: ${msg}, enviat per ${nomMissatger}, distribuit a la sala socket de ${anfitrioRoom}`
+    //     );
+    //   }
+    // );
   }
 }
