@@ -1,5 +1,5 @@
 import { WindowRefService } from './../services/window-ref.service';
-import {ElementRef, Injectable, NgZone} from '@angular/core';
+import { ElementRef, Injectable, NgZone } from '@angular/core';
 import {
   Engine,
   Scene,
@@ -13,18 +13,23 @@ import {
   Texture,
   DynamicTexture,
   Space,
-  ArcRotateCamera
+  ArcRotateCamera,
+  FollowCamera,
+  ActionManager,
+  ExecuteCodeAction,
+  Axis,
+  KeyboardEventTypes,
 } from '@babylonjs/core';
-import "@babylonjs/loaders/glTF";
-import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
-import "@babylonjs/core/Debug/debugLayer";
-import "@babylonjs/inspector";
+import '@babylonjs/loaders/glTF';
+import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
+import '@babylonjs/core/Debug/debugLayer';
+import '@babylonjs/inspector';
 
 @Injectable({ providedIn: 'root' })
 export class EngineService {
   private canvas: HTMLCanvasElement;
   private engine: Engine;
-  private camera: ArcRotateCamera;
+  private camera: FollowCamera;
   private scene: Scene;
   private light: Light;
 
@@ -40,9 +45,9 @@ export class EngineService {
     // The first step is to get the reference of the canvas element from our HTML document
     this.canvas = canvas.nativeElement;
     console.log(this.canvas);
-    
+
     // Then, load the Babylon 3D engine:
-    this.engine = new Engine(this.canvas,  true);
+    this.engine = new Engine(this.canvas, true);
     this.engine.resize(true);
 
     // create a basic BJS Scene object
@@ -52,66 +57,148 @@ export class EngineService {
     //debug
     //this.scene.debugLayer.show();
 
-    // create a FreeCamera, and set its position to (x:5, y:10, z:-20 )
-    this.camera = new ArcRotateCamera('camera1', 0, 0, 5, new Vector3(0, 0, 0), this.scene);
-
-    // target the camera to scene origin
-    this.camera.setTarget(Vector3.Zero());
-
-    // attach the camera to the canvas
-    this.camera.attachControl(this.canvas, false);
-
-    // create a basic light, aiming 0,1,0 - meaning, to the sky
-    this.light = new HemisphericLight('light1', new Vector3(1, 1, 0), this.scene);
-
     // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene
     this.sphere = Mesh.CreateSphere('sphere1', 16, 0.4, this.scene);
 
+    // create a FreeCamera, and set its position to (x:5, y:10, z:-20 )
+    //this.camera = new ArcRotateCamera('camera1', 0, 0, 5, new Vector3(0, 0, 0), this.scene);
+    this.camera = new FollowCamera(
+      'cameraSegueix',
+      new Vector3(1, 1, 0),
+      this.scene,
+      this.sphere
+    );
+
+    // target the camera to scene origin
+    //this.camera.setTarget(Vector3.Zero());
+
+    // attach the camera to the canvas
+    // this.camera.attachControl(this.canvas, false);
+    //this.camera.attachControl(true); //lliga el moviment de la camera amb el mouse 
+    this.camera.radius = 3;
+    console.log(this.camera);
+
+    // create a basic light, aiming 0,1,0 - meaning, to the sky
+    this.light = new HemisphericLight(
+      'light1',
+      new Vector3(1, 1, 0),
+      this.scene
+    );
+
     //material de la base
-    var materialBase = new StandardMaterial("materialBase", this.scene);
+    var materialBase = new StandardMaterial('materialBase', this.scene);
     // materialBase.diffuseColor = new Color3(1, 0, 1);
     // materialBase.specularColor = new Color3(0.5, 0.6, 0.87);
     // materialBase.ambientColor = new Color3(0.23, 0.98, 0.53);
 
-    var materialSphere1 = new StandardMaterial("texture1", this.scene);
+    var materialSphere1 = new StandardMaterial('texture1', this.scene);
     materialSphere1.wireframe = true;
 
     // create the material with its texture for the sphere and assign it to the sphere
     const spherMaterial = new StandardMaterial('sun_surface', this.scene);
-    spherMaterial.diffuseTexture = new Texture('assets/textures/sun.jpg', this.scene);
+    spherMaterial.diffuseTexture = new Texture(
+      'assets/textures/sun.jpg',
+      this.scene
+    );
     this.sphere.material = materialBase;
 
     // move the sphere upward 1/2 of its height
     this.sphere.position.y = 0.2;
 
     // simple rotation along the y axis
-    this.scene.registerAfterRender(() => {
-      this.sphere.rotate (
-        new Vector3(0, 1, 0),
-        0.02,
-        Space.LOCAL
-      );
-    });
-       
-        
+    // this.scene.registerAfterRender(() => {
+    //   this.sphere.rotate (
+    //     new Vector3(0, 1, 0),
+    //     0.02,
+    //     Space.LOCAL
+    //   );
+    // });
+
     // SceneLoader.AppendAsync("https://models.babylonjs.com/", "alien.glb", this.scene);
-    SceneLoader.AppendAsync("/assets/","basePoly.glb", this.scene).then(result=>{
-      for(let i=0;i<result.meshes.length;i++){
-        //console.log(result.meshes[i]);
-        let nomdescargat = result.meshes[i].name;
-        console.log(nomdescargat);
-      
-        if(result.meshes[i].name == "Cylinder"){
-          result.meshes[i].material = materialBase;
-          console.log('Aplicat material')
-          result.meshes[i].name = 'Base';
-                 
-          
+    SceneLoader.AppendAsync('/assets/', 'basePoly.glb', this.scene).then(
+      (result) => {
+        for (let i = 0; i < result.meshes.length; i++) {
+          //console.log(result.meshes[i]);
+          let nomdescargat = result.meshes[i].name;
+          console.log(nomdescargat);
+
+          if (result.meshes[i].name == 'Cylinder') {
+            result.meshes[i].material = materialBase;
+            console.log('Aplicat material');
+            result.meshes[i].name = 'Base';
+          }
         }
       }
+    );
 
-      });
+    var map = {}; //object for multiple key presses
+    this.scene.actionManager = new ActionManager(this.scene);
 
+    this.scene.actionManager.registerAction(
+      new ExecuteCodeAction(ActionManager.OnKeyDownTrigger, function (evt) {
+        map[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
+      })
+    );
+
+    this.scene.actionManager.registerAction(
+      new ExecuteCodeAction(ActionManager.OnKeyUpTrigger, function (evt) {
+        map[evt.sourceEvent.key] = evt.sourceEvent.type == 'keydown';
+      })
+    );
+
+    // 'Variables moviment jugador'
+    const deltaRotacio = 0.15 / Math.PI;
+    let rotacio = 0; //podra ser aleatori
+    const velocitat = 0.05;
+    let posicio = [0, 0]; //array posicio X Y
+    let F; //FPS
+    let usuari = this.sphere;
+    let camera = this.camera;
+    let caure = false;
+    //Animacio jugador
+    this.scene.registerAfterRender(function () {
+      // F = this.engine.getFPS() //Recull els FPS
+
+      if (map['a'] || map['A']) {
+        rotacio += deltaRotacio;
+        usuari.rotate(Axis.Y, -deltaRotacio, Space.LOCAL);
+      }
+      if (map['d'] || map['D']) {
+        rotacio += deltaRotacio;
+        usuari.rotate(Axis.Y, deltaRotacio, Space.LOCAL);
+      }
+
+      if (map['w'] || map['W']) {
+        usuari.translate(Axis.Z, -velocitat, Space.LOCAL);
+      }
+
+      if (map['s'] || map['S']) {
+        usuari.translate(Axis.Z, velocitat, Space.LOCAL);
+      }
+
+      if (map['c'] || map['C']) {
+        console.log(camera)
+      }
+
+      //funcio caure
+      if (
+        Math.pow(
+          Math.pow(usuari.position._x, 2) + Math.pow(usuari.position._z, 2),
+          0.5
+        ) > 1 || caure
+       )  {
+        usuari.translate(Axis.Y, -velocitat, Space.LOCAL);
+        caure = true;
+      }
+
+      //reset
+      if (usuari.position._y < -5) {
+        caure = false;
+        usuari.position._x = 0;
+        usuari.position._y = 0.2;
+        usuari.position._z = 0;
+      }
+    });
 
     // generates the world x-y-z axis for better understanding
     this.showWorldAxis(8);
@@ -147,11 +234,23 @@ export class EngineService {
    * @param size number
    */
   public showWorldAxis(size: number): void {
-
     const makeTextPlane = (text: string, color: string, textSize: number) => {
-      const dynamicTexture = new DynamicTexture('DynamicTexture', 50, this.scene, true);
+      const dynamicTexture = new DynamicTexture(
+        'DynamicTexture',
+        50,
+        this.scene,
+        true
+      );
       dynamicTexture.hasAlpha = true;
-      dynamicTexture.drawText(text, 5, 40, 'bold 36px Arial', color , 'transparent', true);
+      dynamicTexture.drawText(
+        text,
+        5,
+        40,
+        'bold 36px Arial',
+        color,
+        'transparent',
+        true
+      );
       const plane = Mesh.CreatePlane('TextPlane', textSize, this.scene, true);
       const material = new StandardMaterial('TextPlaneMaterial', this.scene);
       material.backFaceCulling = false;
@@ -166,8 +265,10 @@ export class EngineService {
       'axisX',
       [
         Vector3.Zero(),
-        new Vector3(size, 0, 0), new Vector3(size * 0.95, 0.05 * size, 0),
-        new Vector3(size, 0, 0), new Vector3(size * 0.95, -0.05 * size, 0)
+        new Vector3(size, 0, 0),
+        new Vector3(size * 0.95, 0.05 * size, 0),
+        new Vector3(size, 0, 0),
+        new Vector3(size * 0.95, -0.05 * size, 0),
       ],
       this.scene,
       true
@@ -180,8 +281,11 @@ export class EngineService {
     const axisY = Mesh.CreateLines(
       'axisY',
       [
-        Vector3.Zero(), new Vector3(0, size, 0), new Vector3( -0.05 * size, size * 0.95, 0),
-        new Vector3(0, size, 0), new Vector3( 0.05 * size, size * 0.95, 0)
+        Vector3.Zero(),
+        new Vector3(0, size, 0),
+        new Vector3(-0.05 * size, size * 0.95, 0),
+        new Vector3(0, size, 0),
+        new Vector3(0.05 * size, size * 0.95, 0),
       ],
       this.scene,
       true
@@ -194,8 +298,11 @@ export class EngineService {
     const axisZ = Mesh.CreateLines(
       'axisZ',
       [
-        Vector3.Zero(), new Vector3(0, 0, size), new Vector3( 0 , -0.05 * size, size * 0.95),
-        new Vector3(0, 0, size), new Vector3( 0, 0.05 * size, size * 0.95)
+        Vector3.Zero(),
+        new Vector3(0, 0, size),
+        new Vector3(0, -0.05 * size, size * 0.95),
+        new Vector3(0, 0, size),
+        new Vector3(0, 0.05 * size, size * 0.95),
       ],
       this.scene,
       true
