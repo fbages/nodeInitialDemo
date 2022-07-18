@@ -1,5 +1,6 @@
-import { Component, OnInit, AfterViewInit, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { SocketsIoService } from 'src/app/services/sockets-io/sockets-io.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-xat',
@@ -8,14 +9,14 @@ import { SocketsIoService } from 'src/app/services/sockets-io/sockets-io.service
 })
 export class XatComponent implements OnInit, AfterViewInit {
 missatge:string;
-missatgesRebuts:string='';
-missatgesEnviats:string='';
-cssmissatgesRebuts='cssmissatgesRebuts';
-cssmissatgesEnviats='cssmissatgesEnviats';
+subscription: Subscription;
 
   constructor(private sockets:SocketsIoService, private elementRef:ElementRef) { }
 
   ngOnInit(): void {
+    this.subscription = this.sockets.getUltimMissatge().subscribe((msg)=>{
+      this.rebreMissatge(msg,"");
+    })
   }
 
   ngAfterViewInit(): void {
@@ -28,12 +29,14 @@ cssmissatgesEnviats='cssmissatgesEnviats';
      this.elementRef.nativeElement.querySelector('#inputMissatge').value =''; //Buida el textbox per escriure un nou missatge
      //console.log(this.missatge);
      this.sockets.enviarMissatgeGeneral(this.missatge); //Envia al servei el missatge
-     this.elementRef.nativeElement.querySelector('#llistatMissatges').innerHTML += `<div [style.color]="'yellow'">` + this.missatge + '</div><br>';
+     this.elementRef.nativeElement.querySelector('#llistatMissatges').innerHTML += `<div style="color:green;text-align:right;">` + this.missatge + '</div><br>';
     }
  }
 
- rebreMissatge(){
-  
+ rebreMissatge(missatgeRebut, missatger){
+  this.missatge = missatgeRebut;
+  this.elementRef.nativeElement.querySelector('#llistatMissatges').innerHTML += `<div style="color:red;text-align:left;">` + this.missatge + '</div><br>';
+
  }
 
 }

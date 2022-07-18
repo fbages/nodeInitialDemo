@@ -21,14 +21,14 @@ require('./sockets/socketsMissatges')(io);
 app.use(cors());
 //app.use(helmet()); //No funcionar amb Angular, s'ha de configurar o modificar els scripts per separat
 //Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline';
-app.use(express.static('public/angular'));
+app.use(express.static('public/'));
 
 
 //Ruta per conseguir html
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/angular/index.html');
 });
-app.get('/angular', (req, res) => {
+app.get('/html', (req, res) => {
     res.sendFile(__dirname + '/public/index2.html');
    
 });

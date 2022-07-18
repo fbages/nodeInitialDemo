@@ -1,5 +1,7 @@
 import { Injectable, Optional, SkipSelf } from '@angular/core';
+import { Subject, Observable } from 'rxjs';
 import { io } from 'socket.io-client';
+
 
 @Injectable()
 //   {
@@ -11,12 +13,13 @@ export class SocketsIoService {
   public xatsSocket = io('/xats');
   nomJugador: string;
   xatPrivat: string;
-
+  private missatgeRebutG = new Subject<any>() ;
+    
   constructor(@Optional() @SkipSelf() sharedService?: SocketsIoService) {
     if (sharedService) {
       throw new Error("Sockets ja s'ha creat");
     }
-
+    
     console.log("Sockets s'ha creat correctament");
     setTimeout(() => {
       console.log(this.jugadorsSocket['id']);
@@ -28,7 +31,11 @@ export class SocketsIoService {
   
     this.missatgesSocket.on('chat message', (msg:string)=> {
       console.log(msg);
+      this.missatgeRebutG.next(msg);
     });
+  }
+  getUltimMissatge(){
+    return this.missatgeRebutG.asObservable();
   }
 
   getJugadorsocket(): object {
