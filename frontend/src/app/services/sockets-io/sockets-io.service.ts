@@ -37,8 +37,8 @@ export class SocketsIoService {
     });
 
     this.jugadorsSocket.on("altresjugadors", (altresjugadors:any)=>{
-      console.log(altresjugadors, 'ha arribat nova posicio a Angular');
-      //this.jugadorsRebuts.next(altresjugadors || {"nom":"Ana","pos":[0,1,0],"dir":[1,0,1]});
+      //console.log(altresjugadors, 'ha arribat nova posicio a Angular');
+      this.jugadorsRebuts.next(altresjugadors);
     })
 
   }
@@ -69,7 +69,7 @@ export class SocketsIoService {
   }
 
   enviarJugador(jugador:Object){
-    console.log(jugador, "a punt d'enviar a socket");
+    //console.log(jugador, "a punt d'enviar a socket");
     this.jugadorsSocket.emit('jugador', jugador);
   }
   
@@ -85,10 +85,6 @@ export class SocketsIoService {
         console.log('enviada prova');
       }, 3000);
     }
-
-
-
-   
 
     // //Peticio de conectar-se a un xat privat
     // document.getElementById('privatxat').addEventListener('click', () => {

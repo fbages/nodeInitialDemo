@@ -27,6 +27,7 @@ import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
 import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
 import { SocketsIoService } from '../services/sockets-io/sockets-io.service';
+import { Subscription } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class EngineService {
@@ -42,6 +43,7 @@ export class EngineService {
 
   enviarJugador:Object;
   jugadors:Array<Object>;
+  subscription: Subscription;
 
   public constructor(
     private ngZone: NgZone,
@@ -66,7 +68,7 @@ export class EngineService {
     //this.scene.debugLayer.show();
     let jugador1 = new Jugador("francesc2", [0,0,0], [0,0,0,0]);
     console.log(jugador1);
-      
+    
     //motor fisic
      var gravityVector = new Vector3(0,-20, 0);
      var physicsPlugin = new CannonJSPlugin();
@@ -182,10 +184,16 @@ export class EngineService {
     console.log(usuari);
     let camera = this.camera;
     let caure = false;
-
+    let jugadorsMeshes = [];
+    let jugadors = []
+    
+    //Rebre posicions d'altres jugadors per subscripcio
+    this.subscription =this.sockets.getJugadors().subscribe((llistat)=>{
+      this.jugadors = llistat;
+    })
 
     //Animacio jugador
-    this.scene.registerAfterRender(function () {
+    this.scene.registerAfterRender( ()=> {
       // F = this.engine.getFPS() //Recull els FPS
 
       if (map['a'] || map['A']) {
@@ -230,26 +238,25 @@ export class EngineService {
 
       //definir jugador
       Object.assign(jugador1,{"nom":"ana","pos":[usuari.position.x,usuari.position.y,usuari.position.z],"dir":[usuari.rotationQuaternion.x,usuari.rotationQuaternion.y,usuari.rotationQuaternion.z,usuari.rotationQuaternion.w] })
-      //console.log(usuari.rotationQuaternion.x,usuari.rotationQuaternion.y,usuari.rotationQuaternion.z,usuari.rotationQuaternion.w);
+      
       ////Sockets
       //Enviar posicio jugador
-      //Rebre posicions d'altres jugadors
-      //this.jugadors = this.rebreJugadorsEngine();
+      this.sockets.enviarJugador(jugador1);
+      
+      //renderiza posicions jugadors externs
+      console.log(jugadors);
+      for(let i=0; i < jugadors.length; i++){
+        
+      }
     });
-    
-    this.enviarJugadorEngine(jugador1);
 
     // generates the world x-y-z axis for better understanding
     this.showWorldAxis(8);
   }
 
-  public enviarJugadorEngine(jugador:Object):void{
-    this.sockets.enviarJugador(jugador);
-  }
-
   public rebreJugadorsEngine():Object{
     return {"nom":"Ana","pos":[0,1,0],"dir":[1,0,1]};
-    // return this.sockets.getJugadors();
+    // return 
   }
 
   public animate(): void {
