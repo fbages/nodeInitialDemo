@@ -34,6 +34,7 @@ const appRoutes:Routes=[
     XatPrivatComponent,
     XatComponent,
     MessageComponent
+    
   ],
   imports: [
     BrowserModule,

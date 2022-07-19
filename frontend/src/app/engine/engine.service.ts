@@ -1,5 +1,6 @@
 import { WindowRefService } from './../services/window-ref.service';
 import { ElementRef, Injectable, NgZone } from '@angular/core';
+import { Jugador } from '../models/jugador/jugador'
 import {
   Engine,
   Scene,
@@ -18,12 +19,14 @@ import {
   ActionManager,
   ExecuteCodeAction,
   Axis,
-  KeyboardEventTypes,
+  CannonJSPlugin,
+  PhysicsImpostor,
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
 import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
+import { SocketsIoService } from '../services/sockets-io/sockets-io.service';
 
 @Injectable({ providedIn: 'root' })
 export class EngineService {
@@ -35,10 +38,15 @@ export class EngineService {
 
   private sphere: Mesh;
   private base: Mesh;
+  private sphere2 : Mesh;
+
+  enviarJugador:Object;
+  jugadors:Array<Object>;
 
   public constructor(
     private ngZone: NgZone,
-    private windowRef: WindowRefService
+    private windowRef: WindowRefService,
+    private sockets: SocketsIoService
   ) {}
 
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
@@ -56,10 +64,29 @@ export class EngineService {
 
     //debug
     //this.scene.debugLayer.show();
-
+    let jugador1 = new Jugador("francesc2", [0,0,0], [0,0,0,0]);
+    console.log(jugador1);
+      
+    //motor fisic
+     var gravityVector = new Vector3(0,-20, 0);
+     var physicsPlugin = new CannonJSPlugin();
+     this.scene.enablePhysics(gravityVector, physicsPlugin);
+    
     // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene
+    //this.sphere = Mesh.CreateBox('box1',2,this.scene);
     this.sphere = Mesh.CreateSphere('sphere1', 16, 0.4, this.scene);
-
+     this.sphere2 = Mesh.CreateSphere('sphere2', 16, 0.3, this.scene);
+     let ground = Mesh.CreateGround('Ground1',3,3,2,this.scene);
+       
+    // move the sphere upward 1/2 of its height
+    this.sphere.position.y = 1.2;
+     this.sphere2.position.y = 2.4;
+        
+     this.sphere.physicsImpostor = new PhysicsImpostor(this.sphere, PhysicsImpostor.SphereImpostor, { mass: 1000, restitution: 0.1, friction : 0.5 }, this.scene);
+     this.sphere2.physicsImpostor = new PhysicsImpostor(this.sphere2, PhysicsImpostor.SphereImpostor, { mass: 1000, restitution: 0.1, friction : 0.1 }, this.scene);
+     ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.2, friction:0.5 }, this.scene);
+  
+    
     // create a FreeCamera, and set its position to (x:5, y:10, z:-20 )
     //this.camera = new ArcRotateCamera('camera1', 0, 0, 5, new Vector3(0, 0, 0), this.scene);
     this.camera = new FollowCamera(
@@ -76,7 +103,7 @@ export class EngineService {
     // this.camera.attachControl(this.canvas, false);
     //this.camera.attachControl(true); //lliga el moviment de la camera amb el mouse 
     this.camera.radius = 3;
-    console.log(this.camera);
+    //console.log(this.camera);
 
     // create a basic light, aiming 0,1,0 - meaning, to the sky
     this.light = new HemisphericLight(
@@ -102,8 +129,7 @@ export class EngineService {
     );
     this.sphere.material = materialBase;
 
-    // move the sphere upward 1/2 of its height
-    this.sphere.position.y = 0.2;
+
 
     // simple rotation along the y axis
     // this.scene.registerAfterRender(() => {
@@ -115,21 +141,21 @@ export class EngineService {
     // });
 
     // SceneLoader.AppendAsync("https://models.babylonjs.com/", "alien.glb", this.scene);
-    SceneLoader.AppendAsync('/assets/', 'basePoly.glb', this.scene).then(
-      (result) => {
-        for (let i = 0; i < result.meshes.length; i++) {
-          //console.log(result.meshes[i]);
-          let nomdescargat = result.meshes[i].name;
-          console.log(nomdescargat);
+    // SceneLoader.AppendAsync('/assets/', 'basePoly.glb', this.scene).then(
+    //   (result) => {
+    //     for (let i = 0; i < result.meshes.length; i++) {
+    //       //console.log(result.meshes[i]);
+    //       let nomdescargat = result.meshes[i].name;
+    //       console.log(nomdescargat);
 
-          if (result.meshes[i].name == 'Cylinder') {
-            result.meshes[i].material = materialBase;
-            console.log('Aplicat material');
-            result.meshes[i].name = 'Base';
-          }
-        }
-      }
-    );
+    //       if (result.meshes[i].name == 'Cylinder') {
+    //         result.meshes[i].material = materialBase;
+    //         console.log('Aplicat material');
+    //         result.meshes[i].name = 'Base';
+    //       }
+    //     }
+    //   }
+    // );
 
     var map = {}; //object for multiple key presses
     this.scene.actionManager = new ActionManager(this.scene);
@@ -153,8 +179,11 @@ export class EngineService {
     let posicio = [0, 0]; //array posicio X Y
     let F; //FPS
     let usuari = this.sphere;
+    console.log(usuari);
     let camera = this.camera;
     let caure = false;
+
+
     //Animacio jugador
     this.scene.registerAfterRender(function () {
       // F = this.engine.getFPS() //Recull els FPS
@@ -190,18 +219,37 @@ export class EngineService {
         usuari.translate(Axis.Y, -velocitat, Space.LOCAL);
         caure = true;
       }
-
+      
       //reset
-      if (usuari.position._y < -5) {
+      if (usuari.position.y < -5) {
         caure = false;
-        usuari.position._x = 0;
-        usuari.position._y = 0.2;
-        usuari.position._z = 0;
+        usuari.position.x = 0;
+        usuari.position.y = 1.2;
+        usuari.position.z = 0;
       }
+
+      //definir jugador
+      Object.assign(jugador1,{"nom":"ana","pos":[usuari.position.x,usuari.position.y,usuari.position.z],"dir":[usuari.rotationQuaternion.x,usuari.rotationQuaternion.y,usuari.rotationQuaternion.z,usuari.rotationQuaternion.w] })
+      //console.log(usuari.rotationQuaternion.x,usuari.rotationQuaternion.y,usuari.rotationQuaternion.z,usuari.rotationQuaternion.w);
+      ////Sockets
+      //Enviar posicio jugador
+      //Rebre posicions d'altres jugadors
+      //this.jugadors = this.rebreJugadorsEngine();
     });
+    
+    this.enviarJugadorEngine(jugador1);
 
     // generates the world x-y-z axis for better understanding
     this.showWorldAxis(8);
+  }
+
+  public enviarJugadorEngine(jugador:Object):void{
+    this.sockets.enviarJugador(jugador);
+  }
+
+  public rebreJugadorsEngine():Object{
+    return {"nom":"Ana","pos":[0,1,0],"dir":[1,0,1]};
+    // return this.sockets.getJugadors();
   }
 
   public animate(): void {

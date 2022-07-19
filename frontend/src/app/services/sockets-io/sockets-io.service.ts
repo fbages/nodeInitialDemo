@@ -13,6 +13,8 @@ export class SocketsIoService {
   public xatsSocket = io('/xats');
   nomJugador: string;
   xatPrivat: string;
+  
+  private jugadorsRebuts = new Subject<any>();
   private missatgeRebutG = new Subject<any>() ;
     
   constructor(@Optional() @SkipSelf() sharedService?: SocketsIoService) {
@@ -33,7 +35,14 @@ export class SocketsIoService {
       console.log(msg);
       this.missatgeRebutG.next(msg);
     });
+
+    this.jugadorsSocket.on("altresjugadors", (altresjugadors:any)=>{
+      console.log(altresjugadors, 'ha arribat nova posicio a Angular');
+      //this.jugadorsRebuts.next(altresjugadors || {"nom":"Ana","pos":[0,1,0],"dir":[1,0,1]});
+    })
+
   }
+
   getUltimMissatge(){
     return this.missatgeRebutG.asObservable();
   }
@@ -59,12 +68,16 @@ export class SocketsIoService {
       }
   }
 
-  crearSockets() {
-    // var formReg = document.getElementById('registre');
-    // var inputReg = document.getElementById('inputregistre');
+  enviarJugador(jugador:Object){
+    console.log(jugador, "a punt d'enviar a socket");
+    this.jugadorsSocket.emit('jugador', jugador);
+  }
+  
+  getJugadors(){
+    return this.jugadorsRebuts.asObservable();
+  }
 
-    // var form = document.getElementById('form');
-    // var input = document.getElementById('input');
+  crearSockets() {
 
     function prova() {
       setTimeout(() => {

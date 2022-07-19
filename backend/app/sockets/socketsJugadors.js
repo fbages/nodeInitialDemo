@@ -1,7 +1,7 @@
 const crudService = require('../helpers/crudService');
 
 async function socketsJugadors(io){
-
+    let jugadors = [];
     const JugadorsNameSpace = io.of("/jugadors");
     //Conexio i desconexio usuari
     JugadorsNameSpace.on('connection', (socket) => {
@@ -27,6 +27,17 @@ async function socketsJugadors(io){
         socket.on("connect_error", (err) => {
             console.log(`connect_error due to ${err.message}`);
           });
+        
+        socket.on('jugador', (jugador)=>{
+            console.log(jugador, 'ha arribat nova posicio altres jugadors al server');
+            let trobat = jugadors.filter(jugadorllista=>{jugadorllista.nom == jugador.nom});
+            if(trobat != 'null'){
+                jugadors.push(jugador);
+            } else {
+                Object.assign(trobat,jugador);
+            }
+            socket.broadcast.emit("altresjugadors", jugadors);
+        })
     });
     
 }

@@ -38,7 +38,9 @@
             "allowedCommonJsDependencies": [
               "babylonjs-materials"
             ],
-            "scripts": []
+            "scripts": [
+              "src/app/engine/cannon.js"
+            ]
           },
           "configurations": {
             "production": {
