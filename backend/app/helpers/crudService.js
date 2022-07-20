@@ -31,10 +31,14 @@ async function eliminarXat(nomXatEliminat){
 async function afegirJugadorAlXatPrincipal(idsocketJugador){
     let xat = await db.Xats.findOne({nomxat : "Principal"});
     let jug = await db.Jugadors.findOne({idsocketjugador : idsocketJugador});
-    console.log(jug);
-     xat.jugadors.push(jug._id);
-     xat.save();
-    return xat;
+    console.log("Afegir jugador al xat", jug);
+    try{
+        await xat.jugadors.push(jug._id);
+        await xat.save();
+        return xat;
+    } catch(err){
+        console.log(err);
+    }
 }
 
 async function treureJugadorAlXatPrincipal(socketXatsid){
