@@ -21,6 +21,7 @@ import {
   Axis,
   CannonJSPlugin,
   PhysicsImpostor,
+  AxesViewer,
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
@@ -39,6 +40,7 @@ export class EngineService {
 
   private sphere: Mesh;
   private base: Mesh;
+  private box1: Mesh;
   private sphere2 : Mesh;
 
   enviarJugador:Object;
@@ -70,7 +72,7 @@ export class EngineService {
     console.log(jugador1);
     
     //motor fisic
-     var gravityVector = new Vector3(0,-20, 0);
+     var gravityVector = new Vector3(0,-1, 0);
      var physicsPlugin = new CannonJSPlugin();
      this.scene.enablePhysics(gravityVector, physicsPlugin);
     
@@ -79,15 +81,17 @@ export class EngineService {
     this.sphere = Mesh.CreateSphere('sphere1', 16, 0.4, this.scene);
      this.sphere2 = Mesh.CreateSphere('sphere2', 16, 0.3, this.scene);
      let ground = Mesh.CreateGround('Ground1',3,3,2,this.scene);
+     this.box1 = Mesh.CreateBox('box1',0.4,this.scene);
        
     // move the sphere upward 1/2 of its height
     this.sphere.position.y = 1.2;
      this.sphere2.position.y = 2.4;
+     this.box1.position.y = 0.2;
         
      this.sphere.physicsImpostor = new PhysicsImpostor(this.sphere, PhysicsImpostor.SphereImpostor, { mass: 1000, restitution: 0.1, friction : 0.5 }, this.scene);
      this.sphere2.physicsImpostor = new PhysicsImpostor(this.sphere2, PhysicsImpostor.SphereImpostor, { mass: 1000, restitution: 0.1, friction : 0.1 }, this.scene);
      ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.2, friction:0.5 }, this.scene);
-  
+    this.box1.physicsImpostor = new PhysicsImpostor(this.box1, PhysicsImpostor.BoxImpostor, {mass:1000, restitution: 0.1, friction : 0.1}, this.scene)
     
     // create a FreeCamera, and set its position to (x:5, y:10, z:-20 )
     //this.camera = new ArcRotateCamera('camera1', 0, 0, 5, new Vector3(0, 0, 0), this.scene);
@@ -95,7 +99,7 @@ export class EngineService {
       'cameraSegueix',
       new Vector3(1, 1, 0),
       this.scene,
-      this.sphere
+      this.box1
     );
 
     // target the camera to scene origin
@@ -179,14 +183,19 @@ export class EngineService {
     let rotacio = 0; //podra ser aleatori
     const velocitat = 0.05;
     let posicio = [0, 0]; //array posicio X Y
-    let F; //FPS
-    let usuari = this.sphere;
+    let F ; //FPS
+    let usuari = this.box1; //asigna figura 3d a moviments teclat
     console.log(usuari);
     let camera = this.camera;
     let caure = false;
     let jugadorsMeshes = [];
-    let jugadors = []
-    
+    let jugadors = [];
+    const localAxes = new AxesViewer(this.scene, 1);
+    const generalAxes = new AxesViewer(this.scene, 1);
+    localAxes.xAxis.parent = usuari;
+    localAxes.yAxis.parent = usuari;
+    localAxes.zAxis.parent = usuari;
+    let orientation = Vector3.RotationFromAxis(new Vector3(1, 0, 0),new Vector3(0, 1, 0),new Vector3(0, 0, 1));
     //Rebre posicions d'altres jugadors per subscripcio
     this.subscription =this.sockets.getJugadors().subscribe((llistat)=>{
       this.jugadors = llistat;
@@ -195,7 +204,7 @@ export class EngineService {
     //Animacio jugador
     this.scene.registerAfterRender( ()=> {
       // F = this.engine.getFPS() //Recull els FPS
-
+        
       if (map['a'] || map['A']) {
         rotacio += deltaRotacio;
         usuari.rotate(Axis.Y, -deltaRotacio, Space.LOCAL);
@@ -231,13 +240,21 @@ export class EngineService {
       //reset
       if (usuari.position.y < -5) {
         caure = false;
+
+        usuari.rotation.x = 0;
+        usuari.rotation.y = 0;
+        usuari.rotation.z=0;
         usuari.position.x = 0;
-        usuari.position.y = 1.2;
+        usuari.position.y = 5;
         usuari.position.z = 0;
+
+        usuari.physicsImpostor.setAngularVelocity( Vector3.Zero() );
+        usuari.physicsImpostor.setLinearVelocity( Vector3.Zero() );
+
       }
 
       //definir jugador
-      Object.assign(jugador1,{"nom":"ana","pos":[usuari.position.x,usuari.position.y,usuari.position.z],"dir":[usuari.rotationQuaternion.x,usuari.rotationQuaternion.y,usuari.rotationQuaternion.z,usuari.rotationQuaternion.w] })
+      //Object.assign(jugador1,{"nom":"ana","pos":[usuari.position.x,usuari.position.y,usuari.position.z],"dir":[usuari.rotationQuaternion.x,usuari.rotationQuaternion.y,usuari.rotationQuaternion.z,usuari.rotationQuaternion.w] })
       
       ////Sockets
       //Enviar posicio jugador
@@ -252,11 +269,6 @@ export class EngineService {
 
     // generates the world x-y-z axis for better understanding
     this.showWorldAxis(8);
-  }
-
-  public rebreJugadorsEngine():Object{
-    return {"nom":"Ana","pos":[0,1,0],"dir":[1,0,1]};
-    // return 
   }
 
   public animate(): void {

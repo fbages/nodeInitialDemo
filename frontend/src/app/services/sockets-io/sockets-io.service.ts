@@ -37,7 +37,9 @@ export class SocketsIoService {
     });
 
     this.jugadorsSocket.on("altresjugadors", (altresjugadors:any)=>{
-      //console.log(altresjugadors, 'ha arribat nova posicio a Angular');
+      setTimeout(() => {
+        console.log(altresjugadors, 'ha arribat nova posicio a Angular');
+      }, 2000);
       this.jugadorsRebuts.next(altresjugadors);
     })
 
