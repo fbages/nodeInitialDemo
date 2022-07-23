@@ -22,6 +22,9 @@ import {
   CannonJSPlugin,
   PhysicsImpostor,
   AxesViewer,
+  MeshBuilder,
+  Quaternion,
+  
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
@@ -29,6 +32,7 @@ import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
 import { SocketsIoService } from '../services/sockets-io/sockets-io.service';
 import { Subscription } from 'rxjs';
+import * as GUI  from '@babylonjs/gui'
 
 @Injectable({ providedIn: 'root' })
 export class EngineService {
@@ -41,12 +45,12 @@ export class EngineService {
   private sphere: Mesh;
   private base: Mesh;
   private box1: Mesh;
-  private sphere2 : Mesh;
 
+  //public jugadors:any;
   enviarJugador:Object;
-  jugadors:Array<Object>;
   subscription: Subscription;
 
+  nomJugador: string;
   public constructor(
     private ngZone: NgZone,
     private windowRef: WindowRefService,
@@ -57,41 +61,80 @@ export class EngineService {
     // The first step is to get the reference of the canvas element from our HTML document
     this.canvas = canvas.nativeElement;
     console.log(this.canvas);
-
     // Then, load the Babylon 3D engine:
     this.engine = new Engine(this.canvas, true);
     this.engine.resize(true);
+    
+    //definicio nom del jugador
+    console.log(this.sockets);
+    setTimeout(() => {
+      this.nomJugador = this.sockets.nomJugador;
+    }, 500);
 
     // create a basic BJS Scene object
     this.scene = new Scene(this.engine);
     this.scene.clearColor = new Color4(0.5, 0.5, 0.5, 0);
 
     //debug
-    //this.scene.debugLayer.show();
+    this.scene.debugLayer.show();
+
     let jugador1 = new Jugador("francesc2", [0,0,0], [0,0,0,0]);
     console.log(jugador1);
     
     //motor fisic
-     var gravityVector = new Vector3(0,-1, 0);
+     var gravityVector = new Vector3(0, 0, 0);
      var physicsPlugin = new CannonJSPlugin();
-     this.scene.enablePhysics(gravityVector, physicsPlugin);
+     //this.scene.enablePhysics(gravityVector, physicsPlugin);
     
     // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene
-    //this.sphere = Mesh.CreateBox('box1',2,this.scene);
-    this.sphere = Mesh.CreateSphere('sphere1', 16, 0.4, this.scene);
-     this.sphere2 = Mesh.CreateSphere('sphere2', 16, 0.3, this.scene);
-     let ground = Mesh.CreateGround('Ground1',3,3,2,this.scene);
-     this.box1 = Mesh.CreateBox('box1',0.4,this.scene);
+    this.box1 = MeshBuilder.CreateBox("box1",{ width:0.4, height: 0.4, depth:0.6}, this.scene);
+
        
     // move the sphere upward 1/2 of its height
-    this.sphere.position.y = 1.2;
-     this.sphere2.position.y = 2.4;
-     this.box1.position.y = 0.2;
-        
-     this.sphere.physicsImpostor = new PhysicsImpostor(this.sphere, PhysicsImpostor.SphereImpostor, { mass: 1000, restitution: 0.1, friction : 0.5 }, this.scene);
-     this.sphere2.physicsImpostor = new PhysicsImpostor(this.sphere2, PhysicsImpostor.SphereImpostor, { mass: 1000, restitution: 0.1, friction : 0.1 }, this.scene);
-     ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.2, friction:0.5 }, this.scene);
-    this.box1.physicsImpostor = new PhysicsImpostor(this.box1, PhysicsImpostor.BoxImpostor, {mass:1000, restitution: 0.1, friction : 0.1}, this.scene)
+     this.box1.position.y = 5;
+     this.box1.rotationQuaternion = Quaternion.RotationAxis(new Vector3(1, 0, 0), 0);
+   
+    // Crear fisica
+    //this.box1.physicsImpostor = new PhysicsImpostor(this.box1, PhysicsImpostor.BoxImpostor, {mass:1000, restitution: 0.1, friction:0.2}, this.scene)
+    
+    //Crear nom sobre jugador
+     // GUI
+     const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
+    setTimeout(() => {
+      
+      var rect1 = new GUI.Rectangle();
+      rect1.width = "200px";
+    rect1.height = "40px";
+    rect1.cornerRadius = 20;
+    rect1.color = "Orange";
+    rect1.thickness = 4;
+    rect1.background = "green";
+    advancedTexture.addControl(rect1);
+    rect1.linkWithMesh(this.box1);   
+    rect1.linkOffsetY = -100;
+    
+    var label = new GUI.TextBlock();
+    label.text = this.nomJugador;
+    rect1.addControl(label);
+    
+    var target = new GUI.Ellipse();
+    target.width = "40px";
+    target.height = "40px";
+    target.color = "Orange";
+    target.thickness = 4;
+    target.background = "green";
+    advancedTexture.addControl(target);
+    target.linkWithMesh(this.box1);   
+    
+    var line = new GUI.Line();
+    line.lineWidth = 4;
+    line.color = "Orange";
+    line.y2 = 20;
+    line.linkOffsetY = -20;
+    advancedTexture.addControl(line);
+    line.linkWithMesh(this.box1); 
+    line.connectedControl = rect1;  
+  }, 1000);
     
     // create a FreeCamera, and set its position to (x:5, y:10, z:-20 )
     //this.camera = new ArcRotateCamera('camera1', 0, 0, 5, new Vector3(0, 0, 0), this.scene);
@@ -101,14 +144,15 @@ export class EngineService {
       this.scene,
       this.box1
     );
-
+      this.camera.fov = 1.2;
+      this.camera.radius = 2;
+      this.camera.heightOffset=2;
     // target the camera to scene origin
     //this.camera.setTarget(Vector3.Zero());
 
     // attach the camera to the canvas
     // this.camera.attachControl(this.canvas, false);
     //this.camera.attachControl(true); //lliga el moviment de la camera amb el mouse 
-    this.camera.radius = 3;
     //console.log(this.camera);
 
     // create a basic light, aiming 0,1,0 - meaning, to the sky
@@ -118,50 +162,46 @@ export class EngineService {
       this.scene
     );
 
-    //material de la base
-    var materialBase = new StandardMaterial('materialBase', this.scene);
-    // materialBase.diffuseColor = new Color3(1, 0, 1);
-    // materialBase.specularColor = new Color3(0.5, 0.6, 0.87);
-    // materialBase.ambientColor = new Color3(0.23, 0.98, 0.53);
-
-    var materialSphere1 = new StandardMaterial('texture1', this.scene);
-    materialSphere1.wireframe = true;
+    var MaterialInalambric = new StandardMaterial('texture1', this.scene);
+    MaterialInalambric.wireframe = true;
 
     // create the material with its texture for the sphere and assign it to the sphere
-    const spherMaterial = new StandardMaterial('sun_surface', this.scene);
-    spherMaterial.diffuseTexture = new Texture(
+    const MaterialGroc = new StandardMaterial('sun_surface', this.scene);
+        MaterialGroc.diffuseTexture = new Texture(
       'assets/textures/sun.jpg',
       this.scene
     );
-    this.sphere.material = materialBase;
-
-
-
-    // simple rotation along the y axis
-    // this.scene.registerAfterRender(() => {
-    //   this.sphere.rotate (
-    //     new Vector3(0, 1, 0),
-    //     0.02,
-    //     Space.LOCAL
-    //   );
-    // });
-
-    // SceneLoader.AppendAsync("https://models.babylonjs.com/", "alien.glb", this.scene);
-    // SceneLoader.AppendAsync('/assets/', 'basePoly.glb', this.scene).then(
-    //   (result) => {
-    //     for (let i = 0; i < result.meshes.length; i++) {
-    //       //console.log(result.meshes[i]);
-    //       let nomdescargat = result.meshes[i].name;
-    //       console.log(nomdescargat);
-
-    //       if (result.meshes[i].name == 'Cylinder') {
-    //         result.meshes[i].material = materialBase;
-    //         console.log('Aplicat material');
-    //         result.meshes[i].name = 'Base';
-    //       }
-    //     }
-    //   }
-    // );
+    // this.sphere.material = materialBase;
+          // Groc sol material
+    SceneLoader.AppendAsync('/assets/', 'base03.glb', this.scene).then(
+      (result) => {
+        for (let i = 0; i < result.meshes.length; i++) {
+          //console.log(result.meshes[i]);
+          let nomdescargat = result.meshes[i].name;
+          console.log(nomdescargat);
+          
+          if (result.meshes[i].name == 'Cylinder') {
+            result.meshes[i].material = MaterialGroc;
+            result.meshes[i].name = 'Base1';
+          }
+        }
+      }
+    );
+          // Material inalambric
+    SceneLoader.AppendAsync('/assets/', 'base03.glb', this.scene).then(
+      (result) => {
+        for (let i = 0; i < result.meshes.length; i++) {
+          //console.log(result.meshes[i]);
+          let nomdescargat = result.meshes[i].name;
+          console.log(nomdescargat);
+          
+          if (result.meshes[i].name == 'Cylinder') {
+            result.meshes[i].material = MaterialInalambric;
+            result.meshes[i].name = 'Base2';
+          }
+        }
+      }
+    );
 
     var map = {}; //object for multiple key presses
     this.scene.actionManager = new ActionManager(this.scene);
@@ -180,31 +220,144 @@ export class EngineService {
 
     // 'Variables moviment jugador'
     const deltaRotacio = 0.15 / Math.PI;
-    let rotacio = 0; //podra ser aleatori
     const velocitat = 0.05;
-    let posicio = [0, 0]; //array posicio X Y
     let F ; //FPS
+    let rotacio; // salvar la posicio de rotacio 
     let usuari = this.box1; //asigna figura 3d a moviments teclat
     console.log(usuari);
     let camera = this.camera;
     let caure = false;
-    let jugadorsMeshes = [];
+
+    //Generar uns Axis pel propi jugador
+  // const localAxes = new AxesViewer(this.scene, 1);
+  // localAxes.xAxis.parent = usuari;
+  // localAxes.yAxis.parent = usuari;
+  // localAxes.zAxis.parent = usuari;
+
+    //Variables altes usuaris
     let jugadors = [];
-    const localAxes = new AxesViewer(this.scene, 1);
-    const generalAxes = new AxesViewer(this.scene, 1);
-    localAxes.xAxis.parent = usuari;
-    localAxes.yAxis.parent = usuari;
-    localAxes.zAxis.parent = usuari;
-    let orientation = Vector3.RotationFromAxis(new Vector3(1, 0, 0),new Vector3(0, 1, 0),new Vector3(0, 0, 1));
+
+    //Panell GUI on es mostren finestra de xat privat
+    let panel = new GUI.StackPanel();    
+    advancedTexture.addControl(panel);
+    panel.top = "50px"; 
+
+    let button = GUI.Button.CreateSimpleButton("but", "inicial");
+    button.isVisible = false; // amaga a l'inicia
+    button.width = "100px";
+    button.height = "100px";
+    button.color = "white";
+    button.background = "green";
+    //button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    //button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    // button.top = "250px";
+    // button.left = "-250px";
+    panel.addControl(button);
+
     //Rebre posicions d'altres jugadors per subscripcio
-    this.subscription =this.sockets.getJugadors().subscribe((llistat)=>{
-      this.jugadors = llistat;
+    this.subscription =this.sockets.getJugadors().subscribe((jugador)=>{
+      //console.log(jugador," aixo es el jugador que ha arribat i que esta subscrit");
+      let indexJugador = jugadors.findIndex(item=>item.nom == jugador.nom);
+      if(indexJugador != -1){
+         Object.assign(jugadors[indexJugador],jugador);
+
+      }else{
+        let nouJugador = new Jugador(jugador.nom,jugador.pos,jugador.dir);
+        
+        try{
+          if(jugador.nom.length > 0){ //tarda uns microsegons a asignar jugador al nom, arribar sense nom sino
+            jugadors.push(nouJugador);  
+            crearJugadorExtern(jugador.nom, jugador.pos,jugador.dir, this.scene);
+            console.log("S'ha creat un jugador");
+          }
+        } catch(err){
+          console.log(jugador.nom, "és undefined");
+        }
+      }
     })
+
+    function crearJugadorExtern(nom:string, pos, dir, scene){
+      let box1 = MeshBuilder.CreateBox(nom,{ width:0.4, height: 0.4, depth:0.6}, scene);
+      //box1.physicsImpostor = new PhysicsImpostor(box1, PhysicsImpostor.BoxImpostor, {mass:1000, restitution: 0.1, friction:0.2}, scene)
+      box1.position.x = Number(pos[0]) ;
+      box1.position.y = Number(pos[1]) ;
+      box1.position.z = Number(pos[2]) ;
+      box1.rotationQuaternion = Quaternion.RotationAxis(new Vector3(1, 0, 0), 0);
+      box1.rotationQuaternion._x =  0;
+      box1.rotationQuaternion._y = Number(dir[1]) ;
+      box1.rotationQuaternion._z =  0;
+      box1.rotationQuaternion.w = Number(dir[3]);
+
+      setTimeout(() => {
+      
+      let rect1 = new GUI.Rectangle();
+      rect1.width = "200px";
+      rect1.height = "40px";
+      rect1.cornerRadius = 20;
+      rect1.color = "yellow";
+      rect1.thickness = 4;
+      rect1.background = "blue";
+      advancedTexture.addControl(rect1);
+      rect1.linkWithMesh(box1);   
+      rect1.linkOffsetY = -100;
+      
+      let label = new GUI.TextBlock();
+      label.text = nom;
+      rect1.addControl(label);
+      
+      let target = new GUI.Ellipse();
+      target.width = "40px";
+      target.height = "40px";
+      target.color = "Orange";
+      target.thickness = 4;
+      target.background = "green";
+      advancedTexture.addControl(target);
+      target.linkWithMesh(box1);   
+      
+      let line = new GUI.Line();
+      line.lineWidth = 4;
+      line.color = "Orange";
+      line.y2 = 20;
+      line.linkOffsetY = -20;
+      advancedTexture.addControl(line);
+      line.linkWithMesh(box1); 
+      line.connectedControl = rect1;  
+    }, 1000);
+    };
+
+    function updateJugadorExtern(nom:string, pos, dir, scene){
+      try{
+        let box1 = scene.getMeshByName(nom);
+        //console.log(box1);
+        //console.log(typeof pos[0], pos[1], pos[2], 'aqui esta actualitzant')
+        //console.log((box1.position.x), 'aqui esta actualitzant');
+        
+        box1.position.x = Number(pos[0]);
+        box1.position.y = Number(pos[1]);
+        box1.position.z = Number(pos[2]);
+        box1.rotationQuaternion._x = 0;
+        box1.rotationQuaternion._y = Number(dir[1]);
+        box1.rotationQuaternion._z = 0;
+        box1.rotationQuaternion.w = Number(dir[3]);
+
+      } catch (err){
+        console.log(err);
+      }
+
+    };
+
+    function crearXatPrivat(nomXat:string){
+
+    }
+    
+
 
     //Animacio jugador
     this.scene.registerAfterRender( ()=> {
       // F = this.engine.getFPS() //Recull els FPS
-        
+      // usuari.physicsImpostor.setAngularVelocity( Vector3.Zero() );
+      // usuari.physicsImpostor.setLinearVelocity( Vector3.Zero() );
+
       if (map['a'] || map['A']) {
         rotacio += deltaRotacio;
         usuari.rotate(Axis.Y, -deltaRotacio, Space.LOCAL);
@@ -226,49 +379,73 @@ export class EngineService {
         console.log(camera)
       }
 
+
+      if( usuari.position.y > 0.2){
+        console.log('Esta volant');
+        usuari.translate(Axis.Y, -velocitat, Space.LOCAL);
+  
+      }
+      
       //funcio caure
       if (
         Math.pow(
           Math.pow(usuari.position._x, 2) + Math.pow(usuari.position._z, 2),
           0.5
-        ) > 1 || caure
+        ) > 3  || caure
        )  {
         usuari.translate(Axis.Y, -velocitat, Space.LOCAL);
         caure = true;
+        console.log('esta caient')
       }
-      
+  
       //reset
       if (usuari.position.y < -5) {
+        // usuari.physicsImpostor.setAngularVelocity( Vector3.Zero() );
+        // usuari.physicsImpostor.setLinearVelocity( Vector3.Zero() );
+        console.log('esta a dalt')
         caure = false;
-
         usuari.rotation.x = 0;
         usuari.rotation.y = 0;
-        usuari.rotation.z=0;
+        usuari.rotation.z = 0;
         usuari.position.x = 0;
         usuari.position.y = 5;
         usuari.position.z = 0;
-
-        usuari.physicsImpostor.setAngularVelocity( Vector3.Zero() );
-        usuari.physicsImpostor.setLinearVelocity( Vector3.Zero() );
-
+        usuari.rotationQuaternion._x =0;
+        usuari.rotationQuaternion._z =0;
       }
+      
 
-      //definir jugador
-      //Object.assign(jugador1,{"nom":"ana","pos":[usuari.position.x,usuari.position.y,usuari.position.z],"dir":[usuari.rotationQuaternion.x,usuari.rotationQuaternion.y,usuari.rotationQuaternion.z,usuari.rotationQuaternion.w] })
+      //definir jugador per al servidor
+      Object.assign(jugador1,{"nom":this.nomJugador,"pos":[usuari.position.x.toFixed(2),usuari.position.y.toFixed(2),usuari.position.z.toFixed(2)],"dir":[usuari.rotationQuaternion.x.toFixed(2),usuari.rotationQuaternion.y.toFixed(2),usuari.rotationQuaternion.z.toFixed(2),usuari.rotationQuaternion.w.toFixed(2)] })
       
       ////Sockets
       //Enviar posicio jugador
+      //console.log(jugador1, "info jugador partida");
       this.sockets.enviarJugador(jugador1);
       
       //renderiza posicions jugadors externs
-      console.log(jugadors);
-      for(let i=0; i < jugadors.length; i++){
-        
-      }
+      //console.log(jugadors, "info jugadors externs");
+  
+       for(let i=0; i < jugadors.length; i++){
+        //console.log(jugadors[i]);
+        updateJugadorExtern(jugadors[i].nom,jugadors[i].pos,jugadors[i].dir, this.scene);
+        let distancia =  Math.pow(Math.pow(usuari.position._x-jugadors[i].pos[0], 2) + Math.pow(usuari.position._z-jugadors[i].pos[2], 2), 0.5)
+        if(distancia<0.5){
+          console.log('Surt menu per fer xat privat');
+          button.textBlock.text = "Unir a un xat privat amb " + jugadors[i].nom;
+          button.onPointerClickObservable.add(function () {
+            crearXatPrivat(jugadors[i].nom);
+          });
+          button.isVisible = true;
+        } 
+        if(distancia>0.5) {
+          button.isVisible = false;
+        }
+       }
     });
 
     // generates the world x-y-z axis for better understanding
-    this.showWorldAxis(8);
+   // this.showWorldAxis(8);
   }
 
   public animate(): void {
@@ -378,5 +555,10 @@ export class EngineService {
     axisZ.color = new Color3(0, 0, 1);
     const zChar = makeTextPlane('Z', 'blue', size / 10);
     zChar.position = new Vector3(0, 0.05 * size, 0.9 * size);
+  }
+
+  ngOnDestroy() {
+    console.log('ngOnDestroy: cleaning up...');
+    this.subscription.unsubscribe();
   }
 }

@@ -29,14 +29,8 @@ async function socketsJugadors(io){
           });
         
         socket.on('jugador', (jugador)=>{
-            console.log(jugador, 'ha arribat nova posicio altres jugadors al server');
-            let trobat = jugadors.filter(jugadorllista=>{jugadorllista.nom == jugador.nom});
-            if(trobat != 'null'){
-                jugadors.push(jugador);
-            } else {
-                Object.assign(trobat,jugador);
-            }
-            socket.broadcast.emit("altresjugadors", jugadors);
+            //console.log(jugador, 'ha arribat nova posicio al server dun jugador');
+            socket.broadcast.volatile.emit("altresjugadors", jugador);
         })
     });
     

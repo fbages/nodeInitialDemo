@@ -36,11 +36,11 @@ export class SocketsIoService {
       this.missatgeRebutG.next(msg);
     });
 
-    this.jugadorsSocket.on("altresjugadors", (altresjugadors:any)=>{
-      setTimeout(() => {
-        console.log(altresjugadors, 'ha arribat nova posicio a Angular');
-      }, 2000);
-      this.jugadorsRebuts.next(altresjugadors);
+    this.jugadorsSocket.on("altresjugadors", (jugadorExtern:string)=>{
+     //setTimeout(() => {
+        //console.log(jugadorExtern, 'ha arribat nova posicio a Angular');
+        this.jugadorsRebuts.next(jugadorExtern);
+       // }, 2500);
     })
 
   }
@@ -72,7 +72,9 @@ export class SocketsIoService {
 
   enviarJugador(jugador:Object){
     //console.log(jugador, "a punt d'enviar a socket");
-    this.jugadorsSocket.emit('jugador', jugador);
+    //setTimeout(() => {
+      this.jugadorsSocket.emit('jugador', jugador);
+    //},500);
   }
   
   getJugadors(){

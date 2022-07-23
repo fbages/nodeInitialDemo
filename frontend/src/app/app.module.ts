@@ -19,7 +19,7 @@ const appRoutes:Routes=[
 
   {path:'', component:IntroComponent},
   {path:'xat', component:UiComponent}
-
+  
 ]
 
 @NgModule({

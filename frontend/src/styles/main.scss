@@ -75,15 +75,15 @@ body {
 }
 
 #columnEsquerra{
-  display:flex;
-  flex-direction: column;
-  justify-content: space-between;
-  //min-height: 70vh;
+  // display:flex;
+  // flex-direction: column;
+  // justify-content: space-between;
+  min-height: 70vh;
 }
 #stats {
  min-height: 60px;
 }
 
 #xatPrivat {
- min-height:400px;
+  min-height: 70vh;
 }
