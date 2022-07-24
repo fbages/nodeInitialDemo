@@ -92,7 +92,6 @@ async function guardarMissatge(socketMissatge,missatgeEnviat,nomXat){
 
 async function buscarSocketAmbNom(nomUsuari, nameSpaceSocket){
      let jugador = await db.Jugadors.findOne({nom:nomUsuari});
-     console.log(jugador[nameSpaceSocket]);
      return jugador[nameSpaceSocket];
 }
 

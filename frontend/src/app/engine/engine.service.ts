@@ -49,8 +49,10 @@ export class EngineService {
   //public jugadors:any;
   enviarJugador:Object;
   subscription: Subscription;
+  peticioXatJugador: Subscription;
 
   nomJugador: string;
+
   public constructor(
     private ngZone: NgZone,
     private windowRef: WindowRefService,
@@ -76,10 +78,10 @@ export class EngineService {
     this.scene.clearColor = new Color4(0.5, 0.5, 0.5, 0);
 
     //debug
-    this.scene.debugLayer.show();
+    //this.scene.debugLayer.show();
 
-    let jugador1 = new Jugador("francesc2", [0,0,0], [0,0,0,0]);
-    console.log(jugador1);
+    let jugador1 = new Jugador("UsuariNom", [0,0,0], [0,0,0,0]);
+    //console.log(jugador1);
     
     //motor fisic
      var gravityVector = new Vector3(0, 0, 0);
@@ -88,7 +90,22 @@ export class EngineService {
     
     // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene
     this.box1 = MeshBuilder.CreateBox("box1",{ width:0.4, height: 0.4, depth:0.6}, this.scene);
-
+    // let figura;
+    //  SceneLoader.AppendAsync('/assets/', 'ghost.glb', this.scene).then(
+    //   (result) => {
+    //     for (let i = 0; i < result.meshes.length; i++) {
+    //       //console.log(result.meshes[i]);
+    //       let nomdescargat = result.meshes[i].name;
+    //       console.log(nomdescargat);
+          
+    //       if (result.meshes[i].name == 'Fleeing_ghost') {
+    //         //result.meshes[i].material = MaterialInalambric;
+    //         result.meshes[i].name = 'Ghost';
+    //         figura =  result.meshes[i];
+    //       }
+    //     }
+    //   }
+    // );
        
     // move the sphere upward 1/2 of its height
      this.box1.position.y = 5;
@@ -123,6 +140,7 @@ export class EngineService {
     target.color = "Orange";
     target.thickness = 4;
     target.background = "green";
+    target.linkOffsetY = -30;
     advancedTexture.addControl(target);
     target.linkWithMesh(this.box1);   
     
@@ -130,7 +148,7 @@ export class EngineService {
     line.lineWidth = 4;
     line.color = "Orange";
     line.y2 = 20;
-    line.linkOffsetY = -20;
+    line.linkOffsetY = -50;
     advancedTexture.addControl(line);
     line.linkWithMesh(this.box1); 
     line.connectedControl = rect1;  
@@ -248,11 +266,16 @@ export class EngineService {
     button.height = "100px";
     button.color = "white";
     button.background = "green";
-    //button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    //button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    // button.top = "250px";
-    // button.left = "-250px";
     panel.addControl(button);
+
+    let button2 = GUI.Button.CreateSimpleButton("but", "inicial");
+    button2.isVisible = false; // amaga a l'inicia
+    button2.width = "100px";
+    button2.height = "100px";
+    button2.color = "white";
+    button2.background = "red";
+
+    panel.addControl(button2);
 
     //Rebre posicions d'altres jugadors per subscripcio
     this.subscription =this.sockets.getJugadors().subscribe((jugador)=>{
@@ -275,6 +298,17 @@ export class EngineService {
         }
       }
     })
+
+    //Rebre peticions de xat privat d'altres jugadors
+    this.peticioXatJugador =this.sockets.rebrepeticioXatPrivat().subscribe((jugadorPeticio)=>{
+          //finestra de rebre peticions per parlar
+          button2.textBlock.text = jugadorPeticio + " vol parlar amb tu en privat, acceptes?";
+          button2.isVisible = true;
+          button2.onPointerClickObservable.add(() => {
+            this.sockets.confirmacioPeticioXatPrivat(this.nomJugador, jugadorPeticio);
+            button2.isVisible = false;
+           });
+    });
 
     function crearJugadorExtern(nom:string, pos, dir, scene){
       let box1 = MeshBuilder.CreateBox(nom,{ width:0.4, height: 0.4, depth:0.6}, scene);
@@ -346,12 +380,7 @@ export class EngineService {
 
     };
 
-    function crearXatPrivat(nomXat:string){
-
-    }
-    
-
-
+ 
     //Animacio jugador
     this.scene.registerAfterRender( ()=> {
       // F = this.engine.getFPS() //Recull els FPS
@@ -425,28 +454,39 @@ export class EngineService {
       
       //renderiza posicions jugadors externs
       //console.log(jugadors, "info jugadors externs");
+      
   
        for(let i=0; i < jugadors.length; i++){
         //console.log(jugadors[i]);
         updateJugadorExtern(jugadors[i].nom,jugadors[i].pos,jugadors[i].dir, this.scene);
-        let distancia =  Math.pow(Math.pow(usuari.position._x-jugadors[i].pos[0], 2) + Math.pow(usuari.position._z-jugadors[i].pos[2], 2), 0.5)
+        let distancia =  Math.pow(Math.pow(usuari.position._x-jugadors[i].pos[0], 2) + Math.pow(usuari.position._z-jugadors[i].pos[2], 2), 0.5);
+ 
         if(distancia<0.5){
-          console.log('Surt menu per fer xat privat');
-          button.textBlock.text = "Unir a un xat privat amb " + jugadors[i].nom;
-          button.onPointerClickObservable.add(function () {
-            crearXatPrivat(jugadors[i].nom);
+          // console.log('Surt menu per fer xat privat');
+          button.textBlock.text = "Petició xat privat amb " + jugadors[i].nom;
+          button.onPointerClickObservable.add(() => {
+           this.sockets.peticioXatPrivat(jugadors[i].nom, this.nomJugador);
+           
           });
           button.isVisible = true;
+          //confirmacio
+
         } 
         if(distancia>0.5) {
           button.isVisible = false;
+          button2.isVisible = false;
         }
+
        }
     });
 
     // generates the world x-y-z axis for better understanding
    // this.showWorldAxis(8);
   }
+
+
+
+
 
   public animate(): void {
     // We have to run this outside angular zones,

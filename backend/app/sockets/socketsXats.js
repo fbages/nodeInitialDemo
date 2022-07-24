@@ -37,24 +37,25 @@ function socketsXats(io) {
         //socket.join(socket.id);
         
         //Peticio per conectar amb un altre usuari a parlar en el meu room
-        socket.on('Peticio', async nomAltreUsuari => {
+        socket.on('Peticio', async (nomJugadorDemanat, nomJugadorPeticio) => {
             //buscar nom a la bd per trobar el socket.id de Xats
-            console.log("S'ha rebut una petició de " + socket.id + "per parlar amb " + nomAltreUsuari);
-            let socketAltreUsuari = await crudService.buscarSocketAmbNom(nomAltreUsuari,"idsocketxat");
+            console.log("S'ha rebut una petició de " + socket.id + "per parlar amb " + nomJugadorDemanat);
+            let socketAltreUsuari = await crudService.buscarSocketAmbNom(nomJugadorDemanat,"idsocketxat");
             //buscar nom del usuari que fa la peticio
-            let socketUsuariPeticio = await crudService.buscarNomAmbSocket(socket.id, "idsocketxat")
-            socket.to(socketAltreUsuari).emit("Aceptacio parlar", "Puc parlar amb tu?", socketUsuariPeticio);
+            //let socketUsuariPeticio = await crudService.buscarNomAmbSocket(socket.id, "idsocketxat")
+            socket.to(socketAltreUsuari).emit("Aceptacio parlar", "Puc parlar amb tu?", nomJugadorPeticio);
         });
 
         //Confirmació d'acceptacio de l'altre usuari 
-        socket.on('Si accepto', async invitador =>{
-            console.log('sala privada : '+ invitador);
-            let invitadorSocket = await crudService.buscarSocketAmbNom(invitador,"idsocketxat");
-            socket.join(invitadorSocket);
+        socket.on('Si accepto', async (nomJugadorDemanat, nomJugadorPeticio) =>{
+            let socketPeticio = await crudService.buscarSocketAmbNom(nomJugadorPeticio,"idsocketxat");
+            console.log('sala privada : '+ nomJugadorDemanat + ' amb socket ' + socket.id);
+            console.log('afegint socket ' + socketPeticio);
+            //socket.join(socketPeticio);
             // const rooms = xatsNameSpace.adapter.rooms;
             // const sids = xatsNameSpace.adapter.sids;
-            socket.to(invitadorSocket).emit('Acceptat', invitador);
-            console.log('Server ha unit ' + socket.id +" a la sala de l'usuari " + invitador)
+            socket.to(socketPeticio).emit('Acceptat', nomJugadorDemanat);
+            console.log('Server ha unit ' + nomJugadorPeticio +" a la sala de l'usuari " + nomJugadorDemanat)
         });
 
         //Missatge privat rebut i reenviat en el xat privat

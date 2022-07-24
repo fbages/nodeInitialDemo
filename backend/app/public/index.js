@@ -50,9 +50,10 @@ missatgesSocket.on("chat message", function (msg) {
 
 //Peticio de conectar-se a un xat privat
 document.getElementById("privatxat").addEventListener("click", ()=>{
-  let socketinvitacio = document.getElementById("privatsocket").value;
-  console.log(socketinvitacio);
-  xatsSocket.emit('Peticio', socketinvitacio);
+  let nomPeticio = document.getElementById("privatsocket").value;
+  let nomUsuari = document.getElementById("inputregistre").value;
+  console.log(nomPeticio);
+  xatsSocket.emit('Peticio', nomPeticio, nomUsuari);
 })
 //Rebre peticio exterior
 xatsSocket.on('Aceptacio parlar', (msg, usuariPeticio) =>{
@@ -62,22 +63,27 @@ xatsSocket.on('Aceptacio parlar', (msg, usuariPeticio) =>{
 
 //Confirmar peticio exterior
 document.getElementById("peticioxat").addEventListener("click", ()=>{
+  let nomUsuari = document.getElementById("inputregistre").value;
   let invitador = document.getElementById("peticiosocket").value;
   console.log("invitat per: " + invitador);
-  xatsSocket.emit('Si accepto', invitador);
+  xatsSocket.emit('Si accepto', nomUsuari, invitador);
+
   xatPrivat = invitador;
+  console.log(xatPrivat + "confirmada")
+  document.getElementById("salaprivada").innerHTML = invitador;
 })
 
 //Informat que has sigut acceptat
 xatsSocket.on('Acceptat', (invitador)=>{
   document.getElementById("privatsocket").style.backgroundColor = "green";
-  xatPrivat = invitador;
+  document.getElementById("salaprivada").innerHTML = invitador;
+  xatPrivat = document.getElementById("salaprivada").value;
 })
 
 //Enviar missatge privat
 document.getElementById('missatgeprivat').addEventListener("click", ()=>{
   let text = document.getElementById("enviamissatgeprivat").value;
-  //let socketRoom = document.getElementById("peticiosocket").value || xatsSocket.id;
+  xatPrivat = document.getElementById("salaprivada").innerHTML;
   xatsSocket.emit('Missatge privat',xatPrivat, nomJugador, text )
 });
 

@@ -1,0 +1,16 @@
+#llistatMissatges{
+    display:flex;
+    flex-direction: column;
+    width: 250px;
+    height: auto;
+}
+
+.cssmissatgesRebuts{
+    text-align: left;
+   color: red;
+}
+
+.cssmissatgesEnviats{
+    text-align: right;
+    color: green;
+}
