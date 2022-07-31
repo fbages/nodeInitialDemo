@@ -14,13 +14,16 @@ module.exports = {
 }
 
 async function crearXat(nomXat, nousJugadors){
-    let llistatJugadors = [];
-    llistatJugadors.push(nousJugadors);
-    let xat = await db.Xats.create({
-        nomxat : nomXat,
-        jugadors : llistatJugadors
-    })
-    return xat;
+    let xatPrincipal = await db.Xats.findOne({nomxat : "Principal"});
+    if(xatPrincipal == null){
+        let llistatJugadors = [];
+        llistatJugadors.push(nousJugadors);
+        let xat = await db.Xats.create({
+            nomxat : nomXat,
+            jugadors : llistatJugadors
+        })
+        return xat;
+    }
 }
 
 async function eliminarXat(nomXatEliminat){
