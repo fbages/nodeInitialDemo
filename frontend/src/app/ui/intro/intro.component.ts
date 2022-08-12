@@ -42,6 +42,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
   }
 
   loginWithGoogle(): void {
+    console.log(GoogleLoginProvider.PROVIDER_ID);
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
   logOut(): void {

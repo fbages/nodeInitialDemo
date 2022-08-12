@@ -62,7 +62,7 @@ export class EngineService {
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
     // The first step is to get the reference of the canvas element from our HTML document
     this.canvas = canvas.nativeElement;
-    console.log(this.canvas);
+    
     // Then, load the Babylon 3D engine:
     this.engine = new Engine(this.canvas, true);
     this.engine.resize(true);
@@ -387,27 +387,34 @@ export class EngineService {
       // usuari.physicsImpostor.setAngularVelocity( Vector3.Zero() );
       // usuari.physicsImpostor.setLinearVelocity( Vector3.Zero() );
 
-      if (map['a'] || map['A']) {
-        rotacio += deltaRotacio;
-        usuari.rotate(Axis.Y, -deltaRotacio, Space.LOCAL);
-      }
-      if (map['d'] || map['D']) {
+      
+      if ((map['s'] || map['S']) && (map['a'] || map['A'])) {
         rotacio += deltaRotacio;
         usuari.rotate(Axis.Y, deltaRotacio, Space.LOCAL);
-      }
-
-      if (map['w'] || map['W']) {
-        usuari.translate(Axis.Z, -velocitat, Space.LOCAL);
-      }
-
-      if (map['s'] || map['S']) {
         usuari.translate(Axis.Z, velocitat, Space.LOCAL);
-      }
-
-      if (map['c'] || map['C']) {
-        console.log(camera)
-      }
-
+      } else  if ((map['s'] || map['S']) && (map['d'] || map['D'])) {
+        rotacio += deltaRotacio;
+        usuari.rotate(Axis.Y, -deltaRotacio, Space.LOCAL);
+        usuari.translate(Axis.Z, velocitat, Space.LOCAL);
+      } else if ((map['w'] || map['W']) && (map['a'] || map['A'])) {
+        rotacio += deltaRotacio;
+        usuari.rotate(Axis.Y, -deltaRotacio, Space.LOCAL);
+        usuari.translate(Axis.Z, -velocitat, Space.LOCAL);
+      } else  if ((map['w'] || map['W']) && (map['d'] || map['D'])) {
+        rotacio += deltaRotacio;
+        usuari.rotate(Axis.Y, deltaRotacio, Space.LOCAL);
+        usuari.translate(Axis.Z, -velocitat, Space.LOCAL);
+      } else  if (map['s'] || map['S']) {
+        usuari.translate(Axis.Z, velocitat, Space.LOCAL);
+      } else if (map['a'] || map['A']) {
+          rotacio += deltaRotacio;
+          usuari.rotate(Axis.Y, -deltaRotacio, Space.LOCAL);
+        } else  if (map['d'] || map['D']) {
+          rotacio += deltaRotacio;
+          usuari.rotate(Axis.Y, deltaRotacio, Space.LOCAL);
+        } else if (map['w'] || map['W']) {
+          usuari.translate(Axis.Z, -velocitat, Space.LOCAL);
+        }
 
       if( usuari.position.y > 0.2){
         console.log('Esta volant');
