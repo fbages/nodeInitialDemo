@@ -19,11 +19,27 @@ app.use(routerPartides);
 app.use(routerRanking);
 app.use(routerAdmin);
 
+app.get('*', (req,res)=>{
+    res.status(404);
+    res.json({
+        status:false,
+        message:"Page not found"
+    })
+});
+
+app.post('*', (req,res)=>{
+    res.status(404);
+    res.json({
+        status:false,
+        message:"Page not found"
+    })
+});
+
 //Middleware ErrorHandler a posteriori de les routes
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, ()=>{
-    console.log(`Server listen on port ${process.env.PORT}`);
+    console.log(`Server listen on port ${PORT}`);
 })

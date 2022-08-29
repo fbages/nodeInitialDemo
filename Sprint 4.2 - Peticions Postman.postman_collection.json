@@ -8,8 +8,25 @@
 		{
 			"name": "Crear nou usuari",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIxODM5NSwiZXhwIjoxNjU3ODIzMTk1fQ.ed4MB23Hqz8iN1oFVJwIwpP4gaPlisL5fQpnHEhX9vs",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2xhIiwiaWF0IjoxNjU2OTQ5NzI5LCJleHAiOjE2NTc1NTQ1Mjl9.-uaTqgnfvFypHbSDS0zoP6AhlvIbZ1dvc3CUvncRYTg",
+						"type": "default",
+						"disabled": true
+					}
+				],
 				"url": {
 					"raw": "localhost:3000/players/francesc",
 					"host": [
@@ -23,8 +40,7 @@
 					"query": [
 						{
 							"key": "nom",
-							"value": "francesc",
-							"description": "nom del nou usuari",
+							"value": "",
 							"disabled": true
 						}
 					]
@@ -35,16 +51,33 @@
 		{
 			"name": "Modificar nom de l'usuari",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
 				"header": [],
 				"url": {
-					"raw": "localhost:3000/2",
+					"raw": "localhost:3000/players/1?nom=Maria",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"2"
+						"players",
+						"1"
+					],
+					"query": [
+						{
+							"key": "nom",
+							"value": "Maria"
+						}
 					]
 				}
 			},
@@ -53,6 +86,16 @@
 		{
 			"name": "Llistat tots jugadors + percentatge de partides guanyades",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNzU1MywiZXhwIjoxNjU3ODEyMzUzfQ.rHtf5FQRVh8A6qQB_jUqKQApZcfGWsoP4zmphpwIZOE",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -71,17 +114,27 @@
 		{
 			"name": "Jugador 3 tira els daus",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "localhost:3000/games/3",
+					"raw": "localhost:3000/games/1",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
 						"games",
-						"3"
+						"1"
 					]
 				}
 			},
@@ -90,25 +143,17 @@
 		{
 			"name": "Eliminar les tirades d'un jugador",
 			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "localhost:3000/2",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"2"
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIxODM5NSwiZXhwIjoxNjU3ODIzMTk1fQ.ed4MB23Hqz8iN1oFVJwIwpP4gaPlisL5fQpnHEhX9vs",
+							"type": "string"
+						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Llistat jugades d'un jugador",
-			"request": {
-				"method": "GET",
+				},
+				"method": "DELETE",
 				"header": [],
 				"url": {
 					"raw": "localhost:3000/games/3",
@@ -125,12 +170,58 @@
 			"response": []
 		},
 		{
-			"name": "Ranking guanyadors per percentatge i percentatge mig",
+			"name": "Llistat jugades d'un jugador",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:3000/games/2",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"games",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ranking guanyadors per percentatge i percentatge mig",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/ranking",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ranking"
+					]
 				}
 			},
 			"response": []
@@ -138,10 +229,28 @@
 		{
 			"name": "Perdedor",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:3000/ranking/loser",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ranking",
+						"loser"
+					]
 				}
 			},
 			"response": []
@@ -149,20 +258,64 @@
 		{
 			"name": "Guanyador",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:3000/winner",
+					"raw": "localhost:3000/ranking/winner",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
+						"ranking",
 						"winner"
 					]
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Admin login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"adminName\" : \"administrator\",\r\n    \"adminPassword\":\"ITAcademy\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "auth-token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2xhIiwiaWF0IjoxNjU2OTQ0OTg4LCJleHAiOjE2NTc1NDk3ODh9.rlZJTL31-5y97Fgquh6QX9apmr85-I7LGJPRLmaSAK8"
 		}
 	]
 }

@@ -32,6 +32,7 @@ if (database == "mysql") {
     // connect to db
     const sequelize = new Sequelize(databaseName, user, password, {
       dialect: "mysql",
+      logging: false //logging provienent de sequelize 
     });
 
     // init models and add them to the exported db object

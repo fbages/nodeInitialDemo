@@ -41,6 +41,8 @@ PORT=3000
 ### ### TOKEN JWT
 SECRET=STRING_SECRET_ITAcademy  
 
+# Autentificació
+POST /login: Body: {"adminName" : "administrator", "adminPassword":"ITAcademy"} retorna token JWT a inserir a Bearer en la resta peticions 
 
 ## Endpoints
 POST /players: crea un jugador/a.  
@@ -52,4 +54,3 @@ GET /games/{id}: retorna el llistat de jugades per un jugador/a.
 GET /ranking: retorna un ranking de jugadors/es ordenat per percentatge d'èxits i el percentatge d’èxits mig del conjunt de tots els jugadors/es.  
 GET /ranking/loser: retorna el jugador/a amb pitjor percentatge d’èxit.  
 GET /ranking/winner: retorna el jugador/a amb millor percentatge d’èxit.  
-POST /login: Body: {"adminName" : "administrator", "adminPassword":"ITAcademy"} retorna token JWT a inserir en la resta peticions
