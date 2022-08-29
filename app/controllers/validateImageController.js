@@ -11,11 +11,17 @@ exports.validateimage = (req, res) => {
         let tipo = tipoFitxer.name.slice(-3).toUpperCase();
         console.log(tipo);
         if (tipo === "PNG" || tipo === "JPG" || tipo === "GIF") {
-            res.send('Imatge rebuda correctament')
+            res.send({
+                status: true,
+                message:'Imatge rebuda correctament'})
         } else {
-            res.send('Fitxer pujat no és una imatge amb format "PNG", "JPG" o "GIF"');
+            res.send({
+                status: false,
+                message:'Fitxer pujat no és una imatge amb format "PNG", "JPG" o "GIF"'});
         }
     } else {
-        res.send('Fitxer pujat sense el KEY "imatge"')
+        res.send({
+            status: false,
+            message:'Fitxer pujat sense el KEY "imatge"'})
     }
 };
