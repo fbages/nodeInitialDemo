@@ -2,10 +2,9 @@
 
     position: absolute;
     max-width: none;
-   
+    top: 150px;
     //width: 100vw;
     //height: 100vh;
-    
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -50,4 +49,8 @@ button{
     padding:2px 5px;
     border:5px solid #151515;
     -webkit-border-radius: 15px;
+}
+
+button#googleSignIn{
+    border:5px solid #003f10;
 }

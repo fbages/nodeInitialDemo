@@ -8,9 +8,9 @@ import { io } from 'socket.io-client';
 //   providedIn: 'root',
 // } // o estar registrat a appmodule per estar disponible a totarreu
 export class SocketsIoService {
-  public jugadorsSocket = io('/jugadors');
-  public missatgesSocket = io('/missatges');
-  public xatsSocket = io('/xats');
+  public jugadorsSocket = io('http://localhost:3000/jugadors');
+  public missatgesSocket = io('http://localhost:3000/missatges');
+  public xatsSocket = io('http://localhost:3000/xats');
   nomJugador: string;
   xatPrivat: string;
   
