@@ -18,14 +18,20 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { GoogleloginComponent } from './ui/googlelogin/googlelogin.component';
+import { TextComponent } from './ui/xat/text/text.component';
+import { AuthGuard } from './guard/auth.guard';
 
 const appRoutes:Routes=[
 
   {path:'', component:IntroComponent,
     children:[
       {path:'google', component:GoogleloginComponent},
+    ]},
+    {path:'xat', component:UiComponent,
+    canActivate:[AuthGuard],
+    children:[
+      {path:':nomXat', component:TextComponent},
   ]},
-  {path:'xat', component:UiComponent},
   {path:'**', redirectTo:''}
   
 ]

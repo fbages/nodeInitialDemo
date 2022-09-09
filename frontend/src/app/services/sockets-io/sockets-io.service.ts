@@ -18,6 +18,7 @@ export class SocketsIoService {
   private missatgeRebutG = new Subject<any>();
   private peticioXatP = new Subject<any>();
   private missatgeRebutP = new Subject<any>();
+  private confirmacioXatP = new Subject<any>();
     
   constructor(@Optional() @SkipSelf() sharedService?: SocketsIoService) {
     if (sharedService) {
@@ -46,6 +47,10 @@ export class SocketsIoService {
       this.missatgeRebutP.next(paquet);
    });
 
+  }
+
+  crearXat(){
+    return this.confirmacioXatP.asObservable();
   }
 
   getUltimMissatge(){

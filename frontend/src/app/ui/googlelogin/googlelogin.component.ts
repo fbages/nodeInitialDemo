@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { GoogleApiService, UserInfo } from 'src/app/services/google-api.service';
 import { NicknameService } from 'src/app/services/nickname.service';
 
@@ -13,7 +14,8 @@ export class GoogleloginComponent implements OnInit {
   @Output() nicknameEvent = new EventEmitter<string>();
   constructor(
     private readonly googleApi: GoogleApiService,
-    private nickNameService: NicknameService
+    private nickNameService: NicknameService,
+    private router:Router
     ) {
       googleApi.userProfileSubject.subscribe( info => {
         this.userInfo = info
@@ -28,6 +30,8 @@ export class GoogleloginComponent implements OnInit {
 
   }
   logout() {
-    this.googleApi.signOut()
+   // this.router.navigate(['']);
+    this.googleApi.signOut();
+    
   }
 }

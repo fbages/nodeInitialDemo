@@ -1,8 +1,12 @@
 #llistatMissatges{
     display:flex;
     flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    align-content: flex-end;
+    align-self: flex-end;
     width: 250px;
-    height: auto;
+    height: 500px;
 }
 
 .cssmissatgesRebuts{

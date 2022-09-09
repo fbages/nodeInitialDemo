@@ -10,7 +10,8 @@ const authCodeFlowConfig: AuthConfig = {
   redirectUri: window.location.origin + '/google',// window.location.origin,
   clientId: environment.GOOGLE_API_KEY,
   scope: 'openid profile email',
-  showDebugInformation: true
+  showDebugInformation: true,
+  //postLogoutRedirectUri:"http://localhost:4200/"
 }
 
 export interface UserInfo {
@@ -29,13 +30,13 @@ export class GoogleApiService {
 
   userProfileSubject = new Subject<UserInfo>()
 
-
   constructor(private readonly oAuthService: OAuthService, private readonly httpClient: HttpClient) {
  // confiure oauth2 service
  oAuthService.configure(authCodeFlowConfig);
  // manually configure a logout url, because googles discovery document does not provide it
  oAuthService.logoutUrl = "https://www.google.com/accounts/Logout";
-
+ //oAuthService.logoutUrl = "http://localhost:4200/";
+ 
  // loading the discovery document from google, which contains all relevant URL for
  // the OAuth flow, e.g. login url
  oAuthService.loadDiscoveryDocument().then( () => {
@@ -64,7 +65,8 @@ export class GoogleApiService {
   }
 
   signOut() {
-    this.oAuthService.logOut()
+    //delete localStorage.user;
+    this.oAuthService.logOut();
   }
 
   private authHeader() : HttpHeaders {

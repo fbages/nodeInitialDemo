@@ -1,15 +1,29 @@
 <div class="card" id="xatGeneral">
-    <header>Xat General</header>
-    <div id="llistatMissatges">
-        <!-- <div class="cssmissatgesEnviats"> provaenviat</div>
-        <div class="cssmissatgesEnviats"> provaenviat</div>
-        <div class="cssmissatgesRebuts"> provaMissatgeRebut1</div>
-        <div class="cssmissatgesEnviats"> provaenviat</div>
-        <div class="cssmissatgesRebuts"> provaMissatgeRebut1</div>
-        <div class="cssmissatgesEnviats"> provaenviat</div> -->
-    </div>
+    <ul id="llistatXats" class="nav nav-pills flex-column">
+        <!-- <li class="nav-item">
+          <a class="nav-link active" routerLink="general" routerLinkActive="active" >Xat general</a>
+        </li> -->
+        <div *ngFor="let xat of xats.controls; let i=index">
+          <!-- The repeated xats template -->
+          <li class="nav-item">
+            <div id="botonsXats">
+              <button class="nav-link" routerLink={{userXat[i].usuari}} routerLinkActive="active" > {{userXat[i].usuari}}</button>
+              <button type="button" class="btn-close btn-close-white" aria-label="Close"></button>            
+            </div>
+            <!-- <a class="nav-link active" routerLink={{userXat[i].usuari}}> {{userXat[i].usuari}}</a> -->
+          </li>
+        </div>
+      </ul>
+
+  <div class="zonatext">
+    <router-outlet></router-outlet>
     <div id="escriure">
-        <input id="inputMissatge" type="text" />
-        <button id="botoEnviar">Send</button>
-    </div>
+      <input id="inputMissatge" type="text"/>
+      <button id="botoEnviar" class="btn btn-warning">Send</button>
+    </div>   
+  </div>
+
 </div>
+
+
+

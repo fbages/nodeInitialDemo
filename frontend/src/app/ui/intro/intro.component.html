@@ -1,18 +1,18 @@
 <div class="container">
   <div id="fondo">
-    <img src="../../../assets/textures/AbyssXat.svg" alt="title"/>
+    <img src="../../../assets/textures/AbyssXat.svg" alt="title" />
   </div>
 
   <div id="registerMenu">
-      <h2>Sign In with Nickname</h2>
-      <div>
-        <input id="nom" type="text" [(ngModel)]="nomInput" />
-        <button routerLink="/xat" routerLinkActive="active" id="registreNom">
-          Register name
-        </button>
-      </div>
-      <h4>Or</h4>
-      <button routerLink="google" routerLinkActive="active" id="googleSignIn" >Sign In with Google</button>
+    <h2>Sign In with Nickname</h2>
+    <div>
+      <input id="nom" type="text" [(ngModel)]="nomInput" />
+      <button id="registreNom">Register name</button>
+    </div>
+    <h4>Or</h4>
+    <button routerLink="google" routerLinkActive="active" id="googleSignIn">
+      Sign In with Google
+    </button>
+    <router-outlet></router-outlet> 
   </div>
-  <router-outlet></router-outlet>
 </div>
