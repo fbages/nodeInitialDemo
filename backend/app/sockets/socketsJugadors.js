@@ -21,7 +21,11 @@ async function socketsJugadors(io){
 
         socket.on('disconnect', async () => {
             console.log('user disconnected, ' + socket.id);
-            await crudService.eliminarJugador(socket.id);
+            try{
+                await crudService.eliminarJugador(socket.id);
+            } catch {
+                console.log("No s'ha pogut eliminar");
+            }
         });
 
         socket.on("connect_error", (err) => {

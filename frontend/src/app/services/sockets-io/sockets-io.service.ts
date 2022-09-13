@@ -24,8 +24,12 @@ export class SocketsIoService {
     if (sharedService) {
       throw new Error("Sockets ja s'ha creat");
     }
-
-    this.missatgesSocket.on('chat message', (msg:string)=> {
+    //vell nomes text
+    // this.missatgesSocket.on('chat message', (msg:string)=> {
+    //   console.log(msg);
+    //   this.missatgeRebutG.next(msg);
+    // });
+    this.missatgesSocket.on('chat message', (msg)=> {
       console.log(msg);
       this.missatgeRebutG.next(msg);
     });
@@ -38,6 +42,7 @@ export class SocketsIoService {
     this.xatsSocket.on('Aceptacio parlar', (msg, usuariPeticio) => {
       console.log('Has rebut peticio de : ' + usuariPeticio);
        this.peticioXatP.next(usuariPeticio);
+       this.confirmacioXatP.next(usuariPeticio);
       });
 
       //Rebre missatge privat

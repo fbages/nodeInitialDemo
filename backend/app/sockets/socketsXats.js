@@ -30,7 +30,7 @@ function socketsXats(io) {
     xatsNameSpace.on('connection', (socket) => {
         console.log('a user connected to xat principal : ' + socket.id);
 
-        socket.on('disconnect', (socket) => {
+        socket.on('disconnect', async (socket) => {
             console.log('a user disconected from xat principal :' + socket.id); //surt undefined 
         });
         //Cada usuari té la seva room automaticament, quan algu vulgui parlar amb ell s'afegirà a la room del inicial

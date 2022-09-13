@@ -19,7 +19,7 @@ export class XatComponent implements OnInit, AfterViewInit {
   subscriptionXats: Subscription;
 
   xatseleccionat: string;
-  xatsHabititats:Array<any>;
+  xatsHabititats:Array<any>=[];
 
 
   taulell = this.fb.group({
@@ -42,7 +42,7 @@ export class XatComponent implements OnInit, AfterViewInit {
     return this.taulell.get('xats') as FormArray;
   }
 
-  addXat(nomXat) {
+  addXat() {
     this.xats.push(this.fb.control(''));
   }
 
@@ -53,14 +53,21 @@ export class XatComponent implements OnInit, AfterViewInit {
   //hooks
   ngOnInit(): void {
     this.subscription = this.sockets.getUltimMissatge().subscribe((msg) => {
-      console.log('missatge ' + msg);
-      this.rebreMissatge(msg, '');
+      console.log('missatge ' + msg.text);
+      this.rebreMissatge(msg.text, msg.usuari);
     });
 
     this.subscriptionXats = this.sockets.crearXat().subscribe((nomXat) => {
-      console.log('missatge ' + nomXat);
-      
-    });
+      console.log('Xat creat amb nom: ' + nomXat);
+      console.log(this.xatsHabititats);
+      let nomBuscat = this.xatsHabititats.findIndex(nomXat => nomXat);
+      console.log(nomBuscat);
+      if(nomBuscat==-1){
+        this.xatsHabititats.push(nomXat); 
+        this.afegirXat(nomXat);
+      }
+    }
+    );
   }
 
   ngAfterViewInit(): void {
@@ -84,14 +91,12 @@ export class XatComponent implements OnInit, AfterViewInit {
         this.missatge +
         '</div><br>';
     }
+    
     let aux = {
       id: this.userXat.length,
       text: this.missatge,
       usuari: this.missatge,
     };
-    //this.userXat.push(aux);
-    //this.addXat(this.userXat[this.userXat.length]);
-
   }
 
   rebreMissatge(missatgeRebut, missatger) {
@@ -99,15 +104,23 @@ export class XatComponent implements OnInit, AfterViewInit {
     this.elementRef.nativeElement.querySelector(
       '#llistatMissatges'
     ).innerHTML +=
-      `<div style="color:red;text-align:left; align-self: flex-start;background-color:white;border-radius:5px;padding:3px;margin:3px;">` +
+    `<div style="color:red;text-align:left; align-self: flex-start;background-color:white; font-size: 11px; border-radius:5px;padding:1px;margin-top:3px;">` +
+    missatger +
+    '</div><br>'+
+      `<div style="color:red;text-align:left; align-self: flex-start;background-color:white;border-radius:5px;padding:3px;margin:1px 3px 3px 3px;">` +
       this.missatge +
       '</div><br>';
   }
 
   //Afegir xat privat
-  afegirXat() {
-   
+  afegirXat(nomXat:string) {
+    this.userXat.push({ id: this.userXat.length+1, text: '', usuari: nomXat });
+    this.addXat();
   }
 
   //eliminar xat privat
+  eliminarXat(index:number){
+    this.userXat.splice(index,1);
+    this.removeXat(index);
+  }
 }
