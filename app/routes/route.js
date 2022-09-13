@@ -20,7 +20,7 @@ router.post('/time', cors(), customMiddlewares.cacheHeader, customMiddlewares.au
 
 router.get('/pokemon/:id', pokemonController.pokemon);
 
-router.get('*', (req, res) => {
+router.all('*', (req, res) => {
     res.status(404);
     res.send({ message: 'Page not found' })
 }
