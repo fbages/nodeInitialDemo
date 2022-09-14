@@ -1,0 +1,12 @@
+{
+    "dbmysql": {
+        "host": "localhost",
+        "port": 3306,
+        "databaseName": "dados_db"
+    },
+    "dbmongo": {
+        "host": "localhost",
+        "port": 27017,
+        "databaseName": "dados_db"
+    }
+}

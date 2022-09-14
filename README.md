@@ -1,51 +1,56 @@
+# Sprint 4.2: REST API DB JWT
 
-# Node Initial Project
+Per executar la REST API:  
+1 - Clona el repo de Github  
+2 - Executar npm install per instal.lar totes les dependencies  
+3 - Per arrancar la REST API, des del terminal:   
+```
+node app/app.js
+o
+npm start
+```
 
-### Project Structure
+## Variables d'entorn
+Per canviar de base de dades de Mysql a MongoDB, s'ha de modificar la varialbe DATABASE.
+S'ha de crear un fitxer .env dins la carpeta app i hauria de tenir les següents variables:
 
-Main structure of node.js project. Folders / files:
+### ### database connection mysql
+DATABASE_HOST=localhost  
+DATABASE_PORT=3306  
+DATABASE_USER=root  
+DATABASE_PASSWORD=ITAcademy  
+DATABASE_NAME=dados_db  
 
-- <b>\_\_tests__</b>. Tests folder. See [Jest Docs](https://jestjs.io/es-ES/docs/configuration) and [Chai Docs](https://www.chaijs.com/)
-- <b>app</b>:
-    - <b>config</b>
-    - <b>controllers</b>
-    - <b>middlewares</b>
-    - <b>models</b>
-    - <b>routes</b>
-    - <b>helpers</b>
-    - <b>app.js</b>. Entry point.
-- <b>package.json</b>.
-- <b>.env</b>. Environment descriptor. See [dotenv doc](https://www.npmjs.com/package/dotenv).
+### ### database connection mongodb
+DATABASEMONGO_HOST=localhost  
+DATABASEMONGO_PORT=27017  
+DATABASEMONGO_USER=root  
+DATABASEMONGO_PASSWORD=ITAcademy  
+DATABASEMONGO_NAME=dados_db  
 
-Extras:
-- <b>.eslintrc</b>. Linter JS, static code analyzer. See [EsLint Docs](https://eslint.org/docs/user-guide/configuring/configuration-files).
-- <b>.prettierignore</b>. Code formatter. See [Prettier Config](https://prettier.io/docs/en/configuration.html) and [Prettier Ignore](https://prettier.io/docs/en/ignore.html).
-- <b>.ecosystem.config.js</b>. Process Manage at runtime. See [PM2 Docs](https://pm2.keymetrics.io/).
+### ### run options ( mysql, mongodb)
+DATABASE=mysql  
 
-### Import project for use with Visual Studio Code
+### ### credencials administrator
+ADMINNAME=administrator  
+ADMINPASSWORD=ITAcademy  
 
-Follow the steps below:
-* Clone the project from the Github Platform. Execute:
-  ```
-  git clone [url project]
-  ```
-* Open the project downloaded.
-  ![Open Project](img/VSC_open.png)
+### ### server listening
+PORT=3000  
 
+### ### TOKEN JWT
+SECRET=STRING_SECRET_ITAcademy  
 
-### Import project for use with WebStorm
+# Autentificació
+POST /login: Body: {"adminName" : "administrator", "adminPassword":"ITAcademy"} retorna token JWT a inserir a Bearer en la resta peticions 
 
-Follow the steps below:
-* Clone the project from the Github Platform. Execute:
-  ```
-  git clone [url project]
-  ```
-* Open the project downloaded.
-![Open Project](img/webstorm_open.png)
-
-
-### Utilities
-
-* [Node Developers Guide](https://nodejs.dev/learn)
-* **.gitignore file** configuration. See [Official Docs](https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files).
-* **Git branches**. See [Official Docs](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell)
+## Endpoints
+POST /players: crea un jugador/a.  
+PUT /players/{id}: modifica el nom del jugador/a.  
+GET /players: retorna el llistat de tots els jugadors/es del sistema amb el seu percentatge d’èxits.  
+POST /games/{id}: un jugador/a específic realitza una tirada.  
+DELETE /games/{id}: elimina les tirades del jugador/a.  
+GET /games/{id}: retorna el llistat de jugades per un jugador/a.  
+GET /ranking: retorna un ranking de jugadors/es ordenat per percentatge d'èxits i el percentatge d’èxits mig del conjunt de tots els jugadors/es.  
+GET /ranking/loser: retorna el jugador/a amb pitjor percentatge d’èxit.  
+GET /ranking/winner: retorna el jugador/a amb millor percentatge d’èxit.  
