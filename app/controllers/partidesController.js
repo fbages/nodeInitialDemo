@@ -41,7 +41,7 @@ exports.llistatPartides = async (req, res, next) => {
     try {
         let idJugador = req.params.id;
         let llistat = await serviceDb.llistarPartides(idJugador);
-        res.json(llistat);
+        res.json({"result":llistat});
     } catch (err) {
         console.log(err);
         next();

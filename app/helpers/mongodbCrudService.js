@@ -15,7 +15,7 @@ module.exports = serviceDb = { //Declaracio global de serviceDB
 
 async function crearJugador(nomJugador) {
     const jsultimJugador = await dbMongoDB.Jugadors.find({}).limit(1).sort({ id: -1 }) || [];
-    dbMongoDB.maxIndex = (jsultimJugador.length != 0) ? (Number(jsultimJugador[0].id) + 1) : 0;
+    dbMongoDB.maxIndex = (jsultimJugador.length != 0) ? (Number(jsultimJugador[0].id) + 1) : 1;
     return await dbMongoDB.Jugadors.create({ id: dbMongoDB.maxIndex, nom: nomJugador, percentatge: 0, data_registre: new Date })
 }
 

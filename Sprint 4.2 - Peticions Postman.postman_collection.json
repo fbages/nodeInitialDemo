@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "249e503d-c5c8-4fc5-8e1c-864b6137b326",
+		"_postman_id": "364774f4-fb30-4e36-a5cf-4974198feb29",
 		"name": "Sprint 4.2 - Peticions Postman",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -13,36 +13,30 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIxODM5NSwiZXhwIjoxNjU3ODIzMTk1fQ.ed4MB23Hqz8iN1oFVJwIwpP4gaPlisL5fQpnHEhX9vs",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
 				},
 				"method": "POST",
-				"header": [
-					{
-						"key": "auth-token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2xhIiwiaWF0IjoxNjU2OTQ5NzI5LCJleHAiOjE2NTc1NTQ1Mjl9.-uaTqgnfvFypHbSDS0zoP6AhlvIbZ1dvc3CUvncRYTg",
-						"type": "default",
-						"disabled": true
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"nom\":\"Marta\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
 					}
-				],
+				},
 				"url": {
-					"raw": "localhost:3000/players/francesc",
+					"raw": "localhost:3000/players",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"players",
-						"francesc"
-					],
-					"query": [
-						{
-							"key": "nom",
-							"value": "",
-							"disabled": true
-						}
+						"players"
 					]
 				}
 			},
@@ -56,15 +50,24 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
 				},
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"nom\":\"Marc\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:3000/players/1?nom=Maria",
+					"raw": "localhost:3000/players/1",
 					"host": [
 						"localhost"
 					],
@@ -76,7 +79,8 @@
 					"query": [
 						{
 							"key": "nom",
-							"value": "Maria"
+							"value": "marc",
+							"disabled": true
 						}
 					]
 				}
@@ -91,7 +95,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNzU1MywiZXhwIjoxNjU3ODEyMzUzfQ.rHtf5FQRVh8A6qQB_jUqKQApZcfGWsoP4zmphpwIZOE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
@@ -119,7 +123,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
@@ -148,7 +152,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIxODM5NSwiZXhwIjoxNjU3ODIzMTk1fQ.ed4MB23Hqz8iN1oFVJwIwpP4gaPlisL5fQpnHEhX9vs",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
@@ -156,14 +160,14 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "localhost:3000/games/3",
+					"raw": "localhost:3000/games/1",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
 						"games",
-						"3"
+						"1"
 					]
 				}
 			},
@@ -177,7 +181,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
@@ -185,14 +189,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:3000/games/2",
+					"raw": "localhost:3000/games/1",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
 						"games",
-						"2"
+						"1"
 					]
 				}
 			},
@@ -206,7 +210,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
@@ -234,7 +238,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
@@ -263,7 +267,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1NzIwNTE5NSwiZXhwIjoxNjU3ODA5OTk1fQ.N5obJGlbJ2FTRi3LEYBOVl9C0XrgbUThGT76TvHrC8c",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MzE0NjM3MSwiZXhwIjoxNjYzNzUxMTcxfQ.mnTtlYxmKm-WCTyvJDQ2UJyhlZbtN4lAyNad5HwxOmM",
 							"type": "string"
 						}
 					]
@@ -285,13 +289,13 @@
 			"response": []
 		},
 		{
-			"name": "Admin login",
+			"name": "login admin",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"adminName\" : \"administrator\",\r\n    \"adminPassword\":\"ITAcademy\"\r\n}",
+					"raw": "{\r\n    \"adminName\": \"administrator\",\r\n    \"adminPassword\": \"ITAcademy\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -312,10 +316,27 @@
 			"response": []
 		}
 	],
-	"variable": [
+	"auth": {
+		"type": "bearer"
+	},
+	"event": [
 		{
-			"key": "auth-token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2xhIiwiaWF0IjoxNjU2OTQ0OTg4LCJleHAiOjE2NTc1NDk3ODh9.rlZJTL31-5y97Fgquh6QX9apmr85-I7LGJPRLmaSAK8"
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

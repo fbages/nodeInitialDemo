@@ -6,7 +6,7 @@ module.exports = serviceDb = { //Declaracio global de serviceDB
     llistatJugadors,
     crearPartida,
     eliminarPartides,
-    llistaPartides,
+    llistarPartides,
     rankingSorted,
     perdedor,
     guanyador
@@ -68,7 +68,7 @@ async function eliminarPartides(idJugador) {
     return {'message':`El.liminades totes les partides del jugador ${idJugador}`};
 }
 
-async function llistaPartides(idJugador) {
+async function llistarPartides(idJugador) {
     let existeixJugador = await dbMysql.Jugadors.findOne({ where: { id: idJugador }});
     if (existeixJugador == null) { return ({"message":"Aquest jugador no existeix"}) };
     return await dbMysql.Partides.findAll({ where: { idjugador: idJugador }, });

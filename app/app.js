@@ -8,9 +8,10 @@ const routerRanking = require('./routes/routeRanking');
 const routerAdmin = require('./routes/routeAdmin');
 const app = express();
 
+
 //Middleware a totes les rutes per partir els JSON dels POST
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
+app.use(express.urlencoded({extended: true,}));
+app.use(express.json())
 
 
 //Routes
@@ -19,15 +20,7 @@ app.use(routerPartides);
 app.use(routerRanking);
 app.use(routerAdmin);
 
-app.get('*', (req,res)=>{
-    res.status(404);
-    res.json({
-        status:false,
-        message:"Page not found"
-    })
-});
-
-app.post('*', (req,res)=>{
+app.all('*', (req,res)=>{
     res.status(404);
     res.json({
         status:false,

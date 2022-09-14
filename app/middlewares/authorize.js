@@ -6,9 +6,9 @@ function authorize(req, res, next) {
     try {
         const token = req.header('Authorization').slice(7);
         const verified = jwt.verify(token, process.env.SECRET);
-        console.log("comprovat", verified);
+        // console.log("comprovat", verified);
         req.user = verified;
-        next() // continuamos
+        next() // continua
 
     } catch (error) {
         return res.status(401).json({ error: 'Acceso denegado' })
