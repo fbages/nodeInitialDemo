@@ -1,18 +1,79 @@
 <div class="container">
   <div id="fondo">
-    <img src="../../../assets/textures/AbyssXat.svg" alt="title" />
+    <img src="../../../assets/textures/AbyssXat.svg" alt="title" width="600px" />
   </div>
+  <div id="inputContainer">
+    <div id="registerMenu">
+      <h4>Register</h4>
+      <div>
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+          <h6>
+            Mail<span *ngIf="submitted && profileForm.get('email').errors">
+              <span *ngIf="profileForm.get('email').errors.required" style="color: red; font-size: 0.8em"> is required</span>
+              <span *ngIf="profileForm.get('email').errors.email" style="color: red; font-size: 0.8em"> must be a email</span>
+            </span>
+                <span *ngIf="mailRegistrat" style="color: red; font-size: 0.8em"> is already registered</span>
+          </h6>
+          <input id="nom" type="text" formControlName="email" required />
+          <div *ngIf="!googleRegister">
+            <h6>
+              Password<span *ngIf="submitted && profileForm.get('password').errors"><span
+                  *ngIf="profileForm.get('password').errors.required" style="color: red; font-size: 0.8em">
+                  is required</span></span>
+            </h6>
+            <input id="password" type="password" formControlName="password" required />
+            <h6>
+              Confirm Password<span *ngIf="submitted && profileForm.get('confirmPassword').errors">
+                <span *ngIf="profileForm.get('confirmPassword').errors.required" style="color: red; font-size: 0.8em"> is required</span></span>
+                <span *ngIf="profileForm.errors?.['requireConfirmPassword']" style="color: red; font-size: 0.8em"> don't match with password</span>
+            </h6>
+            <input id="confirmPassword" type="password" formControlName="confirmPassword" required />
+          </div>
+          <h6>
+            Nickname<span *ngIf="submitted && profileForm.get('nickname').errors"><span
+                *ngIf="profileForm.get('nickname').errors.required" style="color: red; font-size: 0.8em">
+                is required</span></span>
+                <span *ngIf="nickNameRegistrat" style="color: red; font-size: 0.8em"> is already taken</span>
+          </h6>
+          <input id="nickname" type="text" formControlName="nickname" required /><br />
+          <button  type="submit">Register</button>
+        </form>
+      </div>
 
-  <div id="registerMenu">
-    <h2>Sign In with Nickname</h2>
-    <div>
-      <input id="nom" type="text" [(ngModel)]="nomInput" />
-      <button id="registreNom">Register name</button>
     </div>
+    <div id="signinMenu">
+      <h4>Sign In</h4>
+      <div>
+        <form [formGroup]="signForm" (ngSubmit)="onSubmitSign()">
+          <h6>
+            Mail<span *ngIf="submittedSign && signForm.get('emailSign').errors"><span *ngIf="signForm.get('emailSign').errors.required" style="color: red; font-size: 0.8em"> is required</span></span>
+            
+          </h6>
+          <input id="nomSign" type="text" formControlName="emailSign" required />
+          <div *ngIf="!googleRegister">
+          <h6>
+            Password<span *ngIf="submittedSign && signForm.get('passwordSign').errors"><span *ngIf="signForm.get('passwordSign').errors.required" style="color: red; font-size: 0.8em"> is required</span></span>
+            <span *ngIf="passwordIncorrect" style="color: red; font-size: 0.8em"> is incorrect</span>
+          </h6>
+          <input id="passwordSign" type="password" formControlName="passwordSign" required /><br />
+          </div>
+          <button type="submit">Sign In</button>
+        </form>
+      </div>
+     
+    </div>
+  </div>
+  <div id="googlediv">
     <h4>Or</h4>
-    <button routerLink="google" routerLinkActive="active" id="googleSignIn">
+    <button routerLink="google" routerLinkActive="active" data-type="standard"
+      data-shape="rectangular" data-theme="outline" data-text="$ {button.text}" data-size="large"
+      data-logo_alignment="left">
       Sign In with Google
     </button>
-    <router-outlet></router-outlet> 
+    <div id="g_id_onload" data-client_id="734855494394-5rs0al4gnaks6ivm5vds9r22v9g01090.apps.googleusercontent.com"
+      data-context="signup" data-ux_mode="redirect" data-login_uri="http://localhost:4200/google" data-auto_prompt="false">
+    </div>
+    <router-outlet></router-outlet>
   </div>
 </div>
+<app-footer></app-footer>

@@ -12,6 +12,8 @@ export class SocketsIoService {
   public missatgesSocket = io('http://localhost:3000/missatges');
   public xatsSocket = io('http://localhost:3000/xats');
   nomJugador: string;
+  email:string;
+  password:string;
   xatPrivat: string;
   
   private jugadorsRebuts = new Subject<any>();
@@ -72,7 +74,9 @@ export class SocketsIoService {
         this.nomJugador,
         this.jugadorsSocket.id,
         this.missatgesSocket.id,
-        this.xatsSocket.id
+        this.xatsSocket.id,
+        this.email,
+        this.password
       );
   }
 

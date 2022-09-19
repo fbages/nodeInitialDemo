@@ -11,8 +11,9 @@ async function socketsJugadors(io){
             console.log(msg);
         })
         
-        socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket) => { 
-            crudService.crearJugador(nom, jugadoridsocket, missatgeidsocket, xatidsocket).then( ()=>{
+        socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password) => { 
+            console.log(nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password)
+            crudService.crearJugador(nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password).then( ()=>{
                 console.log("afegir jugador a mongodb xat principal amb socket jugador :" + socket.id);
                 crudService.afegirJugadorAlXatPrincipal(socket.id);
                 }
@@ -22,7 +23,7 @@ async function socketsJugadors(io){
         socket.on('disconnect', async () => {
             console.log('user disconnected, ' + socket.id);
             try{
-                await crudService.eliminarJugador(socket.id);
+                //await crudService.eliminarJugador(socket.id);
             } catch {
                 console.log("No s'ha pogut eliminar");
             }

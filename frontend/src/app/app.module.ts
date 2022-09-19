@@ -20,6 +20,7 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 import { GoogleloginComponent } from './ui/googlelogin/googlelogin.component';
 import { TextComponent } from './ui/xat/text/text.component';
 import { AuthGuard } from './guard/auth.guard';
+import { RegisterComponent } from './ui/register/register.component';
 
 const appRoutes:Routes=[
 
@@ -48,7 +49,8 @@ const appRoutes:Routes=[
     XatPrivatComponent,
     XatComponent,
     MessageComponent,
-    GoogleloginComponent
+    GoogleloginComponent,
+    RegisterComponent
     
   ],
   imports: [

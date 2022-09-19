@@ -2,7 +2,7 @@
 
     position: absolute;
     max-width: none;
-    top: 150px;
+    top: 80px;
     //width: 100vw;
     //height: 100vh;
     display: flex;
@@ -13,21 +13,39 @@
 }
 
 #fondo{
-    width: 833px;
-    background-color: rgb(255, 255, 255); 
+    //width: 833px;
+    //background-color: rgb(255, 255, 255); 
 }
 
+#inputContainer{
+    display: flex;
+    flex-direction: row;
+}
 #registerMenu{
     //position: absolute;
-    max-width: none;
+    max-width: 333px;
     width: 100%;
     //background-color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    top:300px;
+    //top:300px;
     z-index :10;
+    margin: 25px;
+}
+#signinMenu{
+    //position: absolute;
+    max-width: 333px;
+    width: 100%;
+    //background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    //top:300px;
+    z-index :10;
+    margin: 25px;
 }
 
 input{
@@ -42,15 +60,14 @@ input{
 }
 
 button{
-    border-radius: 25px;
-    margin:5px;
-    background-color:#232323;
-    color:#fff;
-    padding:2px 5px;
-    border:5px solid #151515;
-    -webkit-border-radius: 15px;
+    margin:15px;
+    padding:10px;
 }
 
-button#googleSignIn{
-    border:5px solid #003f10;
+#googlediv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
 }
