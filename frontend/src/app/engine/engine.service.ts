@@ -10,11 +10,11 @@ import {
   Color4,
   Vector3,
   HemisphericLight,
+  DirectionalLight,
   StandardMaterial,
   Texture,
   DynamicTexture,
   Space,
-  ArcRotateCamera,
   FollowCamera,
   ActionManager,
   ExecuteCodeAction,
@@ -24,6 +24,8 @@ import {
   AxesViewer,
   MeshBuilder,
   Quaternion,
+  AbstractMesh,
+  ShadowGenerator
   
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
@@ -41,10 +43,12 @@ export class EngineService {
   private camera: FollowCamera;
   private scene: Scene;
   private light: Light;
+  private light2: DirectionalLight;
 
   private sphere: Mesh;
   private base: Mesh;
   private box1: Mesh;
+  private avatar: AbstractMesh;
 
   //public jugadors:any;
   enviarJugador:Object;
@@ -71,101 +75,171 @@ export class EngineService {
     console.log(this.sockets);
     setTimeout(() => {
       this.nomJugador = this.sockets.nomJugador;
-    }, 500);
-
+    }, 500);  
+    
     // create a basic BJS Scene object
     this.scene = new Scene(this.engine);
     this.scene.clearColor = new Color4(0.5, 0.5, 0.5, 0);
-
+    
     //debug
     //this.scene.debugLayer.show();
-
+    
     let jugador1 = new Jugador("UsuariNom", [0,0,0], [0,0,0,0]);
     //console.log(jugador1);
     
     //motor fisic
-     var gravityVector = new Vector3(0, 0, 0);
-     var physicsPlugin = new CannonJSPlugin();
-     //this.scene.enablePhysics(gravityVector, physicsPlugin);
+    var gravityVector = new Vector3(0, 0, 0);
+    var physicsPlugin = new CannonJSPlugin();
+    //this.scene.enablePhysics(gravityVector, physicsPlugin);
     
-    // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene
+    // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene 
     this.box1 = MeshBuilder.CreateBox("box1",{ width:0.4, height: 0.4, depth:0.6}, this.scene);
     // let figura;
     //  SceneLoader.AppendAsync('/assets/', 'ghost.glb', this.scene).then(
-    //   (result) => {
-    //     for (let i = 0; i < result.meshes.length; i++) {
-    //       //console.log(result.meshes[i]);
-    //       let nomdescargat = result.meshes[i].name;
-    //       console.log(nomdescargat);
+      //   (result) => {
+        //     for (let i = 0; i < result.meshes.length; i++) {
+          //       //console.log(result.meshes[i]);  
+          //       let nomdescargat = result.meshes[i].name;
+          //       console.log(nomdescargat);
           
-    //       if (result.meshes[i].name == 'Fleeing_ghost') {
-    //         //result.meshes[i].material = MaterialInalambric;
-    //         result.meshes[i].name = 'Ghost';
-    //         figura =  result.meshes[i];
-    //       }
-    //     }
-    //   }
-    // );
-       
-    // move the sphere upward 1/2 of its height
-     this.box1.position.y = 5;
-     this.box1.rotationQuaternion = Quaternion.RotationAxis(new Vector3(1, 0, 0), 0);
-   
-    // Crear fisica
+          //       if (result.meshes[i].name == 'Fleeing_ghost') {
+            //         //result.meshes[i].material = MaterialInalambric;  
+            //         result.meshes[i].name = 'Ghost';
+            //         figura =  result.meshes[i];
+            //       }
+            //     }
+            //   }
+            // );
+            
+            // move the sphere upward 1/2 of its height
+            this.box1.position.y = 5;
+            this.box1.rotationQuaternion = Quaternion.RotationAxis(new Vector3(1, 0, 0), 0);
+            
+            var MaterialInalambric = new StandardMaterial('texture1', this.scene);
+            MaterialInalambric.wireframe = true;
+          
+            // create the material with its texture for the sphere and assign it to the sphere
+            const MaterialGroc = new StandardMaterial('sun_surface', this.scene);
+                MaterialGroc.diffuseTexture = new Texture(
+              'assets/textures/sun.jpg',
+              this.scene
+            );
+            //textura jugador
+            let materialJugador = new StandardMaterial("materialJugador", this.scene);            
+
+            // this.sphere.material = materialBase;
+                  // Groc sol material
+            SceneLoader.AppendAsync('/assets/', 'base03.glb', this.scene).then(
+              (result) => {
+                for (let i = 0; i < result.meshes.length; i++) {
+                  //console.log(result.meshes[i]);
+                  let nomdescargat = result.meshes[i].name;
+                  console.log(nomdescargat);
+                  
+                  if (result.meshes[i].name == 'Cylinder') {
+                    result.meshes[i].material = MaterialGroc;
+                    result.meshes[i].name = 'Base1';
+                  }
+                }
+              }
+            );
+                  // Material inalambric
+            SceneLoader.AppendAsync('/assets/', 'base03.glb', this.scene).then(
+              (result) => {
+                for (let i = 0; i < result.meshes.length; i++) {
+                  //console.log(result.meshes[i]);
+                  let nomdescargat = result.meshes[i].name;
+                  console.log(nomdescargat);
+                  
+                  if (result.meshes[i].name == 'Cylinder') {
+                    result.meshes[i].material = MaterialInalambric;
+                    result.meshes[i].name = 'Base2';
+                  }
+                }
+              }
+            );
+              
+            // 3D Jugador avatar
+            SceneLoader.AppendAsync('/assets/', 'avatar.glb', this.scene).then(
+              (result) => {
+                for (let i = 0; i < result.meshes.length; i++) {
+                  //console.log(result.meshes[i]);
+                  let nomdescargat = result.meshes[i].name;
+                  console.log(nomdescargat);
+                  this.avatar=result.meshes[i];
+                  
+                  if (result.meshes[i].name == 'avatar') {
+                   
+                    this.avatar.parent = this.box1;
+                    this.box1.visibility=0;
+                    this.avatar.material=materialJugador;
+                    // this.avatar.enableEdgesRendering();
+                    // this.avatar.edgesWidth=1.0;
+                    // this.avatar.edgesColor = new Color4(0,0,0,1);
+                    this.avatar.outlineColor = Color3.Black();
+                    this.avatar.renderOutline = true;
+                        
+                        // Shadows
+                    var shadowGenerator = new ShadowGenerator(1024, this.light2);
+                    shadowGenerator.addShadowCaster(this.scene.getMeshByName('avatar'));
+                    shadowGenerator.useExponentialShadowMap = true;
+                    let terra= this.scene.getMeshByName('Base1')
+                    terra.receiveShadows = true;
+                  }
+                  
+                };
+              }
+            );
+
+    // Crear fisica 
     //this.box1.physicsImpostor = new PhysicsImpostor(this.box1, PhysicsImpostor.BoxImpostor, {mass:1000, restitution: 0.1, friction:0.2}, this.scene)
     
     //Crear nom sobre jugador
      // GUI
      const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
-    setTimeout(() => {
+  //   setTimeout(() => {
       
-      var rect1 = new GUI.Rectangle();
-      rect1.width = "200px";
-    rect1.height = "40px";
-    rect1.cornerRadius = 20;
-    rect1.color = "Orange";
-    rect1.thickness = 4;
-    rect1.background = "green";
-    advancedTexture.addControl(rect1);
-    rect1.linkWithMesh(this.box1);   
-    rect1.linkOffsetY = -100;
+  //     var rect1 = new GUI.Rectangle();
+  //     rect1.width = "200px";
+  //   rect1.height = "40px";  
+  //   rect1.cornerRadius = 20;
+  //   rect1.color = "Orange";
+  //   rect1.thickness = 4;
+  //   rect1.background = "green";
+  //   advancedTexture.addControl(rect1);
+  //   rect1.linkWithMesh(this.box1);   
+  //   rect1.linkOffsetY = 300;
     
-    var label = new GUI.TextBlock();
-    label.text = this.nomJugador;
-    rect1.addControl(label);
+  //   var label = new GUI.TextBlock();
+  //   label.text = this.nomJugador;
+  //   rect1.addControl(label);
     
-    var target = new GUI.Ellipse();
-    target.width = "40px";
-    target.height = "40px";
-    target.color = "Orange";
-    target.thickness = 4;
-    target.background = "green";
-    target.linkOffsetY = -30;
-    advancedTexture.addControl(target);
-    target.linkWithMesh(this.box1);   
+  //   var target = new GUI.Ellipse();
+  //   target.width = "40px";
+  //   target.height = "40px";
+  //   target.color = "Orange";
+  //   target.thickness = 4;
+  //   target.background = "green";
+  //   target.linkOffsetY = -45;
+  //   advancedTexture.addControl(target);
+  //   target.linkWithMesh(this.box1);   
     
-    var line = new GUI.Line();
-    line.lineWidth = 4;
-    line.color = "Orange";
-    line.y2 = 20;
-    line.linkOffsetY = -50;
-    advancedTexture.addControl(line);
-    line.linkWithMesh(this.box1); 
-    line.connectedControl = rect1;  
-  }, 1000);
+  //   var line = new GUI.Line();
+  //   line.lineWidth = 4;
+  //   line.color = "Orange";
+  //   line.y2 = -20;
+  //   line.linkOffsetY = 0;
+  //   advancedTexture.addControl(line);
+  //   line.linkWithMesh(this.box1); 
+  //   line.connectedControl = rect1;  
+
+  // }, 1500); 
+
     
     // create a FreeCamera, and set its position to (x:5, y:10, z:-20 )
     //this.camera = new ArcRotateCamera('camera1', 0, 0, 5, new Vector3(0, 0, 0), this.scene);
-    this.camera = new FollowCamera(
-      'cameraSegueix',
-      new Vector3(1, 1, 0),
-      this.scene,
-      this.box1
-    );
-      this.camera.fov = 1.2;
-      this.camera.radius = 2;
-      this.camera.heightOffset=2;
-    // target the camera to scene origin
+
+    // target the camera to scene origin  
     //this.camera.setTarget(Vector3.Zero());
 
     // attach the camera to the canvas
@@ -178,49 +252,24 @@ export class EngineService {
       'light1',
       new Vector3(1, 1, 0),
       this.scene
-    );
+    );  
 
-    var MaterialInalambric = new StandardMaterial('texture1', this.scene);
-    MaterialInalambric.wireframe = true;
+    this.light2 = new DirectionalLight("dir01", new Vector3(-1, -2, -1), this.scene);
+    this.light2.position = new Vector3(20, 40, 20);
+    this.light2.intensity = 0.5;
 
-    // create the material with its texture for the sphere and assign it to the sphere
-    const MaterialGroc = new StandardMaterial('sun_surface', this.scene);
-        MaterialGroc.diffuseTexture = new Texture(
-      'assets/textures/sun.jpg',
-      this.scene
-    );
-    // this.sphere.material = materialBase;
-          // Groc sol material
-    SceneLoader.AppendAsync('/assets/', 'base03.glb', this.scene).then(
-      (result) => {
-        for (let i = 0; i < result.meshes.length; i++) {
-          //console.log(result.meshes[i]);
-          let nomdescargat = result.meshes[i].name;
-          console.log(nomdescargat);
-          
-          if (result.meshes[i].name == 'Cylinder') {
-            result.meshes[i].material = MaterialGroc;
-            result.meshes[i].name = 'Base1';
-          }
-        }
-      }
-    );
-          // Material inalambric
-    SceneLoader.AppendAsync('/assets/', 'base03.glb', this.scene).then(
-      (result) => {
-        for (let i = 0; i < result.meshes.length; i++) {
-          //console.log(result.meshes[i]);
-          let nomdescargat = result.meshes[i].name;
-          console.log(nomdescargat);
-          
-          if (result.meshes[i].name == 'Cylinder') {
-            result.meshes[i].material = MaterialInalambric;
-            result.meshes[i].name = 'Base2';
-          }
-        }
-      }
-    );
 
+    this.camera = new FollowCamera(
+      'cameraSegueix',
+      new Vector3(1, 1, 0),
+      this.scene,
+      this.box1
+    );  
+      this.camera.fov = 1.2;
+      this.camera.radius = 2;
+      this.camera.heightOffset=2;
+
+      //moviment teclat
     var map = {}; //object for multiple key presses
     this.scene.actionManager = new ActionManager(this.scene);
 
@@ -242,8 +291,9 @@ export class EngineService {
     let F ; //FPS
     let rotacio; // salvar la posicio de rotacio 
     let usuari = this.box1; //asigna figura 3d a moviments teclat
+    // let usuari = this.avatar; //asigna figura 3d a moviments teclat
     console.log(usuari);
-    let camera = this.camera;
+
     let caure = false;
 
     //Generar uns Axis pel propi jugador
@@ -264,16 +314,19 @@ export class EngineService {
     button.isVisible = false; // amaga a l'inicia
     button.width = "100px";
     button.height = "100px";
-    button.color = "white";
+    button.color = "black";
     button.background = "green";
+    button.cornerRadius = 20;
+
     panel.addControl(button);
 
     let button2 = GUI.Button.CreateSimpleButton("but", "inicial");
     button2.isVisible = false; // amaga a l'inicia
     button2.width = "100px";
     button2.height = "100px";
-    button2.color = "white";
+    button2.color = "black";
     button2.background = "red";
+    button2.cornerRadius = 20;
 
     panel.addControl(button2);
 
@@ -290,8 +343,11 @@ export class EngineService {
         try{
           if(jugador.nom.length > 0){ //tarda uns microsegons a asignar jugador al nom, arribar sense nom sino
             jugadors.push(nouJugador);  
-            crearJugadorExtern(jugador.nom, jugador.pos,jugador.dir, this.scene);
-            console.log("S'ha creat un jugador");
+            setTimeout(() => {
+              
+              crearJugadorExtern(jugador.nom, jugador.pos,jugador.dir, this.scene, this.avatar);
+              console.log("S'ha creat un jugador");
+            }, 1000);
           }
         } catch(err){
           console.log(jugador.nom, "és undefined");
@@ -309,8 +365,9 @@ export class EngineService {
             button2.isVisible = false;
            });
     });
-
-    function crearJugadorExtern(nom:string, pos, dir, scene){
+    
+    function crearJugadorExtern(nom:string, pos, dir, scene, avatar3d){
+      
       let box1 = MeshBuilder.CreateBox(nom,{ width:0.4, height: 0.4, depth:0.6}, scene);
       //box1.physicsImpostor = new PhysicsImpostor(box1, PhysicsImpostor.BoxImpostor, {mass:1000, restitution: 0.1, friction:0.2}, scene)
       box1.position.x = Number(pos[0]) ;
@@ -321,51 +378,55 @@ export class EngineService {
       box1.rotationQuaternion._y = Number(dir[1]) ;
       box1.rotationQuaternion._z =  0;
       box1.rotationQuaternion.w = Number(dir[3]);
-
+      let avatar2 = avatar3d.clone("avatar2",box1);
+      avatar2.parent=box1;
+      box1.visibility=0;
       setTimeout(() => {
       
       let rect1 = new GUI.Rectangle();
       rect1.width = "200px";
       rect1.height = "40px";
       rect1.cornerRadius = 20;
-      rect1.color = "yellow";
-      rect1.thickness = 4;
-      rect1.background = "blue";
+      rect1.color = "Black";
+      rect1.thickness = 2;
+      rect1.background = "Grey";
       advancedTexture.addControl(rect1);
       rect1.linkWithMesh(box1);   
-      rect1.linkOffsetY = -100;
+      rect1.linkOffsetY = -180;
       
       let label = new GUI.TextBlock();
       label.text = nom;
       rect1.addControl(label);
       
-      let target = new GUI.Ellipse();
-      target.width = "40px";
-      target.height = "40px";
-      target.color = "Orange";
-      target.thickness = 4;
-      target.background = "green";
-      advancedTexture.addControl(target);
-      target.linkWithMesh(box1);   
+      // let target = new GUI.Ellipse();
+      // target.width = "40px";
+      // target.height = "40px";
+      // target.color = "Black";
+      // target.thickness = 1;
+      // target.background = "Grey";
+      // //target.linkOffsetY = -110;
+      // advancedTexture.addControl(target);
+      // target.linkWithMesh(box1);   
       
-      let line = new GUI.Line();
-      line.lineWidth = 4;
-      line.color = "Orange";
-      line.y2 = 20;
-      line.linkOffsetY = -20;
-      advancedTexture.addControl(line);
-      line.linkWithMesh(box1); 
-      line.connectedControl = rect1;  
-    }, 1000);
-    };
+      // let line = new GUI.Line();
+      // line.lineWidth = 4;
+      // line.color = "Black";
+      // line.y2 = 20;
+      // //line.linkOffsetY = -130;
+      // advancedTexture.addControl(line);
+      // line.linkWithMesh(box1); 
+      // line.connectedControl = rect1;  
+    }, 500);
+    }; 
 
     function updateJugadorExtern(nom:string, pos, dir, scene){
       try{
         let box1 = scene.getMeshByName(nom);
-        //console.log(box1);
-        //console.log(typeof pos[0], pos[1], pos[2], 'aqui esta actualitzant')
-        //console.log((box1.position.x), 'aqui esta actualitzant');
-        
+        if(box1 !=null){
+          //console.log(box1);
+          //console.log(typeof pos[0], pos[1], pos[2], 'aqui esta actualitzant')
+          //console.log((box1.position.x), 'aqui esta actualitzant');
+          
         box1.position.x = Number(pos[0]);
         box1.position.y = Number(pos[1]);
         box1.position.z = Number(pos[2]);
@@ -373,7 +434,8 @@ export class EngineService {
         box1.rotationQuaternion._y = Number(dir[1]);
         box1.rotationQuaternion._z = 0;
         box1.rotationQuaternion.w = Number(dir[3]);
-
+      }
+        
       } catch (err){
         console.log(err);
       }
@@ -490,10 +552,6 @@ export class EngineService {
     // generates the world x-y-z axis for better understanding
    // this.showWorldAxis(8);
   }
-
-
-
-
 
   public animate(): void {
     // We have to run this outside angular zones,

@@ -14,14 +14,26 @@ import { XatPrivatComponent } from './ui/xat-privat/xat-privat.component';
 import { XatComponent } from './ui/xat/xat.component';
 import { SocketsIoService } from './services/sockets-io/sockets-io.service';
 import { MessageComponent } from './ui/message/message.component';
-import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
-import { GoogleLoginProvider } from 'angularx-social-login';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { OAuthModule } from 'angular-oauth2-oidc';
+import { GoogleloginComponent } from './ui/googlelogin/googlelogin.component';
+import { TextComponent } from './ui/xat/text/text.component';
+import { AuthGuard } from './guard/auth.guard';
+import { RegisterComponent } from './ui/register/register.component';
 
 const appRoutes:Routes=[
 
-  {path:'', component:IntroComponent},
-  {path:'xat', component:UiComponent}
+  {path:'', component:IntroComponent,
+    children:[
+      {path:'google', component:GoogleloginComponent},
+    ]},
+    {path:'xat', component:UiComponent,
+    canActivate:[AuthGuard],
+    children:[
+      {path:':nomXat', component:TextComponent},
+  ]},
+  {path:'**', redirectTo:''}
   
 ]
 
@@ -36,36 +48,22 @@ const appRoutes:Routes=[
     StatsComponent,
     XatPrivatComponent,
     XatComponent,
-    MessageComponent
+    MessageComponent,
+    GoogleloginComponent,
+    RegisterComponent
     
   ],
   imports: [
     BrowserModule,
     FormsModule,
     RouterModule.forRoot(appRoutes),
-    SocialLoginModule,
+    HttpClientModule,
+    OAuthModule.forRoot(),
     ReactiveFormsModule
   ],
   providers: [
     WindowRefService,
-    SocketsIoService,
-    [
-      {
-        provide: 'SocialAuthServiceConfig',
-        useValue: {
-          autoLogin: false,
-          providers: [
-            {
-              id: GoogleLoginProvider.PROVIDER_ID,
-              provider: new GoogleLoginProvider('734855494394-5rs0al4gnaks6ivm5vds9r22v9g01090.apps.googleusercontent.com')
-            }            
-          ],
-          onError: (err) => {
-            console.error(err);
-          }
-        } as SocialAuthServiceConfig,
-      }
-    ],
+    SocketsIoService
   ],
   bootstrap: [
     AppComponent

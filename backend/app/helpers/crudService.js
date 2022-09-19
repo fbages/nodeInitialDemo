@@ -9,8 +9,44 @@ module.exports = {
     //llistatJugadors, //Usuari que es conectar ha de tenir llistat dels jugadors anteriors
     guardarMissatge,
     buscarSocketAmbNom,
-    buscarNomAmbSocket
+    buscarNomAmbSocket,
+    getEmail,
+    getNickname,
+    regristrarSockets,
+    signInJugador
+}
 
+async function getEmail(emailProva){
+
+    let mail = await db.Jugadors.findOne({email:emailProva});
+    //console.log("mail trobat : " + mail);
+    if(mail == null){
+        return false
+    }else{
+        return true
+    }
+}
+
+async function getNickname(nicknameProva){
+    let nom = await db.Jugadors.findOne({nom:nicknameProva});
+    console.log(nom);
+    if(nom == null){
+        return false
+    }else{
+        return true
+    }
+}
+
+async function regristrarSockets(jugadorSockets){
+    let jugadorSockets2 = await db.Jugadors.findOneAndUpdate(jugadorSockets.email,jugadorSockets);
+    //console.log(jugadorSockets2);
+    return (jugadorSockets2 == null)?false:true;
+}
+
+async function signInJugador(jugador){
+    console.log(jugador);
+    let jugadorTrobat = await db.Jugadors.findOne(jugador);
+    return (jugadorTrobat == null)?false:true;
 }
 
 async function crearXat(nomXat, nousJugadors){
@@ -52,13 +88,15 @@ async function treureJugadorAlXatPrincipal(socketXatsid){
     return xat;
 }
 
-async function crearJugador(nomJugador, idSocketJugador, idSocketMissatges, idSocketXat){
-
+async function crearJugador(nomJugador, idSocketJugador, idSocketMissatges, idSocketXat, email, password){
+    console.log('Sha creat jugador')
     let jugador = await db.Jugadors.create({
         nom : nomJugador,
         idsocketjugador : idSocketJugador,
         idsocketmissatge : idSocketMissatges,
-        idsocketxat : idSocketXat
+        idsocketxat : idSocketXat,
+        email: email,
+        password : password
 
     });
     return jugador;

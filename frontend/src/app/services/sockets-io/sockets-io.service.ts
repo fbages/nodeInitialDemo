@@ -8,23 +8,30 @@ import { io } from 'socket.io-client';
 //   providedIn: 'root',
 // } // o estar registrat a appmodule per estar disponible a totarreu
 export class SocketsIoService {
-  public jugadorsSocket = io('/jugadors');
-  public missatgesSocket = io('/missatges');
-  public xatsSocket = io('/xats');
+  public jugadorsSocket = io('http://localhost:3000/jugadors');
+  public missatgesSocket = io('http://localhost:3000/missatges');
+  public xatsSocket = io('http://localhost:3000/xats');
   nomJugador: string;
+  email:string;
+  password:string;
   xatPrivat: string;
   
   private jugadorsRebuts = new Subject<any>();
   private missatgeRebutG = new Subject<any>();
   private peticioXatP = new Subject<any>();
   private missatgeRebutP = new Subject<any>();
+  private confirmacioXatP = new Subject<any>();
     
   constructor(@Optional() @SkipSelf() sharedService?: SocketsIoService) {
     if (sharedService) {
       throw new Error("Sockets ja s'ha creat");
     }
-
-    this.missatgesSocket.on('chat message', (msg:string)=> {
+    //vell nomes text
+    // this.missatgesSocket.on('chat message', (msg:string)=> {
+    //   console.log(msg);
+    //   this.missatgeRebutG.next(msg);
+    // });
+    this.missatgesSocket.on('chat message', (msg)=> {
       console.log(msg);
       this.missatgeRebutG.next(msg);
     });
@@ -37,6 +44,7 @@ export class SocketsIoService {
     this.xatsSocket.on('Aceptacio parlar', (msg, usuariPeticio) => {
       console.log('Has rebut peticio de : ' + usuariPeticio);
        this.peticioXatP.next(usuariPeticio);
+       this.confirmacioXatP.next(usuariPeticio);
       });
 
       //Rebre missatge privat
@@ -46,6 +54,10 @@ export class SocketsIoService {
       this.missatgeRebutP.next(paquet);
    });
 
+  }
+
+  crearXat(){
+    return this.confirmacioXatP.asObservable();
   }
 
   getUltimMissatge(){
@@ -62,7 +74,9 @@ export class SocketsIoService {
         this.nomJugador,
         this.jugadorsSocket.id,
         this.missatgesSocket.id,
-        this.xatsSocket.id
+        this.xatsSocket.id,
+        this.email,
+        this.password
       );
   }
 

@@ -55,22 +55,55 @@ body {
 #general{
   display:flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content:right;
 }
 
 .card{
   display:flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: rgb(44, 44, 44);
+  background-color: transparent;
   min-width: 175px;
   margin: 0 15px 15px 15px;
   padding: 15px;
+  border-style: none;
+  pointer-events: none;
+
 }
 
 #xatGeneral {
-  min-height: 70vh;
+  min-height: 60vh;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+
 }
+
+.zonatext {
+  background-color: rgb(44, 44, 44);
+  pointer-events:auto;
+  border-radius: 5px;
+}
+
+.nav-pills .nav-link {
+  background-color: rgb(44, 44, 44);
+  border-radius: 5px 0px 0px 5px;
+  margin: 3px 0px 3px 0px;
+  color: white;
+  pointer-events:auto;
+  // .active{
+  //   color: rgb(230, 171, 9)
+  // }
+}
+.nav-pills .nav-link :active {
+  background-color: rgb(230, 171, 99);
+  border-radius: 5px 0px 0px 5px;
+  margin: 3px 0px 3px 0px;
+  color: black;
+  pointer-events:auto;
+}
+
+
 
 #columnEsquerra{
   // display:flex;
@@ -80,9 +113,74 @@ body {
 }
 
 #stats {
- min-height: 60px;
+ min-height: 70px;
 }
 
 #xatPrivat {
   min-height: 70vh;
 }
+
+#llistatMissatges{
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  align-content: flex-end;
+  align-self: flex-end;
+  width: 250px;
+  height: 500px;
+  overflow: hidden;
+  margin: 5px;
+}
+
+#llistatXats{
+  display:flex;
+  flex-direction: column;
+  align-items:flex-end;
+}
+.cssmissatgesRebuts{
+  width: 250px;
+  text-align: left;
+  align-self: left;
+ color: red;
+ word-wrap: break-word;
+}
+
+.cssmissatgesEnviats{
+  width: 250px;
+  text-align: right;
+  align-self: right;
+  color: green;
+  word-wrap: break-word;
+}
+
+#inputMissatge {
+  margin: 5px;
+  border-radius: 5px;
+  height: 2.5em;
+}
+
+#botoEnviar {
+  margin: 3px 5px 5px 0;
+}
+
+
+// .nav-items{
+//   // .active{
+//     //   color: rgb(230, 171, 9)
+//     // }
+    
+//   }
+  
+  #botonsXats{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(44, 44, 44);
+    border-radius: 10px;
+    margin: 3px -5px 3px 3px;
+    padding-right: 5px;
+    padding-left: 3px;
+    color: white;
+    pointer-events:auto;
+  }
