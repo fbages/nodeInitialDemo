@@ -1,13 +1,10 @@
 //imports
 const express = require('express');
-const fileupload = require('express-fileupload');
 const app = express();
 
 //Middlewares globals
-app.use(express.urlencoded({extended: true,}));
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-app.use(fileupload());
-
 
 //Routes
 let router = require('./routes/route');
