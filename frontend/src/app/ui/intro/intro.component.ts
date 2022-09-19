@@ -145,13 +145,19 @@ export class IntroComponent implements OnInit, AfterViewInit {
           if (!res) {
             this.passwordIncorrect = true;
           }else{
-            if (this.nomInput != null) {
-              this.nomInput = this.profileForm.get('nickname').value;
+            console.log('nomInput ' + this.nomInput);
+            //S'ha de fer tornar el nickname perque angular s'apiga com es diu el jugador que ha entrat
+            if (this.nomInput == null) {
+              const cercaNickname = async ()=>{
+                this.nomInput = await this.getNickname(this.signForm.get('emailSign').value);
+                console.log('nomInput ' + this.nomInput, this.signForm.get('emailSign').value);
+              }
+              cercaNickname().then(()=>{
+                this.nicknameService.setNickname(this.nomInput);
+                this.router.navigate(['/xat/Xat General']);
+              })
             }
-            this.nicknameService.setNickname(this.profileForm.get('nickname').value);
-            this.router.navigate(['/xat/Xat General']);
-          }
-        })
+        }})
       } else {
         //buscar jugador que s'ha registrat amb google
         const cercaMailGoogle = async ()=>{
@@ -163,12 +169,19 @@ export class IntroComponent implements OnInit, AfterViewInit {
           if (!res) {
             this.passwordIncorrect = true;
           }else{
+            console.log('nomInput ' + this.nomInput);
             //S'ha de fer tornar el nickname perque angular s'apiga com es diu el jugador que ha entrat
             if (this.nomInput != null) {
-              this.nomInput = this.profileForm.get('nickname').value;
+              const cercaNickname = async ()=>{
+                this.nomInput = await this.getNickname(this.signForm.get('emailSign').value);
+                console.log('nomInput ' + this.nomInput);
+              }
+              cercaNickname().then(()=>{
+                this.nicknameService.setNickname(this.nomInput);
+                this.router.navigate(['/xat/Xat General']);
+              }
+              )
             }
-            this.nicknameService.setNickname(this.profileForm.get('nickname').value);
-            this.router.navigate(['/xat/Xat General']);
           }
         })
       }
@@ -189,12 +202,12 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
   async buscarNickname(nickName:string){
     let resposta = await this.loginService.buscarNickname(nickName);
-    //console.log(resposta)
-    if (resposta['data']) {
-      return true;
-    } else {
-      return false;
-    }
+      //console.log(resposta)
+      if (resposta['data']) {
+        return true;
+      } else {
+        return false;
+      }
   }
 
   async buscarJugador(jugador:object){
@@ -205,6 +218,12 @@ export class IntroComponent implements OnInit, AfterViewInit {
     } else {
       return false;
     }
+  }
+
+  async getNickname(nickName:string){
+    let resposta = await this.loginService.getNickname(nickName);
+    //console.log(resposta)
+    return resposta['data'];
   }
 
   requireConfirmPassword(form: FormGroup) {

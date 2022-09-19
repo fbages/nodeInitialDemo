@@ -12,6 +12,7 @@ module.exports = {
     buscarNomAmbSocket,
     getEmail,
     getNickname,
+    retornaNickname,
     regristrarSockets,
     signInJugador
 }
@@ -35,6 +36,12 @@ async function getNickname(nicknameProva){
     }else{
         return true
     }
+}
+
+async function retornaNickname(email){
+    console.log(email);
+    let jugador = await db.Jugadors.findOne({email:email});
+    return jugador.nom;
 }
 
 async function regristrarSockets(jugadorSockets){

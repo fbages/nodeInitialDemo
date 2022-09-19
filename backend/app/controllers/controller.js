@@ -24,6 +24,17 @@ exports.getNickname = async (req, res, next) => {
     }
 }
 
+exports.retornaNickname = async (req, res, next) => {
+    try {
+        let emailEnviat = req.body.email;
+        let resultat = await crud.retornaNickname(emailEnviat)
+        res.send({"data":resultat});
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
+}
+
 exports.signInJugador = async (req, res, next) => {
     try {
         console.log(req.body);

@@ -29,4 +29,8 @@ export class LoginService {
   async signInJugador(jugador:object){
     return await this.http.post('/api/signIn',jugador).toPromise();
   }
+
+  async getNickname(email:string){
+    return await this.http.post('/api/getnickname',{'email':email}).toPromise();
+  }
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NicknameService } from 'src/app/services/nickname.service';
 
 @Component({
   selector: 'app-header',
@@ -6,10 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  nickname:string;
 
-  constructor() { }
+  constructor(public nicknameService : NicknameService) { }
 
   ngOnInit(): void {
+    this.nickname = this.nicknameService.getNickname();
+    console.log(this.nickname);
   }
 
 }
