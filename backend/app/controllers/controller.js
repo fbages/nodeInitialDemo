@@ -41,11 +41,42 @@ exports.signInJugador = async (req, res, next) => {
         let controlUsuariPassword = {};
         controlUsuariPassword.email=req.body.email; 
         controlUsuariPassword.password=req.body.password; 
-        let resultat = await crud.signInJugador(controlUsuariPassword)
+        let resultat = await crud.signInJugador(controlUsuariPassword);
+        console.log(resultat);
         if(resultat){
         await crud.regristrarSockets(req.body);
         }
         res.send({"data":resultat});
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
+}
+
+exports.llegirMissatges = async (req, res, next) => {
+    try {
+        let nomXatEnviat = req.body.nomXat;
+        let resultat = await crud.retornaMissatges(nomXatEnviat);
+        if(resultat==false){
+            res.send({"data":[]})
+        }else{
+            res.send({"data":resultat});
+        }
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
+}
+exports.creacioSala = async (req, res, next) => {
+    try {
+        let nomXatEnviat = req.body.nomXat;
+        let totsJugadors = await crud.llistatJugadors();
+        let resultat = await crud.crearXat(nomXatEnviat,totsJugadors);
+        if(resultat==null){
+            res.send({"data":"sala ja existent"})
+        }else{
+            res.send({"data":resultat});
+        }
     } catch (err) {
         res.status(400);
         res.json(err);

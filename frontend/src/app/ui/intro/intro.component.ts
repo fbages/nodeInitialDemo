@@ -145,7 +145,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
           if (!res) {
             this.passwordIncorrect = true;
           }else{
-            console.log('nomInput ' + this.nomInput);
+           
             //S'ha de fer tornar el nickname perque angular s'apiga com es diu el jugador que ha entrat
             if (this.nomInput == null) {
               const cercaNickname = async ()=>{
@@ -154,6 +154,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
               }
               cercaNickname().then(()=>{
                 this.nicknameService.setNickname(this.nomInput);
+                console.log('nomInput ' + this.nomInput);
                 this.router.navigate(['/xat/Xat General']);
               })
             }
@@ -177,7 +178,9 @@ export class IntroComponent implements OnInit, AfterViewInit {
                 console.log('nomInput ' + this.nomInput);
               }
               cercaNickname().then(()=>{
+                console.log(this.nomInput);
                 this.nicknameService.setNickname(this.nomInput);
+                console.log(this.nicknameService.getNickname())
                 this.router.navigate(['/xat/Xat General']);
               }
               )

@@ -17,10 +17,12 @@ export class SocketsIoService {
   xatPrivat: string;
   
   private jugadorsRebuts = new Subject<any>();
+  private jugadorsRebutsDesconectats = new Subject<any>();
   private missatgeRebutG = new Subject<any>();
   private peticioXatP = new Subject<any>();
   private missatgeRebutP = new Subject<any>();
   private confirmacioXatP = new Subject<any>();
+  //private xatnouP = new Subject<any>();
     
   constructor(@Optional() @SkipSelf() sharedService?: SocketsIoService) {
     if (sharedService) {
@@ -31,21 +33,33 @@ export class SocketsIoService {
     //   console.log(msg);
     //   this.missatgeRebutG.next(msg);
     // });
-    this.missatgesSocket.on('chat message', (msg)=> {
-      console.log(msg);
-      this.missatgeRebutG.next(msg);
+    this.missatgesSocket.on('chat message', (msg,jugador)=> {
+      console.log(msg,jugador);
+      this.missatgeRebutG.next({"message":msg, "nomJugador":jugador});
     });
 
     this.jugadorsSocket.on("altresjugadors", (jugadorExtern:string)=>{
         this.jugadorsRebuts.next(jugadorExtern);
+    })
+    
+    this.jugadorsSocket.on('jugadorDesconecat', (nomJugadorDesconectat:string)=>{
+      console.log("Sha desconectat"+nomJugadorDesconectat)
+       this.jugadorsRebutsDesconectats.next(nomJugadorDesconectat);
     })
 
     //Rebre peticio per parlar privat
     this.xatsSocket.on('Aceptacio parlar', (msg, usuariPeticio) => {
       console.log('Has rebut peticio de : ' + usuariPeticio);
        this.peticioXatP.next(usuariPeticio);
-       this.confirmacioXatP.next(usuariPeticio);
+       
       });
+
+      //confirmacio de peticio aceptada
+      this.xatsSocket.on('Acceptat', (nomJugadorDemanat, nomJugadorPeticio)=> {
+        let nomXat = nomJugadorDemanat + "*" + nomJugadorPeticio;
+        this.confirmacioXatP.next(nomXat)
+         
+        });
 
       //Rebre missatge privat
     this.xatsSocket.on('Missatge privat distribuit',(anfitrioRoom, nomMissatger, msg) => {
@@ -53,6 +67,11 @@ export class SocketsIoService {
       let paquet = {"text": msg, "emisor": nomMissatger};
       this.missatgeRebutP.next(paquet);
    });
+
+    this.xatsSocket.on('crea xat public', (nomXat)=>{
+      console.log(nomXat + ' arribat del servidor')
+      this.confirmacioXatP.next(nomXat)
+    });
 
   }
 
@@ -80,10 +99,10 @@ export class SocketsIoService {
       );
   }
 
-  enviarMissatgeGeneral(missatge:string){
-      console.log(missatge);
+  enviarMissatgeGeneral(missatge:string,nomxat:string){
+     // console.log(missatge);
       if (missatge) {
-        this.missatgesSocket.emit('chat message', missatge);
+        this.missatgesSocket.emit('chat message', missatge,nomxat);
       }
   }
 
@@ -97,6 +116,11 @@ export class SocketsIoService {
   getJugadors(){
     return this.jugadorsRebuts.asObservable();
   }
+  getJugadorsDesconectats(){
+    return this.jugadorsRebutsDesconectats.asObservable();
+  }
+
+
 
   peticioXatPrivat(nomJugadorDemanat:string, nomJugadorPeticio:string ){
      this.xatsSocket.emit('Peticio', nomJugadorDemanat, nomJugadorPeticio);
@@ -107,8 +131,12 @@ export class SocketsIoService {
   }
 
   confirmacioPeticioXatPrivat(nomJugadorDemanat:string, nomJugadorPeticio:string ){
+    this.confirmacioXatP.next(nomJugadorDemanat + "*" + nomJugadorPeticio);
+    this.xatsSocket.emit('registrar xat privat', nomJugadorDemanat + "*" + nomJugadorPeticio);
     this.xatsSocket.emit('Si accepto', nomJugadorDemanat, nomJugadorPeticio);
   }
+
+  
 
   enviarMissatgePrivat(missatge:string, destinatari){
     console.log('Missatge privat' + missatge);
@@ -119,6 +147,11 @@ export class SocketsIoService {
   rebreUltimMissatgePrivat(){
   return this.missatgeRebutP.asObservable();
 }
+
+creadaSalaPublica(nomXat: string){
+  this.xatsSocket.emit('xat public', nomXat);
+}
+
 
 //ajuda
   crearSockets() {

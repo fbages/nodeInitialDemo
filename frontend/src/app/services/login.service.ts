@@ -31,6 +31,14 @@ export class LoginService {
   }
 
   async getNickname(email:string){
-    return await this.http.post('/api/getnickname',{'email':email}).toPromise();
+    return await this.http.post('/api/getnickname', {'email':email}).toPromise();
+  }
+
+  async llegirMissatges(nomXat:string){
+    return await this.http.post('/api/missatges', {'nomXat':nomXat}).toPromise();
+  }
+
+  async creacioSala(nomXat:string){
+    return await this.http.post('/api/creaciosala',{'nomXat':nomXat}).toPromise();
   }
 }

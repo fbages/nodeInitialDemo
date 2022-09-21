@@ -6,7 +6,8 @@ module.exports = {
     treureJugadorAlXatPrincipal,
     crearJugador,
     eliminarJugador,
-    //llistatJugadors, //Usuari que es conectar ha de tenir llistat dels jugadors anteriors
+    llistatJugadors, //Usuari que es conectar ha de tenir llistat dels jugadors anteriors
+    llistatJugadorsXatPrivat,
     guardarMissatge,
     buscarSocketAmbNom,
     buscarNomAmbSocket,
@@ -14,7 +15,9 @@ module.exports = {
     getNickname,
     retornaNickname,
     regristrarSockets,
-    signInJugador
+    signInJugador,
+    retornaMissatges,
+    retornaXat
 }
 
 async function getEmail(emailProva){
@@ -41,41 +44,73 @@ async function getNickname(nicknameProva){
 async function retornaNickname(email){
     console.log(email);
     let jugador = await db.Jugadors.findOne({email:email});
+    console.log("jugador trobat: ",jugador);
     return jugador.nom;
 }
 
+async function llistatJugadors(){
+    
+    let jugadors = await db.Jugadors.find({}).select('_id');
+    console.log(jugadors);
+    return jugadors;
+}
+
+async function llistatJugadorsXatPrivat(jugadorsXat){
+    
+    let jugadors = await db.Jugadors.find({$or:[{nom:jugadorsXat[0]},{nom:jugadorsXat[1]}]}).select('_id');
+    console.log(jugadors);
+    return jugadors;
+}
+
+async function retornaMissatges(nomXatEnviat){
+    
+    let xat = await db.Xats.findOne({nomxat:nomXatEnviat});
+    console.log(xat);
+    if(xat!=null){
+        let missatges = await db.Missatges.find({idXat:xat._id});
+        //console.log(missatges);
+        return missatges
+    }else{
+        return false
+    }
+}
+
 async function regristrarSockets(jugadorSockets){
-    let jugadorSockets2 = await db.Jugadors.findOneAndUpdate(jugadorSockets.email,jugadorSockets);
-    //console.log(jugadorSockets2);
+    console.log("mail per buscar eljugador",jugadorSockets.email)
+    let jugadorSockets2 = await db.Jugadors.findOneAndUpdate({email:jugadorSockets.email},jugadorSockets);
+    console.log('registrat nous sockets',jugadorSockets2);
     return (jugadorSockets2 == null)?false:true;
 }
 
 async function signInJugador(jugador){
-    console.log(jugador);
+    console.log('signinjugador', jugador);
     let jugadorTrobat = await db.Jugadors.findOne(jugador);
+    console.log(jugadorTrobat);
     return (jugadorTrobat == null)?false:true;
 }
 
 async function crearXat(nomXat, nousJugadors){
-    let xatPrincipal = await db.Xats.findOne({nomxat : "Principal"});
-    if(xatPrincipal == null){
-        let llistatJugadors = [];
-        llistatJugadors.push(nousJugadors);
-        let xat = await db.Xats.create({
-            nomxat : nomXat,
-            jugadors : llistatJugadors
-        })
+    let xat = await db.Xats.findOne({nomxat : nomXat});
+    if(xat == null){
+        let xat = await db.Xats.create({nomxat : nomXat, jugadors : nousJugadors})
         return xat;
+    }else{
+        return null;
     }
 }
 
 async function eliminarXat(nomXatEliminat){
-    let xat = await db.Xats.deleteOne({nomXat : nomXatEliminat});
+    let xat = await db.Xats.deleteOne({nomxat : nomXatEliminat});
     return console.log("Xat eliminat");
 }
 
+async function retornaXat(nomXat){
+    let xat = await db.Xats.findOne({nomxat : nomXat});
+    return xat
+}
+
 async function afegirJugadorAlXatPrincipal(idsocketJugador){
-    let xat = await db.Xats.findOne({nomxat : "Principal"});
+    let xat = await db.Xats.findOne({nomxat : "Xat General"});
     let jug = await db.Jugadors.findOne({idsocketjugador : idsocketJugador});
     console.log("Afegir jugador al xat", jug);
     try{
@@ -88,7 +123,7 @@ async function afegirJugadorAlXatPrincipal(idsocketJugador){
 }
 
 async function treureJugadorAlXatPrincipal(socketXatsid){
-    let xat = await db.Xats.findOne({nomXat : "Principal"});
+    let xat = await db.Xats.findOne({nomXat : "Xat General"});
     let jugador = await db.Jugadors.findOne({idsocketjugador : socketXatsid});
     xat.jugadors.splice(xat.jugadors.findIndex(jug => jug === jugador._id),1);
     xat.save();
@@ -113,11 +148,11 @@ async function eliminarJugador(socketJugador){
     try{
         //borrar de jugadors
         let jugadorEliminat = await db.Jugadors.findOne({idsocketjugador : socketJugador});
-        console.log(jugadorEliminat);
+        //console.log(jugadorEliminat);
         await jugadorEliminat.remove();
         //borrar jugador del llistat de jugadors al xat principal
         let xatPrincipal = await db.Xats.findOne({nomxat : "Principal"});
-        console.log(xatPrincipal.jugadors);
+        //console.log(xatPrincipal.jugadors);
         xatPrincipal.jugadors.splice(xatPrincipal.jugadors.findIndex(jug => jug === jugadorEliminat._id),1);
         xatPrincipal.save();
         return console.log("Jugador eliminat de tot arreu, jugadors i xat principal");
@@ -129,14 +164,16 @@ async function eliminarJugador(socketJugador){
 async function guardarMissatge(socketMissatge,missatgeEnviat,nomXat){
     let xat = await db.Xats.findOne({nomxat: nomXat});
     let jugador = await db.Jugadors.findOne({idsocketmissatge: socketMissatge});
-    
+    console.log(xat);
     let missatge = await db.Missatges.create({
         text : missatgeEnviat,
-        jugador : jugador._id,
+        jugador : jugador.nom,
         idXat : xat._id
     })
     return missatge;
 };
+
+
 
 async function buscarSocketAmbNom(nomUsuari, nameSpaceSocket){
      let jugador = await db.Jugadors.findOne({nom:nomUsuari});
@@ -144,7 +181,9 @@ async function buscarSocketAmbNom(nomUsuari, nameSpaceSocket){
 }
 
 async function buscarNomAmbSocket(socket, nameSpaceSocket){
+    //console.log(socket,nameSpaceSocket);
+    //console.log({[`${nameSpaceSocket}`]:socket});
     let jugador = await db.Jugadors.findOne({[`${nameSpaceSocket}`]:socket});
-    console.log(jugador.nom);
+    //console.log(jugador);
     return jugador.nom
 }

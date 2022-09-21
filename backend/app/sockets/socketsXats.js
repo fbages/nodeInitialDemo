@@ -33,6 +33,10 @@ function socketsXats(io) {
         socket.on('disconnect', async (socket) => {
             console.log('a user disconected from xat principal :' + socket.id); //surt undefined 
         });
+        socket.on('xat public', async(nomXat)=>{
+            console.log(nomXat);
+            socket.broadcast.emit('crea xat public', nomXat);
+        })
         //Cada usuari té la seva room automaticament, quan algu vulgui parlar amb ell s'afegirà a la room del inicial
         //socket.join(socket.id);
         
@@ -51,10 +55,7 @@ function socketsXats(io) {
             let socketPeticio = await crudService.buscarSocketAmbNom(nomJugadorPeticio,"idsocketxat");
             console.log('sala privada : '+ nomJugadorDemanat + ' amb socket ' + socket.id);
             console.log('afegint socket ' + socketPeticio);
-            //socket.join(socketPeticio);
-            // const rooms = xatsNameSpace.adapter.rooms;
-            // const sids = xatsNameSpace.adapter.sids;
-            socket.to(socketPeticio).emit('Acceptat', nomJugadorDemanat);
+            socket.to(socketPeticio).emit('Acceptat', nomJugadorDemanat,nomJugadorPeticio);
             console.log('Server ha unit ' + nomJugadorPeticio +" a la sala de l'usuari " + nomJugadorDemanat)
         });
 
@@ -66,6 +67,12 @@ function socketsXats(io) {
             console.log(`Missatge privat : ${msg} de ${missatgerSocket} enviat a la room ${anfitrioSocket}`);
             xatsNameSpace.to(anfitrioSocket).emit(`Missatge privat distribuit`, anfitrioRoom, nomMissatger, msg); //socket or xatsNameSpace
         });
+
+        socket.on('registrar xat privat', async (nomXat)=>{
+            let nomJugadors = nomXat.split('/');
+            nomJugadors = await crudService.llistatJugadorsXatPrivat(nomJugadors)
+            await crudService.crearXat(nomXat,nomJugadors)
+        })
         socket.on("connect_error", (err) => {
             console.log(`connect_error due to ${err.message}`);
           });

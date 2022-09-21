@@ -3,7 +3,7 @@ const { Schema } = require('mongoose');
 
 const missatgeSchema = new Schema({
     text : String,
-    jugador : mongoose.ObjectId,
+    jugador : String,
     idXat : mongoose.ObjectId
 });
 

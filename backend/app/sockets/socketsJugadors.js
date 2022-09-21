@@ -21,9 +21,12 @@ async function socketsJugadors(io){
         })
 
         socket.on('disconnect', async () => {
-            console.log('user disconnected, ' + socket.id);
+            console.log('user disconnected de jugadors, ' + socket.id);
             try{
-                //await crudService.eliminarJugador(socket.id);
+                //Enviar a tots els jugadors un emit que aquest jugador s'ha desconectat, aixi el poden borrar del 3D
+                let nomJugador = await crudService.buscarNomAmbSocket(socket.id,'idsocketjugador');
+                console.log(nomJugador);
+                socket.broadcast.volatile.emit('jugadorDesconecat', nomJugador);
             } catch {
                 console.log("No s'ha pogut eliminar");
             }

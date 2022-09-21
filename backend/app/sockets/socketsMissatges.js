@@ -6,11 +6,14 @@ function ioMissatges(io) {
     //Rebre missatges i reenviarlos a la resta d'usuaris globals
     missatgesNameSpace.on('connection', (socket) => {
         console.log('a user connected to missatges ' + socket.id);
-        socket.on('chat message', async (msg) => {
-            await crudService.guardarMissatge(socket.id, msg, "Principal");
+        socket.on('chat message', async (msg,nomXat) => {
             //Buscar socket.id al llistat de jugadors per enviar a la resta el nom del jugador
-            let nomJugador = await crudService.buscarNomAmbSocket(socket.id,"idsocketxat")
-            console.log('message: ' + msg);
+            let nomJugador = await crudService.buscarNomAmbSocket(socket.id,"idsocketmissatge");
+            console.log(msg,nomXat)
+            //Salvar missatge a la db
+            await crudService.guardarMissatge(socket.id, msg, nomXat);
+            
+            //console.log('message: ' + msg, nomJugador);
             
             socket.broadcast.emit('chat message', msg, nomJugador);
         });

@@ -35,6 +35,7 @@ import '@babylonjs/inspector';
 import { SocketsIoService } from '../services/sockets-io/sockets-io.service';
 import { Subscription } from 'rxjs';
 import * as GUI  from '@babylonjs/gui'
+import { NicknameService } from '../services/nickname.service';
 
 @Injectable({ providedIn: 'root' })
 export class EngineService {
@@ -60,7 +61,8 @@ export class EngineService {
   public constructor(
     private ngZone: NgZone,
     private windowRef: WindowRefService,
-    private sockets: SocketsIoService
+    private sockets: SocketsIoService,
+    private nicknameService : NicknameService
   ) {}
 
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
@@ -74,7 +76,7 @@ export class EngineService {
     //definicio nom del jugador
     console.log(this.sockets);
     setTimeout(() => {
-      this.nomJugador = this.sockets.nomJugador;
+      this.nomJugador = this.nicknameService.getNickname();
     }, 500);  
     
     // create a basic BJS Scene object
@@ -261,13 +263,14 @@ export class EngineService {
 
     this.camera = new FollowCamera(
       'cameraSegueix',
-      new Vector3(1, 1, 0),
+      new Vector3(1, 15, 0),
       this.scene,
       this.box1
     );  
       this.camera.fov = 1.2;
       this.camera.radius = 2;
-      this.camera.heightOffset=2;
+      this.camera.heightOffset=1.5;
+      
 
       //moviment teclat
     var map = {}; //object for multiple key presses
@@ -297,10 +300,10 @@ export class EngineService {
     let caure = false;
 
     //Generar uns Axis pel propi jugador
-  // const localAxes = new AxesViewer(this.scene, 1);
+  //  const localAxes = new AxesViewer(this.scene, 1);
   // localAxes.xAxis.parent = usuari;
-  // localAxes.yAxis.parent = usuari;
-  // localAxes.zAxis.parent = usuari;
+  //  localAxes.yAxis.parent = usuari;
+  //  localAxes.zAxis.parent = usuari;
 
     //Variables altes usuaris
     let jugadors = [];
@@ -339,7 +342,7 @@ export class EngineService {
 
       }else{
         let nouJugador = new Jugador(jugador.nom,jugador.pos,jugador.dir);
-        
+        console.log(nouJugador);
         try{
           if(jugador.nom.length > 0){ //tarda uns microsegons a asignar jugador al nom, arribar sense nom sino
             jugadors.push(nouJugador);  
@@ -353,6 +356,17 @@ export class EngineService {
           console.log(jugador.nom, "és undefined");
         }
       }
+    })
+
+    //Borrar jugador desconectat del array de jugadors
+    this.subscription = this.sockets.getJugadorsDesconectats().subscribe((jugador)=>{
+      let indexJugador = jugadors.findIndex(item=>item.nom == jugador);
+      jugadors.splice(indexJugador,1);
+      console.log(indexJugador, jugador, jugadors);
+      let meshDesconectat = this.scene.getMeshByName(jugador);
+      meshDesconectat.dispose();
+      let labelDesconectat = advancedTexture.getControlByName(jugador);
+      labelDesconectat.dispose();
     })
 
     //Rebre peticions de xat privat d'altres jugadors
@@ -393,7 +407,8 @@ export class EngineService {
       advancedTexture.addControl(rect1);
       rect1.linkWithMesh(box1);   
       rect1.linkOffsetY = -180;
-      
+      rect1.name = nom;
+
       let label = new GUI.TextBlock();
       label.text = nom;
       rect1.addControl(label);
@@ -479,9 +494,9 @@ export class EngineService {
         }
 
       if( usuari.position.y > 0.2){
-        console.log('Esta volant');
+        //console.log('Esta volant');
         usuari.translate(Axis.Y, -velocitat, Space.LOCAL);
-  
+
       }
       
       //funcio caure
@@ -491,16 +506,23 @@ export class EngineService {
           0.5
         ) > 3  || caure
        )  {
-        usuari.translate(Axis.Y, -velocitat, Space.LOCAL);
+        usuari.translate(Axis.Y, -velocitat, Space.WORLD);
+        
+        //usuari.rotate(Axis.X,0.01,Space.LOCAL);
         caure = true;
-        console.log('esta caient')
+        //console.log('esta caient')
+        usuari.rotate(Axis.X,0.005,Space.LOCAL);
+
+        this.camera.radius = 2;
+        this.camera.heightOffset=-3;
       }
   
       //reset
-      if (usuari.position.y < -5) {
+      if (usuari.position.y < -10) {
         // usuari.physicsImpostor.setAngularVelocity( Vector3.Zero() );
         // usuari.physicsImpostor.setLinearVelocity( Vector3.Zero() );
-        console.log('esta a dalt')
+        //console.log('esta a dalt')
+        
         caure = false;
         usuari.rotation.x = 0;
         usuari.rotation.y = 0;
@@ -510,6 +532,11 @@ export class EngineService {
         usuari.position.z = 0;
         usuari.rotationQuaternion._x =0;
         usuari.rotationQuaternion._z =0;
+        usuari.rotationQuaternion._y =0;
+        usuari.rotationQuaternion._w =1;
+        this.camera.radius = 2;
+        this.camera.heightOffset=1;
+  
       }
       
 
@@ -531,10 +558,12 @@ export class EngineService {
         let distancia =  Math.pow(Math.pow(usuari.position._x-jugadors[i].pos[0], 2) + Math.pow(usuari.position._z-jugadors[i].pos[2], 2), 0.5);
  
         if(distancia<0.5){
+          
           // console.log('Surt menu per fer xat privat');
           button.textBlock.text = "Petició xat privat amb " + jugadors[i].nom;
           button.onPointerClickObservable.add(() => {
            this.sockets.peticioXatPrivat(jugadors[i].nom, this.nomJugador);
+           button.isVisible = false;
            
           });
           button.isVisible = true;
