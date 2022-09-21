@@ -21,9 +21,9 @@ export class IntroComponent implements OnInit, AfterViewInit {
   googleRegisterSubs: Subscription;
   googleRegister: boolean = false;
   mailRegistrat: boolean = false;
-  nickNameRegistrat : boolean = false;
-  passwordIncorrect : boolean = false;
- 
+  nickNameRegistrat: boolean = false;
+  passwordIncorrect: boolean = false;
+
   constructor(
     private sockets: SocketsIoService,
     private formBuilder: FormBuilder,
@@ -40,8 +40,9 @@ export class IntroComponent implements OnInit, AfterViewInit {
         password: ['', Validators.required],
         confirmPassword: ['', Validators.required],
         nickname: ['', Validators.required],
-      }, {
-        validators: [this.requireConfirmPassword]
+      },
+      {
+        validators: [this.requireConfirmPassword],
       }
     );
 
@@ -76,8 +77,8 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
   onSubmit() {
     this.submitted = true;
-    this.mailRegistrat=false;
-    this.nickNameRegistrat=false;
+    this.mailRegistrat = false;
+    this.nickNameRegistrat = false;
 
     if (
       this.profileForm.status == 'VALID' ||
@@ -85,38 +86,43 @@ export class IntroComponent implements OnInit, AfterViewInit {
         this.profileForm.get('email').valid &&
         this.profileForm.get('nickname').valid)
     ) {
-      console.log("formulari valid");
-      
+      //console.log("formulari valid");
+
       const cerca = async () => {
-        let resposta = await this.buscarUsuari(this.profileForm.get('email').value);
+        let resposta = await this.buscarUsuari(
+          this.profileForm.get('email').value
+        );
         return resposta;
       };
       cerca().then((res) => {
-        
         if (res) {
-          console.log('Mail is already register');
-          this.mailRegistrat=true;
+          // console.log('Mail is already register');
+          this.mailRegistrat = true;
         } else {
-          const cercaNickname =async ()=>{
-            let resposta = await this.buscarNickname(this.profileForm.get('nickname').value)
+          const cercaNickname = async () => {
+            let resposta = await this.buscarNickname(
+              this.profileForm.get('nickname').value
+            );
             return resposta;
-          } 
-          cercaNickname().then((res)=> {
+          };
+          cercaNickname().then((res) => {
             if (res) {
-              console.log('Nickname is already taken');
-              this.nickNameRegistrat=true;
-            }else{
+              //console.log('Nickname is already taken');
+              this.nickNameRegistrat = true;
+            } else {
               if (this.nomInput != null) {
                 this.nomInput = this.profileForm.get('nickname').value;
               }
-              this.nicknameService.setNickname(this.profileForm.get('nickname').value);
+              this.nicknameService.setNickname(
+                this.profileForm.get('nickname').value
+              );
               this.sockets.nomJugador = this.profileForm.get('nickname').value;
-              this.sockets.email = this.profileForm.get('email').value
-              this.sockets.password = this.profileForm.get('password').value
+              this.sockets.email = this.profileForm.get('email').value;
+              this.sockets.password = this.profileForm.get('password').value;
               this.sockets.registrarJugador();
               this.router.navigate(['/xat/Xat General']);
             }
-          })
+          });
         }
       });
     } else {
@@ -133,60 +139,74 @@ export class IntroComponent implements OnInit, AfterViewInit {
       this.signForm.status == 'VALID' ||
       (this.googleRegister == true && this.signForm.get('emailSign').valid)
     ) {
-      if(this.signForm.status == 'VALID'){
-
-        const cercaPassword =async ()=>{
-          let jugador = {'email':this.signForm.get('emailSign').value, 'password':this.signForm.get('passwordSign').value, 'idsocketjugador':this.sockets.jugadorsSocket.id, 'idsocketmissatge':this.sockets.missatgesSocket.id,'idsocketxat':this.sockets.xatsSocket.id};
-          console.log(jugador);
-          let resposta = await this.buscarJugador(jugador)
-          return resposta;
-        } 
-        cercaPassword().then((res)=> {
-          if (!res) {
-            this.passwordIncorrect = true;
-          }else{
-           
-            //S'ha de fer tornar el nickname perque angular s'apiga com es diu el jugador que ha entrat
-            if (this.nomInput == null) {
-              const cercaNickname = async ()=>{
-                this.nomInput = await this.getNickname(this.signForm.get('emailSign').value);
-                console.log('nomInput ' + this.nomInput, this.signForm.get('emailSign').value);
-              }
-              cercaNickname().then(()=>{
-                this.nicknameService.setNickname(this.nomInput);
-                console.log('nomInput ' + this.nomInput);
-                this.router.navigate(['/xat/Xat General']);
-              })
-            }
-        }})
-      } else {
-        //buscar jugador que s'ha registrat amb google
-        const cercaMailGoogle = async ()=>{
-          let jugador = {'email':this.signForm.get('emailSign').value, 'password':"Google", 'idsocketjugador':this.sockets.jugadorsSocket.id, 'idsocketmissatge':this.sockets.missatgesSocket.id,'idsocketxat':this.sockets.xatsSocket.id};
+      if (this.signForm.status == 'VALID') {
+        const cercaPassword = async () => {
+          let jugador = {
+            email: this.signForm.get('emailSign').value,
+            password: this.signForm.get('passwordSign').value,
+            idsocketjugador: this.sockets.jugadorsSocket.id,
+            idsocketmissatge: this.sockets.missatgesSocket.id,
+            idsocketxat: this.sockets.xatsSocket.id,
+          };
+          // console.log(jugador);
           let resposta = await this.buscarJugador(jugador);
           return resposta;
-        }
-        cercaMailGoogle().then((res)=> {
+        };
+        cercaPassword().then((res) => {
           if (!res) {
             this.passwordIncorrect = true;
-          }else{
-            console.log('nomInput ' + this.nomInput);
+          } else {
             //S'ha de fer tornar el nickname perque angular s'apiga com es diu el jugador que ha entrat
-            if (this.nomInput != null) {
-              const cercaNickname = async ()=>{
-                this.nomInput = await this.getNickname(this.signForm.get('emailSign').value);
-                console.log('nomInput ' + this.nomInput);
-              }
-              cercaNickname().then(()=>{
-                console.log(this.nomInput);
+            if (this.nomInput == null) {
+              const cercaNickname = async () => {
+                this.nomInput = await this.getNickname(
+                  this.signForm.get('emailSign').value
+                );
+                // console.log('nomInput ' + this.nomInput, this.signForm.get('emailSign').value);
+              };
+              cercaNickname().then(() => {
                 this.nicknameService.setNickname(this.nomInput);
-                console.log(this.nicknameService.getNickname())
+                //console.log('nomInput ' + this.nomInput);
                 this.router.navigate(['/xat/Xat General']);
-              }
-              )
+              });
             }
           }
-        })
+        });
+      } else {
+        //buscar jugador que s'ha registrat amb google
+        const cercaMailGoogle = async () => {
+          let jugador = {
+            email: this.signForm.get('emailSign').value,
+            password: 'Google',
+            idsocketjugador: this.sockets.jugadorsSocket.id,
+            idsocketmissatge: this.sockets.missatgesSocket.id,
+            idsocketxat: this.sockets.xatsSocket.id,
+          };
+          let resposta = await this.buscarJugador(jugador);
+          return resposta;
+        };
+        cercaMailGoogle().then((res) => {
+          if (!res) {
+            this.passwordIncorrect = true;
+          } else {
+            //console.log('nomInput ' + this.nomInput);
+            //S'ha de fer tornar el nickname perque angular s'apiga com es diu el jugador que ha entrat
+            if (this.nomInput != null) {
+              const cercaNickname = async () => {
+                this.nomInput = await this.getNickname(
+                  this.signForm.get('emailSign').value
+                );
+                //console.log('nomInput ' + this.nomInput);
+              };
+              cercaNickname().then(() => {
+                //console.log(this.nomInput);
+                this.nicknameService.setNickname(this.nomInput);
+                //console.log(this.nicknameService.getNickname())
+                this.router.navigate(['/xat/Xat General']);
+              });
+            }
+          }
+        });
       }
     } else {
       this.submittedSign = true;
@@ -203,17 +223,17 @@ export class IntroComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async buscarNickname(nickName:string){
+  async buscarNickname(nickName: string) {
     let resposta = await this.loginService.buscarNickname(nickName);
-      //console.log(resposta)
-      if (resposta['data']) {
-        return true;
-      } else {
-        return false;
-      }
+    //console.log(resposta)
+    if (resposta['data']) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  async buscarJugador(jugador:object){
+  async buscarJugador(jugador: object) {
     let resposta = await this.loginService.signInJugador(jugador);
     //console.log(resposta)
     if (resposta['data']) {
@@ -223,7 +243,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async getNickname(nickName:string){
+  async getNickname(nickName: string) {
     let resposta = await this.loginService.getNickname(nickName);
     //console.log(resposta)
     return resposta['data'];

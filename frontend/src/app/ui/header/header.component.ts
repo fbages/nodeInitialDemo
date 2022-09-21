@@ -4,16 +4,15 @@ import { NicknameService } from 'src/app/services/nickname.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  nickname:string;
+  nickname: string;
 
-  constructor(public nicknameService : NicknameService) { }
+  constructor(public nicknameService: NicknameService) {}
 
   ngOnInit(): void {
     this.nickname = this.nicknameService.getNickname();
-    console.log(this.nickname);
+    //console.log(this.nickname);
   }
-
 }

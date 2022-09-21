@@ -52,10 +52,18 @@ body {
 //   // }
 // }
 
+#uicomponent{
+  display:flex;
+  flex-direction: row;
+  justify-content:space-between;
+}
+
 #general{
   display:flex;
   flex-direction: row;
   justify-content:right;
+  max-height: 95vw;
+  z-index: 2;
 }
 
 .card{
@@ -72,7 +80,8 @@ body {
 }
 
 #xatGeneral {
-  min-height: 60vh;
+  min-height: 95vh;
+  max-height: 95vh;
   display:flex;
   flex-direction: row;
   justify-content: space-between;
@@ -80,6 +89,10 @@ body {
 }
 
 .zonatext {
+  display: flex;
+  flex-direction:column;
+  justify-content: flex-end;
+  align-items: center;
   background-color: rgb(44, 44, 44);
   pointer-events:auto;
   border-radius: 5px;
@@ -112,25 +125,22 @@ body {
   min-height: 70vh;
 }
 
-#stats {
- min-height: 70px;
-}
-
-#xatPrivat {
-  min-height: 70vh;
-}
-
 #llistatMissatges{
+  height: auto;
+  
   display:flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-  align-content: flex-end;
-  align-self: flex-end;
+  //justify-content: flex-end; //no apareix scroll
+   align-items: flex-end;
+   align-content: flex-end;
+   align-self: flex-end;
   width: 250px;
-  height: 500px;
-  overflow: hidden;
-  margin: 5px;
+  // min-height: 50vh;
+  // height: 78vh;
+  //max-height: 500px;
+  max-height: 77vh;
+  overflow-y: auto;
+
 }
 
 #llistatXats{
