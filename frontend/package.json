@@ -27,6 +27,7 @@
     "@babylonjs/loaders": "^5.26.1",
     "@babylonjs/materials": "^5.0.0-beta.6",
     "angular-oauth2-oidc": "^13.0.1",
+    "babylonjs-gltf2interface": "^5.26.1",
     "bootstrap": "^5.2.0",
     "dotenv": "^16.0.2",
     "rxjs": "^6.6.7",

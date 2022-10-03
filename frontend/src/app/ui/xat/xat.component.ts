@@ -57,6 +57,11 @@ export class XatComponent implements OnInit, AfterViewInit {
     });
   }
 
+  logout(){
+    console.log("hoal")
+    this.router.navigate(['']);
+  }
+
   //formbuilders funcions
   get xats() {
     return this.taulell.get('xats') as FormArray;
@@ -75,7 +80,7 @@ export class XatComponent implements OnInit, AfterViewInit {
     this.subscription = this.sockets
       .getUltimMissatge()
       .subscribe((objectMissatge) => {
-         console.log (objectMissatge);
+        // console.log (objectMissatge);
          if(objectMissatge.nomxat == this.xatseleccionat){
            this.rebreMissatge(objectMissatge.message, objectMissatge.nomJugador);
          }
@@ -126,7 +131,7 @@ export class XatComponent implements OnInit, AfterViewInit {
       ).innerHTML +=
         `<div style="color:green;text-align:right; align-self:flex-end;background-color:white;border-radius:5px;padding:3px;margin:3px;">` +
         this.missatge +
-        '</div><br>';
+        '</div>';
     }
 
   }
@@ -138,10 +143,10 @@ export class XatComponent implements OnInit, AfterViewInit {
     ).innerHTML +=
       `<div style="color:red;text-align:left; align-self: flex-start;background-color:white; font-size: 11px; border-radius:5px;padding:1px;margin-top:3px;">` +
       missatger +
-      '</div><br>' +
+      '</div>' +
       `<div style="color:red;text-align:left; align-self: flex-start;background-color:white;border-radius:5px;padding:3px;margin:1px 3px 3px 3px;">` +
       this.missatge +
-      '</div><br>';
+      '</div>';
   }
 
   // Cargar missatges de la base de dades
@@ -160,17 +165,17 @@ export class XatComponent implements OnInit, AfterViewInit {
         ).innerHTML +=
           `<div style="color:green;text-align:right; align-self:flex-end;background-color:white;border-radius:5px;padding:3px;margin:3px;">` +
           missatgesXat['data'][i]['text'] +
-          '</div><br>';
+          '</div>';
       } else {
         this.elementRef.nativeElement.querySelector(
           '#llistatMissatges'
         ).innerHTML +=
           `<div style="color:red;text-align:left; align-self: flex-start;background-color:white; font-size: 11px; border-radius:5px;padding:1px;margin-top:3px;">` +
           missatgesXat['data'][i]['jugador'] +
-          '</div><br>' +
+          '</div>' +
           `<div style="color:red;text-align:left; align-self: flex-start;background-color:white;border-radius:5px;padding:3px;margin:1px 3px 3px 3px;">` +
           missatgesXat['data'][i]['text'] +
-          '</div><br>';
+          '</div>';
       }
     }
   }

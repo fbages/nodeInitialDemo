@@ -15,4 +15,5 @@ export class HeaderComponent implements OnInit {
     this.nickname = this.nicknameService.getNickname();
     //console.log(this.nickname);
   }
+
 }

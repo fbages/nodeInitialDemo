@@ -79,9 +79,21 @@ body {
 
 }
 
+#xatGlobal {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end
+
+}
+#botoLogOut{
+  width: 100px;
+  margin-top: 14px;
+  margin-right: 30px;
+}
 #xatGeneral {
-  min-height: 95vh;
-  max-height: 95vh;
+  min-height: 90vh;
+  max-height: 90vh;
   display:flex;
   flex-direction: row;
   justify-content: space-between;

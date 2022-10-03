@@ -36,7 +36,7 @@
                 <span *ngIf="nickNameRegistrat" style="color: red; font-size: 0.8em"> is already taken</span>
           </h6>
           <input id="nickname" type="text" formControlName="nickname" required /><br />
-          <button  type="submit">Register</button>
+          <button type="button" class="btn btn-success" type="submit">Register</button>
         </form>
       </div>
 
@@ -57,7 +57,7 @@
           </h6>
           <input id="passwordSign" type="password" formControlName="passwordSign" required /><br />
           </div>
-          <button type="submit">Sign In</button>
+          <button type="button" class="btn btn-info" type="submit">Sign In</button>
         </form>
       </div>
      
@@ -65,7 +65,7 @@
   </div>
   <div id="googlediv">
     <h4>Or</h4>
-    <button routerLink="google" routerLinkActive="active" data-type="standard"
+    <button type="button" class="btn btn-primary" routerLink="google" routerLinkActive="active" data-type="standard"
       data-shape="rectangular" data-theme="outline" data-text="$ {button.text}" data-size="large"
       data-logo_alignment="left">
       Sign In with Google
