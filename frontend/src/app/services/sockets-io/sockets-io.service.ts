@@ -1,15 +1,17 @@
 import { Injectable, Optional, SkipSelf } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { io } from 'socket.io-client';
+import { NicknameService } from '../nickname.service';
+
 
 @Injectable()
 //   {
 //   providedIn: 'root',
 // } // o estar registrat a appmodule per estar disponible a totarreu
 export class SocketsIoService {
-  public jugadorsSocket = io('http://localhost:3000/jugadors');
-  public missatgesSocket = io('http://localhost:3000/missatges');
-  public xatsSocket = io('http://localhost:3000/xats');
+  public jugadorsSocket //= io('http://localhost:3000/jugadors');
+  public missatgesSocket //= io('http://localhost:3000/missatges');
+  public xatsSocket //= io('http://localhost:3000/xats');
   nomJugador: string;
   email: string;
   password: string;
@@ -23,18 +25,22 @@ export class SocketsIoService {
   private confirmacioXatP = new Subject<any>();
   //private xatnouP = new Subject<any>();
 
-  constructor(@Optional() @SkipSelf() sharedService?: SocketsIoService) {
+  constructor( public nicknamService: NicknameService,
+    @Optional() @SkipSelf() sharedService?: SocketsIoService) {
     if (sharedService) {
       throw new Error("Sockets ja s'ha creat");
     }
-    //vell nomes text
-    // this.missatgesSocket.on('chat message', (msg:string)=> {
-    //   console.log(msg);
-    //   this.missatgeRebutG.next(msg);
-    // });
-    this.missatgesSocket.on('chat message', (msg, jugador) => {
-      //console.log(msg,jugador);
-      this.missatgeRebutG.next({ message: msg, nomJugador: jugador });
+    //Registrar sockets a la base de dades
+    this.nomJugador = this.nicknamService.nomJugador;
+    this.email = this.nicknamService.email;
+    this.password = this.nicknamService.password;
+    this.jugadorsSocket = io('http://localhost:3000/jugadors');
+    this.missatgesSocket = io('http://localhost:3000/missatges');
+    this.xatsSocket = io('http://localhost:3000/xats');
+
+    this.missatgesSocket.on('chat message', (msg, jugador, nomXat) => {
+      console.log(msg,jugador,nomXat);
+      this.missatgeRebutG.next({ message: msg, nomJugador: jugador, nomxat:nomXat });
     });
 
     this.jugadorsSocket.on('altresjugadors', (jugadorExtern: string) => {
@@ -75,7 +81,14 @@ export class SocketsIoService {
       //console.log(nomXat + ' arribat del servidor')
       this.confirmacioXatP.next(nomXat);
     });
+    //Apuntar al jugador a totes les sales publiques i privades
+
   }
+  // registrarXatsJugadorInicial(){
+  //   console.log(this.xatsSocket);
+  //   this.xatsSocket.emit('descargar',this.xatsSocket);
+  //   console.log("descargat tots els xats")
+  // }
 
   crearXat() {
     return this.confirmacioXatP.asObservable();
@@ -99,6 +112,23 @@ export class SocketsIoService {
       this.email,
       this.password
     );
+  };
+
+  socketsInJugador() {
+
+    setTimeout(() => {
+      
+          this.jugadorsSocket.emit(
+            'socketsInJugador',
+            this.nomJugador,
+            this.jugadorsSocket.id,
+            this.missatgesSocket.id,
+            this.xatsSocket.id,
+            this.nicknamService.email,
+            this.password
+            );
+        }, 500);
+
   }
 
   enviarMissatgeGeneral(missatge: string, nomxat: string) {

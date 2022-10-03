@@ -7,6 +7,7 @@ router.post('/nickname', controllers.getNickname);
 router.post('/getnickname',controllers.retornaNickname);
 router.post('/signin', controllers.signInJugador);
 router.post('/missatges', controllers.llegirMissatges);
+router.post('/llegirsales', controllers.llegirsales);
 router.post('/creaciosala', controllers.creacioSala);
 
 router.all('*',(req,res)=>{

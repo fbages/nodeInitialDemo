@@ -1,40 +1,17 @@
 const crudService = require('../helpers/crudService');
-const mongoose = require('mongoose');
-
-class XatClass {
-    constructor(nomXat, jugadors) {
-        this.nomXat = nomXat;
-        this.jugadors = jugadors;
-    }
-    get nom() {
-        return this.nomXat;
-    }
-
-    get jugadors() {
-        return this.jugadors;
-    }
-}
-
 
 function socketsXats(io) {
     const xatsNameSpace = io.of("/xats");
 
-
-    // xatsNameSpace.on('xatprincipal', (socket) => {
-    //     socket.on('nouJugador', (id) => {
-    //         crudService.crearJugador(id);
-    //         console.log("creat jugador");
-    //     })
-    // })
-
-    xatsNameSpace.on('connection', (socket) => {
-        console.log('a user connected to xat principal : ' + socket.id);
-
+    xatsNameSpace.on('connection', async (socket) => {
+        console.log('a user connected to xat general : ' + socket.id);
+        
         socket.on('disconnect', async (socket) => {
             console.log('a user disconected from xat principal :' + socket.id); //surt undefined 
         });
+
         socket.on('xat public', async (nomXat) => {
-            //console.log(nomXat);
+            socket.join(nomXat);
             socket.broadcast.emit('crea xat public', nomXat);
         })
         //Cada usuari té la seva room automaticament, quan algu vulgui parlar amb ell s'afegirà a la room del inicial
@@ -69,7 +46,8 @@ function socketsXats(io) {
         });
 
         socket.on('registrar xat privat', async (nomXat) => {
-            let nomJugadors = nomXat.split('/');
+            let nomJugadors = nomXat.split('*');
+            //console.log(nomJugadors);
             nomJugadors = await crudService.llistatJugadorsXatPrivat(nomJugadors)
             await crudService.crearXat(nomXat, nomJugadors)
         })

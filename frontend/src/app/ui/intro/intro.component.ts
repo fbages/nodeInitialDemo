@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ElementRef } from '@angular/core';
-import { SocketsIoService } from 'src/app/services/sockets-io/sockets-io.service';
+//import { SocketsIoService } from 'src/app/services/sockets-io/sockets-io.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NicknameService } from 'src/app/services/nickname.service';
 import { Router } from '@angular/router';
@@ -25,7 +25,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
   passwordIncorrect: boolean = false;
 
   constructor(
-    private sockets: SocketsIoService,
+    //private sockets: SocketsIoService,
     private formBuilder: FormBuilder,
     private nicknameService: NicknameService,
     private router: Router,
@@ -113,13 +113,15 @@ export class IntroComponent implements OnInit, AfterViewInit {
               if (this.nomInput != null) {
                 this.nomInput = this.profileForm.get('nickname').value;
               }
-              this.nicknameService.setNickname(
-                this.profileForm.get('nickname').value
-              );
-              this.sockets.nomJugador = this.profileForm.get('nickname').value;
-              this.sockets.email = this.profileForm.get('email').value;
-              this.sockets.password = this.profileForm.get('password').value;
-              this.sockets.registrarJugador();
+              this.nicknameService.setNickname(this.profileForm.get('nickname').value);
+              this.nicknameService.setEmail(this.profileForm.get('email').value);
+              this.nicknameService.setPassword(this.profileForm.get('password').value);
+
+              //this.sockets.nomJugador = this.profileForm.get('nickname').value;
+              // this.sockets.email = this.profileForm.get('email').value;
+              // this.sockets.password = this.profileForm.get('password').value;
+              // this.sockets.registrarJugador();
+              this.nicknameService.nouRegistrat = true;
               this.router.navigate(['/xat/Xat General']);
             }
           });
@@ -144,19 +146,20 @@ export class IntroComponent implements OnInit, AfterViewInit {
           let jugador = {
             email: this.signForm.get('emailSign').value,
             password: this.signForm.get('passwordSign').value,
-            idsocketjugador: this.sockets.jugadorsSocket.id,
-            idsocketmissatge: this.sockets.missatgesSocket.id,
-            idsocketxat: this.sockets.xatsSocket.id,
+            // idsocketjugador: this.sockets.jugadorsSocket.id,
+            // idsocketmissatge: this.sockets.missatgesSocket.id,
+            // idsocketxat: this.sockets.xatsSocket.id,
           };
-          // console.log(jugador);
+          //console.log(jugador);
           let resposta = await this.buscarJugador(jugador);
+          //console.log(resposta);
           return resposta;
         };
         cercaPassword().then((res) => {
           if (!res) {
             this.passwordIncorrect = true;
           } else {
-            //S'ha de fer tornar el nickname perque angular s'apiga com es diu el jugador que ha entrat
+            //S'ha de fer tornar el nickname perque angular sapiga com es diu el jugador que ha entrat
             if (this.nomInput == null) {
               const cercaNickname = async () => {
                 this.nomInput = await this.getNickname(
@@ -167,6 +170,8 @@ export class IntroComponent implements OnInit, AfterViewInit {
               cercaNickname().then(() => {
                 this.nicknameService.setNickname(this.nomInput);
                 //console.log('nomInput ' + this.nomInput);
+                this.nicknameService.setEmail(this.signForm.get('emailSign').value);
+                this.nicknameService.setPassword(this.signForm.get('passwordSign').value);
                 this.router.navigate(['/xat/Xat General']);
               });
             }
@@ -178,9 +183,9 @@ export class IntroComponent implements OnInit, AfterViewInit {
           let jugador = {
             email: this.signForm.get('emailSign').value,
             password: 'Google',
-            idsocketjugador: this.sockets.jugadorsSocket.id,
-            idsocketmissatge: this.sockets.missatgesSocket.id,
-            idsocketxat: this.sockets.xatsSocket.id,
+            // idsocketjugador: this.sockets.jugadorsSocket.id,
+            // idsocketmissatge: this.sockets.missatgesSocket.id,
+            // idsocketxat: this.sockets.xatsSocket.id,
           };
           let resposta = await this.buscarJugador(jugador);
           return resposta;
@@ -235,7 +240,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
   async buscarJugador(jugador: object) {
     let resposta = await this.loginService.signInJugador(jugador);
-    //console.log(resposta)
+    // console.log(resposta)
     if (resposta['data']) {
       return true;
     } else {
@@ -261,8 +266,8 @@ export class IntroComponent implements OnInit, AfterViewInit {
       this.nomInput = this.nicknameService.getNickname();
     }
     this.nicknameService.setNickname(this.nomInput);
-    this.sockets.nomJugador = this.nomInput;
-    this.sockets.registrarJugador();
+    // this.sockets.nomJugador = this.nomInput;
+    // this.sockets.registrarJugador();
     this.router.navigate(['/xat/Xat General']);
   }
 }

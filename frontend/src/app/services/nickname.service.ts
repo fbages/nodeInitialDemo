@@ -5,6 +5,10 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class NicknameService {
+  nomJugador:string;
+  email:string;
+  password:string;
+  nouRegistrat:boolean = false;
 
   nickname:string;
   private googleRegister = new Subject<any>();
@@ -13,7 +17,7 @@ export class NicknameService {
     if (sharedService) {
       throw new Error("Nicknameservice ja s'ha creat");
     }
-   
+    
    }
 
   getNickname(){
@@ -22,6 +26,7 @@ export class NicknameService {
 
   setNickname(value:string){
     this.nickname = value;
+    this.nomJugador = value;
   }
 
   getGoogleStatus(){
@@ -35,5 +40,12 @@ export class NicknameService {
     return this.googleRegister.asObservable();
   }
 
+  setEmail(value:string){
+    this.email = value;
+  }
+
+  setPassword(value:string){
+    this.password = value;
+  }
 
 }

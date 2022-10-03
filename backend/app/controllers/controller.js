@@ -44,7 +44,7 @@ exports.signInJugador = async (req, res, next) => {
         let resultat = await crud.signInJugador(controlUsuariPassword);
         //console.log(resultat);
         if (resultat) {
-            await crud.regristrarSockets(req.body);
+            await crud.registrarSockets(req.body);
         }
         res.send({ "data": resultat });
     } catch (err) {
@@ -57,6 +57,21 @@ exports.llegirMissatges = async (req, res, next) => {
     try {
         let nomXatEnviat = req.body.nomXat;
         let resultat = await crud.retornaMissatges(nomXatEnviat);
+        if (resultat == false) {
+            res.send({ "data": [] })
+        } else {
+            res.send({ "data": resultat });
+        }
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
+}
+exports.llegirsales = async (req, res, next) => {
+    try {
+        let nomUsuari = req.body.nom;
+        //console.log(nomUsuari)
+        let resultat = await crud.llistarXats(nomUsuari);
         if (resultat == false) {
             res.send({ "data": [] })
         } else {

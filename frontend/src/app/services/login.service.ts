@@ -37,6 +37,10 @@ export class LoginService {
   async llegirMissatges(nomXat:string){
     return await this.http.post('/api/missatges', {'nomXat':nomXat}).toPromise();
   }
+  
+  async llegirSales(nickname:string){
+    return await this.http.post('/api/llegirsales', {'nom': nickname}).toPromise();
+  }
 
   async creacioSala(nomXat:string){
     return await this.http.post('/api/creaciosala',{'nomXat':nomXat}).toPromise();

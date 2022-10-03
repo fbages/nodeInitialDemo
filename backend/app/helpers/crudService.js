@@ -14,10 +14,21 @@ module.exports = {
     getEmail,
     getNickname,
     retornaNickname,
-    regristrarSockets,
+    registrarSockets,
     signInJugador,
     retornaMissatges,
-    retornaXat
+    retornaXat,
+    buscarIdJugadorAmbSocket,
+    buscarXatsAmbId,
+    llistarXats
+}
+
+async function llistarXats(nomUsuari){
+    let id = await db.Jugadors.findOne({nom : nomUsuari}).select('_id');
+    //console.log(id);
+    let xats = await db.Xats.find({jugadors:id}).select('nomxat');
+    //console.log(xats);
+    return xats;
 }
 
 async function getEmail(emailProva) {
@@ -75,9 +86,10 @@ async function retornaMissatges(nomXatEnviat) {
     }
 }
 
-async function regristrarSockets(jugadorSockets) {
-    //console.log("mail per buscar eljugador",jugadorSockets.email)
+async function registrarSockets(jugadorSockets) {
+    //console.log(jugadorSockets);
     let jugadorSockets2 = await db.Jugadors.findOneAndUpdate({ email: jugadorSockets.email }, jugadorSockets);
+    jugadorSockets2 = await db.Jugadors.findOne({ email: jugadorSockets.email });
     //console.log('registrat nous sockets',jugadorSockets2);
     return (jugadorSockets2 == null) ? false : true;
 }
@@ -187,3 +199,13 @@ async function buscarNomAmbSocket(socket, nameSpaceSocket) {
     //console.log(jugador);
     return jugador.nom
 }
+
+async function buscarIdJugadorAmbSocket(socket, nameSpaceSocket) {
+    let id = await db.Jugadors.findOne({ [`${nameSpaceSocket}`]: socket }).select('_id');
+    return id;
+}
+
+async function buscarXatsAmbId(id) {
+    let xats = await db.Xats.find({ jugadors: id }).select('nomxat');
+    return xats;
+};

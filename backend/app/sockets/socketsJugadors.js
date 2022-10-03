@@ -1,19 +1,32 @@
 const crudService = require('../helpers/crudService');
 
 async function socketsJugadors(io) {
-    let jugadors = [];
+    
     const JugadorsNameSpace = io.of("/jugadors");
     //Conexio i desconexio usuari
-    JugadorsNameSpace.on('connection', (socket) => {
+    JugadorsNameSpace.on('connection', async (socket) => {
         console.log('a user connected to jugadors ' + socket.id);
 
         socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password) => {
             //console.log(nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password)
             crudService.crearJugador(nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password).then(() => {
                 //console.log("afegir jugador a mongodb xat principal amb socket jugador :" + socket.id);
-                crudService.afegirJugadorAlXatPrincipal(socket.id);
+            crudService.afegirJugadorAlXatPrincipal(socket.id);
             }
             );
+        })
+
+        socket.on('socketsInJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket,email,password) => {
+            let jugador = {
+                nom: nom,
+                idsocketjugador : jugadoridsocket,
+                idsocketmissatge : missatgeidsocket,
+                idsocketxat : xatidsocket,
+                email: email,
+                password:password,
+            };
+
+            await crudService.registrarSockets(jugador);
         })
 
         socket.on('disconnect', async () => {

@@ -363,7 +363,7 @@ export class EngineService {
             }, 1000);
           }
         } catch (err) {
-          console.log(jugador.nom, 'és undefined');
+         // console.log(jugador.nom, 'és undefined');
         }
       }
     });
