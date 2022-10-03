@@ -196,7 +196,7 @@ async function buscarNomAmbSocket(socket, nameSpaceSocket) {
     //console.log(socket,nameSpaceSocket);
     //console.log({[`${nameSpaceSocket}`]:socket});
     let jugador = await db.Jugadors.findOne({ [`${nameSpaceSocket}`]: socket });
-    //console.log(jugador);
+   // console.log(jugador);
     return jugador.nom
 }
 

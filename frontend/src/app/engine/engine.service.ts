@@ -29,7 +29,7 @@ import {
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
-import '@babylonjs/core/Debug/debugLayer';
+//import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
 import { SocketsIoService } from '../services/sockets-io/sockets-io.service';
 import { Subscription } from 'rxjs';

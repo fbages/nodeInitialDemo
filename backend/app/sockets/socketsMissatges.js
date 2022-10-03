@@ -31,7 +31,7 @@ function ioMissatges(io) {
             //Salvar missatge a la db
             await crudService.guardarMissatge(socket.id, msg, nomXat);
 
-            console.log('message: ' + msg, nomXat);
+            //console.log('message: ' + msg, nomXat);
            
             socket.broadcast.to(nomXat).emit('chat message', msg, nomJugador,nomXat);
         });

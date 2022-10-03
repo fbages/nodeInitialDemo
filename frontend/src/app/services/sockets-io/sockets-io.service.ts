@@ -9,9 +9,9 @@ import { NicknameService } from '../nickname.service';
 //   providedIn: 'root',
 // } // o estar registrat a appmodule per estar disponible a totarreu
 export class SocketsIoService {
-  public jugadorsSocket //= io('http://localhost:3000/jugadors');
-  public missatgesSocket //= io('http://localhost:3000/missatges');
-  public xatsSocket //= io('http://localhost:3000/xats');
+  public jugadorsSocket = io('http://localhost:3000/jugadors');
+  public missatgesSocket = io('http://localhost:3000/missatges');
+  public xatsSocket = io('http://localhost:3000/xats');
   nomJugador: string;
   email: string;
   password: string;
@@ -34,12 +34,12 @@ export class SocketsIoService {
     this.nomJugador = this.nicknamService.nomJugador;
     this.email = this.nicknamService.email;
     this.password = this.nicknamService.password;
-    this.jugadorsSocket = io('http://localhost:3000/jugadors');
-    this.missatgesSocket = io('http://localhost:3000/missatges');
-    this.xatsSocket = io('http://localhost:3000/xats');
+    // this.jugadorsSocket = io('http://localhost:3000/jugadors');
+    // this.missatgesSocket = io('http://localhost:3000/missatges');
+    // this.xatsSocket = io('http://localhost:3000/xats');
 
     this.missatgesSocket.on('chat message', (msg, jugador, nomXat) => {
-      console.log(msg,jugador,nomXat);
+      //console.log(msg,jugador,nomXat);
       this.missatgeRebutG.next({ message: msg, nomJugador: jugador, nomxat:nomXat });
     });
 
