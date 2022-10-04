@@ -124,8 +124,8 @@ export class SocketsIoService {
   }
 
   enviarMissatgeGeneral(missatge: string, nomxat: string) {
-   // console.log(missatge,nomxat);
     if (missatge) {
+      console.log(missatge,nomxat);
       this.missatgesSocket.emit('chat message', missatge, nomxat);
     }
   }
@@ -181,7 +181,12 @@ export class SocketsIoService {
 
   creadaSalaPublica(nomXat: string) {
     this.xatsSocket.emit('xat public', nomXat);
-  }
+    setTimeout(() => {
+      
+      console.log('afegit a la room de la nova sala')
+      this.missatgesSocket.emit('nou chat');
+    }, 500);
+    }
 
   //ajuda
   // crearSockets() {

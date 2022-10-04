@@ -1,4 +1,5 @@
 const crudService = require('../helpers/crudService');
+const adjuntaSala = require('./socketsMissatges')
 
 function socketsXats(io) {
     const xatsNameSpace = io.of("/xats");
@@ -11,7 +12,7 @@ function socketsXats(io) {
         });
 
         socket.on('xat public', async (nomXat) => {
-            socket.join(nomXat);
+            //socket.join(nomXat); //error la room de xatsNamespace no es la mateix que de missatgesNamespace      
             socket.broadcast.emit('crea xat public', nomXat);
         })
         //Cada usuari té la seva room automaticament, quan algu vulgui parlar amb ell s'afegirà a la room del inicial

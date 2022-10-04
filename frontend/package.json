@@ -30,6 +30,7 @@
     "babylonjs-gltf2interface": "^5.26.1",
     "bootstrap": "^5.2.0",
     "dotenv": "^16.0.2",
+    "nodemon": "^2.0.20",
     "rxjs": "^6.6.7",
     "socket.io-client": "^4.5.1",
     "tslib": "^2.3.0",

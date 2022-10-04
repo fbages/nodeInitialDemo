@@ -58,7 +58,6 @@ export class XatComponent implements OnInit, AfterViewInit {
   }
 
   logout(){
-    console.log("hoal")
     this.router.navigate(['']);
   }
 
@@ -96,7 +95,7 @@ export class XatComponent implements OnInit, AfterViewInit {
           this.userXat.push({ nomXat: nomXat });
           this.addXat();
           this.llegirMissatges(nomXat);
-          this.router.navigate(['/xat/' + nomXat]);
+          //this.router.navigate(['/xat/' + nomXat]);
         }
     
     });
@@ -124,6 +123,7 @@ export class XatComponent implements OnInit, AfterViewInit {
       let rutaXat = this.router.url.split('/');
       //console.log(rutaXat);
       rutaXat[2] = rutaXat[2].replace('%20', ' ');
+      //console.log(rutaXat[2]);
       this.sockets.enviarMissatgeGeneral(this.missatge, rutaXat[2]); //Envia al servei el missatge
 
       this.elementRef.nativeElement.querySelector(

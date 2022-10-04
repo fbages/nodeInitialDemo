@@ -12,12 +12,13 @@ export class FooterComponent implements OnInit {
 
   ngOnInit(): void {
     window.addEventListener("keyup", this.disableF5);
-
     window.addEventListener("keydown", this.disableF5);
+
   }
 
   disableF5(e) {
     if ((e.which || e.keyCode) == 116) e.preventDefault(); 
  };
+
 
 }
