@@ -23,6 +23,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
   mailRegistrat: boolean = false;
   nickNameRegistrat: boolean = false;
   passwordIncorrect: boolean = false;
+  statusUsuari: boolean = false;
 
   constructor(
     //private sockets: SocketsIoService,
@@ -107,21 +108,30 @@ export class IntroComponent implements OnInit, AfterViewInit {
           };
           cercaNickname().then((res) => {
             if (res) {
-              //console.log('Nickname is already taken');
+              console.log('Nickname is already taken');
               this.nickNameRegistrat = true;
             } else {
               if (this.nomInput != null) {
                 this.nomInput = this.profileForm.get('nickname').value;
               }
-              this.nicknameService.setNickname(this.profileForm.get('nickname').value);
-              this.nicknameService.setEmail(this.profileForm.get('email').value);
-              this.nicknameService.setPassword(this.profileForm.get('password').value);
+              this.nicknameService.setNickname(
+                this.profileForm.get('nickname').value
+              );
+              this.nicknameService.setEmail(
+                this.profileForm.get('email').value
+              );
+              this.nicknameService.setPassword(
+                this.profileForm.get('password').value
+              );
 
-              //this.sockets.nomJugador = this.profileForm.get('nickname').value;
-              // this.sockets.email = this.profileForm.get('email').value;
-              // this.sockets.password = this.profileForm.get('password').value;
-              // this.sockets.registrarJugador();
               this.nicknameService.nouRegistrat = true;
+              let jugador = {
+                email: this.nicknameService.getEmail(),
+                nom: this.nicknameService.getNickname(),
+                password: this.nicknameService.getPassword(),
+                status:true
+              };
+              this.loginService.registrarNouJugador(jugador);
               this.router.navigate(['/xat/Xat General']);
             }
           });
@@ -167,12 +177,24 @@ export class IntroComponent implements OnInit, AfterViewInit {
                 );
                 // console.log('nomInput ' + this.nomInput, this.signForm.get('emailSign').value);
               };
-              cercaNickname().then(() => {
+              cercaNickname().then( async () => {
                 this.nicknameService.setNickname(this.nomInput);
                 //console.log('nomInput ' + this.nomInput);
-                this.nicknameService.setEmail(this.signForm.get('emailSign').value);
-                this.nicknameService.setPassword(this.signForm.get('passwordSign').value);
-                this.router.navigate(['/xat/Xat General']);
+                this.nicknameService.setEmail(
+                  this.signForm.get('emailSign').value
+                );
+                this.nicknameService.setPassword(
+                  this.signForm.get('passwordSign').value
+                );
+
+                //Controla que no estigui ja conectat
+                let resposta = await this.loginService.getStatus(this.signForm.get('emailSign').value)
+                console.log(resposta)
+                if(resposta['data']){
+                  this.statusUsuari = true;
+                } else {
+                  this.router.navigate(['/xat/Xat General']);
+                }
               });
             }
           }
@@ -239,8 +261,9 @@ export class IntroComponent implements OnInit, AfterViewInit {
   }
 
   async buscarJugador(jugador: object) {
+    //console.log(jugador);
     let resposta = await this.loginService.signInJugador(jugador);
-    // console.log(resposta)
+    //console.log(resposta);
     if (resposta['data']) {
       return true;
     } else {
@@ -266,8 +289,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
       this.nomInput = this.nicknameService.getNickname();
     }
     this.nicknameService.setNickname(this.nomInput);
-    // this.sockets.nomJugador = this.nomInput;
-    // this.sockets.registrarJugador();
     this.router.navigate(['/xat/Xat General']);
   }
 }

@@ -1,4 +1,5 @@
 const crudService = require('../helpers/crudService');
+const crudServiceJugadors = require('../helpers/crudServiceJugadors');
 
 async function socketsJugadors(io) {
     
@@ -7,26 +8,28 @@ async function socketsJugadors(io) {
     JugadorsNameSpace.on('connection', async (socket) => {
         console.log('a user connected to jugadors ' + socket.id);
 
-        socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password) => {
-            //console.log(nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password)
-            crudService.crearJugador(nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password).then(() => {
-                //console.log("afegir jugador a mongodb xat principal amb socket jugador :" + socket.id);
-            crudService.afegirJugadorAlXatPrincipal(socket.id);
-            }
-            );
-        })
+        // nomes index.js
+        // socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, email, password) => {
+        //     //console.log(nom, jugadoridsocket, missatgeidsocket, xatidsocket, email, password)
+        //     crudService.crearJugador(nom, jugadoridsocket, missatgeidsocket, email, password).then(() => {
+        //         //console.log("afegir jugador a mongodb xat principal amb socket jugador :" + socket.id);
+        //     crudService.afegirJugadorAlXatPrincipal(socket.id);
+        //     }
+        //     );
+        // })
 
-        socket.on('socketsInJugador', async (nom, jugadoridsocket, missatgeidsocket, xatidsocket,email,password) => {
+        socket.on('socketsInJugador', async (nom, jugadoridsocket, missatgeidsocket,email,password) => {
             let jugador = {
                 nom: nom,
                 idsocketjugador : jugadoridsocket,
                 idsocketmissatge : missatgeidsocket,
-                idsocketxat : xatidsocket,
+                //idsocketxat : xatidsocket,
                 email: email,
                 password:password,
+                status: true
             };
 
-            await crudService.registrarSockets(jugador);
+            await crudServiceJugadors.registrarSockets(jugador);
         })
 
         socket.on('disconnect', async () => {
@@ -36,6 +39,10 @@ async function socketsJugadors(io) {
                 let nomJugador = await crudService.buscarNomAmbSocket(socket.id, 'idsocketjugador');
                 //console.log(nomJugador);
                 socket.broadcast.volatile.emit('jugadorDesconecat', nomJugador);
+
+                //canviem a false l'status del jugador, aixi no es pot conectar un altre vegada
+                let jugadorDesconectat = await crudService.statusDesconectat(nomJugador);
+
             } catch {
                 console.log("No s'ha pogut eliminar");
             }

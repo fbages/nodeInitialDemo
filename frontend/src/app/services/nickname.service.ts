@@ -25,8 +25,8 @@ export class NicknameService {
   }
 
   setNickname(value:string){
-    this.nickname = value;
-    this.nomJugador = value;
+    this.nickname = value.trim();
+    this.nomJugador = value.trim();
   }
 
   getGoogleStatus(){
@@ -40,8 +40,16 @@ export class NicknameService {
     return this.googleRegister.asObservable();
   }
 
+  getEmail(){
+    return this.email;
+  }
+
   setEmail(value:string){
-    this.email = value;
+    this.email = value.trim();
+  }
+
+  getPassword(){
+    return this.password;
   }
 
   setPassword(value:string){

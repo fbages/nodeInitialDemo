@@ -1,5 +1,4 @@
 const crudService = require('../helpers/crudService');
-const adjuntaSala = require('./socketsMissatges')
 
 function socketsXats(io) {
     const xatsNameSpace = io.of("/xats");

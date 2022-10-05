@@ -5,8 +5,9 @@ function ioMissatges(io) {
 
     //Rebre missatges i reenviarlos a la resta d'usuaris globals
     missatgesNameSpace.on('connection', (socket) => {
-        console.log('a user connected to missatges ' + socket.id);
 
+        //Missatges
+        console.log('a user connected to missatges ' + socket.id);
 
         //unir a les rooms de xat
         setTimeout( async ()  => {
@@ -23,7 +24,7 @@ function ioMissatges(io) {
                 socket.join(xats[i].nomxat);
             }
           //  console.log(socket.rooms);
-        }, 1000);
+        }, 500);
 
         socket.on('chat message', async (msg, nomXat) => {
             //Buscar socket.id al llistat de jugadors per enviar a la resta el nom del jugador
@@ -33,32 +34,82 @@ function ioMissatges(io) {
             await crudService.guardarMissatge(socket.id, msg, nomXat);
             
             //console.log('message: ' + msg, nomXat);
-            //Comprova que tots els usuaris estant a la sala on s'envia el missatge (sala creada en sessio)
-            let idJugador = await crudService.buscarIdJugadorAmbSocket(socket.id,"idsocketmissatge");
-           // console.log(idJugador);
-            let xats = await crudService.buscarXatsAmbId(idJugador);
-          //console.log(xats);
-          for(let i = 0; i< xats.length; i++ ){
-              // console.log(i, xats[i].nomxat)
-               socket.join(xats[i].nomxat);
-           }
-        //    console.log('Afegits tots els jugadors')
+
         //    console.log(socket.rooms);
             socket.broadcast.to(nomXat).emit('chat message', msg, nomJugador,nomXat);
         });
 
-        socket.on('nou chat', async()=>{
-             // console.log(socket.id);
-             let idJugador = await crudService.buscarIdJugadorAmbSocket(socket.id,"idsocketmissatge");
-              //console.log(idJugador);
-              let xats = await crudService.buscarXatsAmbId(idJugador);
-           // console.log(xats);
-            for(let i = 0; i< xats.length; i++ ){
-                // console.log(i, xats[i].nomxat)
-                 socket.join(xats[i].nomxat);
-             }
-            //  console.log('Afegits tots els jugadors')
-            //  console.log(socket.rooms);
+        // socket.on('nou chat', async(nomXat)=>{
+
+        //      // console.log(socket.id);
+        //      let idJugador = await crudService.buscarIdJugadorAmbSocket(socket.id,"idsocketmissatge");
+        //       //console.log(idJugador);
+        //       let xats = await crudService.buscarXatsAmbId(idJugador);
+        //     //console.log(xats);
+        //     for(let i = 0; i< xats.length; i++ ){
+        //         // console.log(i, xats[i].nomxat)
+        //          socket.join(xats[i].nomxat);
+        //      }
+            
+        //       console.log(socket.rooms);
+        // });
+      
+
+        //Sales
+
+        //Reenvia la creacio d'una sala publica a la resta d'usuaris
+        socket.on('xat public', async (nomXat) => {
+            let jugadors = await crudService.llistatJugadors();
+            let nouXat = await crudService.crearXat(nomXat, jugadors);
+            //si afegeix tothom, si un es borrar es nomes ell  
+            socket.broadcast.emit('creat xat public', nomXat);
+        })
+
+        //Usuari s'uneix a la sala
+        socket.on('room',(room)=>{
+            socket.join(room);
+        });
+        //Usuari deixar la sala
+        socket.on('deixa room', (room)=>{
+            socket.leave(room)
+        })
+
+        //Cada usuari té la seva room automaticament, quan algu vulgui parlar amb ell s'afegirà a la room del inicial
+        //socket.join(socket.id);
+
+        //Peticio per conectar amb un altre usuari a parlar en el meu room
+        socket.on('Peticio', async (nomJugadorDemanat, nomJugadorPeticio) => {
+            //buscar nom a la bd per trobar el socket.id de Xats
+            //console.log("S'ha rebut una petició de " + socket.id + "per parlar amb " + nomJugadorDemanat);
+            let socketAltreUsuari = await crudService.buscarSocketAmbNom(nomJugadorDemanat, "idsocketxat");
+            //buscar nom del usuari que fa la peticio
+            //let socketUsuariPeticio = await crudService.buscarNomAmbSocket(socket.id, "idsocketxat")
+            socket.to(socketAltreUsuari).emit("Aceptacio parlar", "Puc parlar amb tu?", nomJugadorPeticio);
+        });
+
+        //Confirmació d'acceptacio de l'altre usuari 
+        socket.on('Si accepto', async (nomJugadorDemanat, nomJugadorPeticio) => {
+            let socketPeticio = await crudService.buscarSocketAmbNom(nomJugadorPeticio, "idsocketxat");
+            //console.log('sala privada : '+ nomJugadorDemanat + ' amb socket ' + socket.id);
+            //console.log('afegint socket ' + socketPeticio);
+            socket.to(socketPeticio).emit('Acceptat', nomJugadorDemanat, nomJugadorPeticio);
+            // console.log('Server ha unit ' + nomJugadorPeticio +" a la sala de l'usuari " + nomJugadorDemanat)
+        });
+
+        //Missatge privat rebut i reenviat en el xat privat
+        socket.on('Missatge privat', async (anfitrioRoom, nomMissatger, msg) => {
+            //console.log(`Sala: ${anfitrioRoom}  Missatger: ${nomMissatger}  Msg: ${msg}`);
+            let anfitrioSocket = await crudService.buscarSocketAmbNom(anfitrioRoom, "idsocketxat");
+            let missatgerSocket = await crudService.buscarSocketAmbNom(nomMissatger, "idsocketxat");
+            //console.log(`Missatge privat : ${msg} de ${missatgerSocket} enviat a la room ${anfitrioSocket}`);
+            xatsNameSpace.to(anfitrioSocket).emit(`Missatge privat distribuit`, anfitrioRoom, nomMissatger, msg); //socket or xatsNameSpace
+        });
+
+        socket.on('registrar xat privat', async (nomXat) => {
+            let nomJugadors = nomXat.split('*');
+            //console.log(nomJugadors);
+            nomJugadors = await crudService.llistatJugadorsXatPrivat(nomJugadors)
+            await crudService.crearXat(nomXat, nomJugadors)
         })
 
         socket.on("connect_error", (err) => {

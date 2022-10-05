@@ -4,7 +4,8 @@ const jugadorSchema = new Schema({
     nom : String,
     idsocketjugador : String,
     idsocketmissatge : String,
-    idsocketxat : String,
+   // idsocketxat : String,
+    status: Boolean,
     email: String,
     password: String
 });

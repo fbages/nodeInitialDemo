@@ -58,6 +58,7 @@
           <input id="passwordSign" type="password" formControlName="passwordSign" required /><br />
           </div>
           <button type="button" class="btn btn-info" type="submit">Sign In</button>
+          <span *ngIf="statusUsuari" style="color: red; font-size: 0.8em"> User has already sign in</span>
         </form>
       </div>
      

@@ -1,4 +1,28 @@
 const crud = require('../helpers/crudService');
+const crudServiceJugadors = require('../helpers/crudServiceJugadors');
+
+exports.status = async (req, res, next) => {
+    try {
+        let emailProvat = req.body.email;
+        let resultat = await crud.controlarStatus(emailProvat)
+        res.send({ "data": resultat });
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
+}
+
+exports.statusDesconectat = async (req, res, next) => {
+    try {
+        let emailProvat = req.body.email;
+        let nomJugador = await crud.buscarNomAmbEmail(emailProvat);
+        let resultat = await crud.statusDesconectat(nomJugador);
+        res.send({ "data": resultat.status });
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
+}
 
 exports.getEmail = async (req, res, next) => {
     try {
@@ -35,6 +59,23 @@ exports.retornaNickname = async (req, res, next) => {
     }
 }
 
+exports.registrarNom = async (req, res, next) => {
+    try {
+        //console.log(req.body);
+        let usuari = {};
+        usuari.email = req.body.email;
+        usuari.password = req.body.password;
+        usuari.nom = req.body.nom;
+        usuari.status = req.body.status
+        let resultat = await crud.registrarNom(usuari);
+        let _id = await crud.afegirJugadorAlXatPrincipal(usuari.email);
+        res.send({ "data": resultat });
+    } catch (err) {
+        res.status(400);
+        res.json(err);
+    }
+}
+
 exports.signInJugador = async (req, res, next) => {
     try {
         //console.log(req.body);
@@ -44,7 +85,7 @@ exports.signInJugador = async (req, res, next) => {
         let resultat = await crud.signInJugador(controlUsuariPassword);
         //console.log(resultat);
         if (resultat) {
-            await crud.registrarSockets(req.body);
+            await crudServiceJugadors.registrarSockets(req.body);
         }
         res.send({ "data": resultat });
     } catch (err) {

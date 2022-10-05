@@ -36,15 +36,16 @@ export class XatComponent implements OnInit, AfterViewInit {
     private nickNameService: NicknameService
   ) {
     //controlar si es la primera vegada que es registra
-    if(this.nickNameService.nouRegistrat){
-      setTimeout(() => {
-        this.sockets.registrarJugador(); 
-      }, 400);
-    } else {
+    //if(this.nickNameService.nouRegistrat){
+      // setTimeout(() => {
+      //   this.sockets.registrarJugador(); 
+      // }, 400);
+    //} else {
       setTimeout(() => {
         this.sockets.socketsInJugador(); 
       }, 400);
-    }
+    //}
+
     router.events.subscribe((val) => {
       let rutaXat;
       rutaXat = this.router.url.split('/');
@@ -58,7 +59,9 @@ export class XatComponent implements OnInit, AfterViewInit {
   }
 
   logout(){
-    this.router.navigate(['']);
+    //console.log(this.nickNameService.getEmail())
+    this.loginService.setStatusDesconectat(this.nickNameService.getEmail());
+    this.router.navigate(['http://localhost:4200/']);
   }
 
   //formbuilders funcions

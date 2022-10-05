@@ -11,7 +11,7 @@ import { NicknameService } from '../nickname.service';
 export class SocketsIoService {
   public jugadorsSocket = io('http://localhost:3000/jugadors');
   public missatgesSocket = io('http://localhost:3000/missatges');
-  public xatsSocket = io('http://localhost:3000/xats');
+  //public xatsSocket = io('http://localhost:3000/xats');
   nomJugador: string;
   email: string;
   password: string;
@@ -53,19 +53,19 @@ export class SocketsIoService {
     );
 
     //Rebre peticio per parlar privat
-    this.xatsSocket.on('Aceptacio parlar', (msg, usuariPeticio) => {
+    this.missatgesSocket.on('Aceptacio parlar', (msg, usuariPeticio) => {
       //console.log('Has rebut peticio de : ' + usuariPeticio);
       this.peticioXatP.next(usuariPeticio);
     });
 
     //confirmacio de peticio aceptada
-    this.xatsSocket.on('Acceptat', (nomJugadorDemanat, nomJugadorPeticio) => {
+    this.missatgesSocket.on('Acceptat', (nomJugadorDemanat, nomJugadorPeticio) => {
       let nomXat = nomJugadorDemanat + '*' + nomJugadorPeticio;
       this.confirmacioXatP.next(nomXat);
     });
 
     //Rebre missatge privat
-    this.xatsSocket.on(
+    this.missatgesSocket.on(
       'Missatge privat distribuit',
       (anfitrioRoom, nomMissatger, msg) => {
         // console.log(`Missatge: ${msg}, enviat per ${nomMissatger}, distribuit a la sala socket de ${anfitrioRoom}`);
@@ -74,9 +74,10 @@ export class SocketsIoService {
       }
     );
 
-    this.xatsSocket.on('crea xat public', (nomXat) => {
+    this.missatgesSocket.on('creat xat public', (nomXat) => {
       //console.log(nomXat + ' arribat del servidor')
       this.confirmacioXatP.next(nomXat);
+      this.missatgesSocket.emit('room', nomXat);
     });
 
   }
@@ -94,17 +95,17 @@ export class SocketsIoService {
     return this.jugadorsSocket;
   }
 
-  registrarJugador() {
-    this.jugadorsSocket.emit(
-      'nouJugador',
-      this.nomJugador,
-      this.jugadorsSocket.id,
-      this.missatgesSocket.id,
-      this.xatsSocket.id,
-      this.email,
-      this.password
-    );
-  };
+  // registrarJugador() {
+  //   this.jugadorsSocket.emit(
+  //     'nouJugador',
+  //     this.nomJugador,
+  //     this.jugadorsSocket.id,
+  //     this.missatgesSocket.id,
+  //     //this.xatsSocket.id,
+  //     this.email,
+  //     this.password
+  //   );
+  // };
 
   socketsInJugador() {
 
@@ -115,12 +116,16 @@ export class SocketsIoService {
             this.nomJugador,
             this.jugadorsSocket.id,
             this.missatgesSocket.id,
-            this.xatsSocket.id,
+            //this.xatsSocket.id,
             this.nicknamService.email,
             this.password
             );
         }, 500);
 
+  }
+
+  sortirXat(nomxat: string){
+    this.missatgesSocket.emit('deixa room', nomxat)
   }
 
   enviarMissatgeGeneral(missatge: string, nomxat: string) {
@@ -132,9 +137,7 @@ export class SocketsIoService {
 
   enviarJugador(jugador: Object) {
     //console.log(jugador, "a punt d'enviar a socket");
-    //setTimeout(() => {
     this.jugadorsSocket.emit('jugador', jugador);
-    //},500);
   }
 
   getJugadors() {
@@ -145,7 +148,7 @@ export class SocketsIoService {
   }
 
   peticioXatPrivat(nomJugadorDemanat: string, nomJugadorPeticio: string) {
-    this.xatsSocket.emit('Peticio', nomJugadorDemanat, nomJugadorPeticio);
+    this.missatgesSocket.emit('Peticio', nomJugadorDemanat, nomJugadorPeticio);
   }
 
   rebrepeticioXatPrivat() {
@@ -157,11 +160,11 @@ export class SocketsIoService {
     nomJugadorPeticio: string
   ) {
     this.confirmacioXatP.next(nomJugadorDemanat + '*' + nomJugadorPeticio);
-    this.xatsSocket.emit(
+    this.missatgesSocket.emit(
       'registrar xat privat',
       nomJugadorDemanat + '*' + nomJugadorPeticio
     );
-    this.xatsSocket.emit('Si accepto', nomJugadorDemanat, nomJugadorPeticio);
+    this.missatgesSocket.emit('Si accepto', nomJugadorDemanat, nomJugadorPeticio);
   }
 
   // enviarMissatgePrivat(missatge: string, destinatari) {
@@ -180,60 +183,10 @@ export class SocketsIoService {
   // }
 
   creadaSalaPublica(nomXat: string) {
-    this.xatsSocket.emit('xat public', nomXat);
-    setTimeout(() => {
-      
-      console.log('afegit a la room de la nova sala')
-      this.missatgesSocket.emit('nou chat');
-    }, 500);
+    this.missatgesSocket.emit('xat public', nomXat);
     }
 
-  //ajuda
-  // crearSockets() {
-  //   // function prova() {
-  //   //   setTimeout(() => {
-  //   //     this.jugadorsSocket.emit('prova', 'Hola aixo es una prova');
-  //   //     console.log('enviada prova');
-  //   //     //this.xatPrivat = invitador;
-  //   //   }, 3000);
-  //   // }
-  //   // //Peticio de conectar-se a un xat privat
-  //   // document.getElementById('privatxat').addEventListener('click', () => {
-  //   //   let socketinvitacio = document.getElementById('privatsocket').value;
-  //   //   console.log(socketinvitacio);
-  //   //   this.xatsSocket.emit('Peticio', socketinvitacio);
-  //   // });
-  //   // //Rebre peticio exterior
-  //   // this.xatsSocket.on('Aceptacio parlar', (msg, usuariPeticio) => {
-  //   //   console.log('Has rebut peticio de : ' + usuariPeticio);
-  //   //   document.getElementById('peticiosocket').value = usuariPeticio;
-  //   // });
-  //   // //Confirmar peticio exterior
-  //   // document.getElementById('peticioxat').addEventListener('click', () => {
-  //   //   let invitador = document.getElementById('peticiosocket').value;
-  //   //   console.log('invitat per: ' + invitador);
-  //   //   this.xatsSocket.emit('Si accepto', invitador);
-  //   //   this.xatPrivat = invitador;
-  //   // });
-  //   // //Informat que has sigut acceptat
-  //   // this.xatsSocket.on('Acceptat', (invitador) => {
-  //   //   document.getElementById('privatsocket').style.backgroundColor = 'green';
-  //   //   this.xatPrivat = invitador;
-  //   // });
-  //   // //Enviar missatge privat
-  //   // document.getElementById('missatgeprivat').addEventListener('click', () => {
-  //   //   let text = document.getElementById('enviamissatgeprivat').value;
-  //   //   //let socketRoom = document.getElementById("peticiosocket").value || xatsSocket.id;
-  //   //   this.xatsSocket.emit('Missatge privat', this.xatPrivat, this.nomJugador, text);
-  //   // });
-  //   //rebre missatge privat
-  //   // this.xatsSocket.on(
-  //   //   'Missatge privat distribuit',
-  //   //   (anfitrioRoom, nomMissatger, msg) => {
-  //   //     console.log(
-  //   //       `Missatge: ${msg}, enviat per ${nomMissatger}, distribuit a la sala socket de ${anfitrioRoom}`
-  //   //     );
-  //   //   }
-  //   // );
-  // }
+  
+
+  
 }

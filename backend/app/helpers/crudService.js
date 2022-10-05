@@ -14,19 +14,37 @@ module.exports = {
     getEmail,
     getNickname,
     retornaNickname,
-    registrarSockets,
+    //registrarSockets,
     signInJugador,
     retornaMissatges,
     retornaXat,
     buscarIdJugadorAmbSocket,
     buscarXatsAmbId,
-    llistarXats
+    llistarXats,
+    registrarNom,
+    statusDesconectat,
+    controlarStatus,
+    buscarNomAmbEmail
+}
+async function buscarNomAmbEmail(email){
+    let nomJugador = await db.Jugadors.findOne({email: email});
+    return nomJugador.nom
 }
 
-async function llistarXats(nomUsuari){
-    let id = await db.Jugadors.findOne({nom : nomUsuari}).select('_id');
+async function statusDesconectat(nomJugador){
+    let statusJugador = await db.Jugadors.findOneAndUpdate({nom: nomJugador},{status:false, idsocketjugador: null, idsocketmissatge:null});
+    //console.log(statusJugador);
+}
+
+async function controlarStatus(email){
+    let statusJugador = await db.Jugadors.findOne({email: email});
+    return statusJugador.status
+}
+
+async function llistarXats(nomUsuari) {
+    let id = await db.Jugadors.findOne({ nom: nomUsuari }).select('_id');
     //console.log(id);
-    let xats = await db.Xats.find({jugadors:id}).select('nomxat');
+    let xats = await db.Xats.find({ jugadors: id }).select('nomxat');
     //console.log(xats);
     return xats;
 }
@@ -86,12 +104,22 @@ async function retornaMissatges(nomXatEnviat) {
     }
 }
 
-async function registrarSockets(jugadorSockets) {
-    //console.log(jugadorSockets);
-    let jugadorSockets2 = await db.Jugadors.findOneAndUpdate({ email: jugadorSockets.email }, jugadorSockets);
-    jugadorSockets2 = await db.Jugadors.findOne({ email: jugadorSockets.email });
-    //console.log('registrat nous sockets',jugadorSockets2);
-    return (jugadorSockets2 == null) ? false : true;
+async function registrarNom(jugador) {
+    try {
+        let jug = await db.Jugadors.create(jugador);
+        let _id = await db.Jugadors.findOne(jugador)['_id'];
+        console.log(_id);
+        //Introduir jugador a tots els xats oberts publics
+        let xats = await db.Xats.find({ tipus: 'public' });
+        console.log(xats);
+        for (let i = 0; i < xats.length; i++) {
+            await xats[i].jugadors.push(_id);
+            await xats[i].save();
+        }
+        return jug;
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 async function signInJugador(jugador) {
@@ -121,9 +149,10 @@ async function retornaXat(nomXat) {
     return xat
 }
 
-async function afegirJugadorAlXatPrincipal(idsocketJugador) {
+async function afegirJugadorAlXatPrincipal(email) {
     let xat = await db.Xats.findOne({ nomxat: "Xat General" });
-    let jug = await db.Jugadors.findOne({ idsocketjugador: idsocketJugador });
+    console.log(xat);
+    let jug = await db.Jugadors.findOne({ email: email });
     //console.log("Afegir jugador al xat", jug);
     try {
         await xat.jugadors.push(jug._id);
@@ -196,7 +225,7 @@ async function buscarNomAmbSocket(socket, nameSpaceSocket) {
     //console.log(socket,nameSpaceSocket);
     //console.log({[`${nameSpaceSocket}`]:socket});
     let jugador = await db.Jugadors.findOne({ [`${nameSpaceSocket}`]: socket });
-   // console.log(jugador);
+    // console.log(jugador);
     return jugador.nom
 }
 
