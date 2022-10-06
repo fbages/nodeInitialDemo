@@ -40,10 +40,10 @@ http://localhost:4200
 
 ## Screenshots
 
-# Landing page
+### Landing page
 
 ![](assets/Intro.PNG)
 
-# Entorn 3D amb xat
+### Entorn 3D amb xat
 
 ![](assets/Xat.PNG)
