@@ -39,7 +39,7 @@ async function socketsJugadors(io) {
                 let nomJugador = await crudService.buscarNomAmbSocket(socket.id, 'idsocketjugador');
                 //console.log('nomJugador', nomJugador);
                 socket.broadcast.volatile.emit('jugadorDesconecat', nomJugador);
-
+                console.log(`Usuari ${nomJugador} s'ha desconectat`);
                 //canviem a false l'status del jugador, aixi no es pot conectar un altre vegada
                 let jugadorDesconectat = await crudServiceJugadors.statusDesconectat(nomJugador);
 

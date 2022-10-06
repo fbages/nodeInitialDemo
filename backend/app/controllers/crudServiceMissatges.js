@@ -65,7 +65,7 @@ async function afegirJugadorAlXat(email, nomXat) {
     //console.log('Xat seleccionat', nomXat, email);
     let xat = await db.Xats.findOne({ nomxat: nomXat });
     let jug = await db.Jugadors.findOne({ email: email });
-    console.log("Afegir jugador al xat", jug);
+    //console.log("Afegir jugador al xat", jug);
     try {
         await xat.jugadors.push(jug._id);
         await xat.save();
