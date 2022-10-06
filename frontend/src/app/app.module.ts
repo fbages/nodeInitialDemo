@@ -9,7 +9,6 @@ import { IntroComponent } from './ui/intro/intro.component'
 import { RouterModule, Routes } from '@angular/router';
 import { FooterComponent } from './ui/footer/footer.component';
 import { HeaderComponent } from './ui/header/header.component';
-import { StatsComponent } from './ui/stats/stats.component';
 import { XatComponent } from './ui/xat/xat.component';
 import { SocketsIoService } from './services/sockets-io/sockets-io.service';
 import { MessageComponent } from './ui/message/message.component';
@@ -44,7 +43,6 @@ const appRoutes:Routes=[
     IntroComponent,
     FooterComponent,
     HeaderComponent,
-    StatsComponent,
     XatComponent,
     MessageComponent,
     GoogleloginComponent,

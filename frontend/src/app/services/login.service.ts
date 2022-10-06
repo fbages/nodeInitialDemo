@@ -48,11 +48,11 @@ export class LoginService {
     return await this.http.post('/api/missatges', {'nomXat':nomXat.trim()}).toPromise();
   }
   
-  async llegirSales(nickname:string){
-    return await this.http.post('/api/llegirsales', {'nom': nickname.trim()}).toPromise();
-  }
+  // async llegirSales(nickname:string){
+  //   return await this.http.post('/api/llegirsales', {'nom': nickname.trim()}).toPromise();
+  // }
 
-  async creacioSala(nomXat:string){
-    return await this.http.post('/api/creaciosala',{'nomXat':nomXat.trim()}).toPromise();
-  }
+  // async creacioSala(nomXat:string){
+  //   return await this.http.post('/api/creaciosala',{'nomXat':nomXat.trim()}).toPromise();
+  // }
 }

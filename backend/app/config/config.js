@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const jugadorSchema = require("../models/jugadorModel");
 const missatgeSchema = require("../models/missatgeModel");
 const xatSchema = require("../models/xatModel");
-const crudService = require("../helpers/crudService");
+const crudService = require("../controllers/crudServiceMissatges");
 
 module.exports = db = {};//fa la variable global accessible a tot el programa 
 

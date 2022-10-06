@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, OnInit, ElementRef } from '@angular/core';
-//import { SocketsIoService } from 'src/app/services/sockets-io/sockets-io.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NicknameService } from 'src/app/services/nickname.service';
 import { Router } from '@angular/router';
@@ -26,7 +25,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
   statusUsuari: boolean = false;
 
   constructor(
-    //private sockets: SocketsIoService,
     private formBuilder: FormBuilder,
     private nicknameService: NicknameService,
     private router: Router,
@@ -145,7 +143,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
   onSubmitSign() {
     this.submittedSign = true;
 
-    //console.log(this.signForm);
+    console.log(this.signForm.status);
     //console.log(this.googleRegister, this.signForm.get('nomSign'));
     if (
       this.signForm.status == 'VALID' ||
@@ -166,11 +164,12 @@ export class IntroComponent implements OnInit, AfterViewInit {
           return resposta;
         };
         cercaPassword().then((res) => {
+
           if (!res) {
             this.passwordIncorrect = true;
           } else {
             //S'ha de fer tornar el nickname perque angular sapiga com es diu el jugador que ha entrat
-            if (this.nomInput == null) {
+            //if (this.nomInput == null) {
               const cercaNickname = async () => {
                 this.nomInput = await this.getNickname(
                   this.signForm.get('emailSign').value
@@ -188,15 +187,19 @@ export class IntroComponent implements OnInit, AfterViewInit {
                 );
 
                 //Controla que no estigui ja conectat
-                let resposta = await this.loginService.getStatus(this.signForm.get('emailSign').value)
+                let resposta = await this.loginService.getStatus(this.signForm.get('emailSign').value);
                 console.log(resposta)
                 if(resposta['data']){
                   this.statusUsuari = true;
+                  setTimeout(() => {
+                    this.statusUsuari = false;
+                    this.submittedSign = false;
+                  }, 3000);
                 } else {
                   this.router.navigate(['/xat/Xat General']);
                 }
               });
-            }
+           // }
           }
         });
       } else {
@@ -236,7 +239,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
         });
       }
     } else {
-      this.submittedSign = true;
+      this.submittedSign = false;
     }
   }
 

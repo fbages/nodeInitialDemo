@@ -22,7 +22,6 @@ app.use(helmet()); //No funcionar amb Angular, s'ha de configurar o modificar el
 app.use(routes);
 
 //Rutes sockets
-//require('./sockets/socketsXats')(io);
 require('./sockets/socketsJugadors')(io);
 require('./sockets/socketsMissatges')(io);
 

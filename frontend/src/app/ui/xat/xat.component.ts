@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, OnDestroy } from '@angular/core';
 import { SocketsIoService } from 'src/app/services/sockets-io/sockets-io.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder,FormArray, Validators } from '@angular/forms';
@@ -11,13 +11,14 @@ import { NicknameService } from 'src/app/services/nickname.service';
   templateUrl: './xat.component.html',
   styleUrls: ['./xat.component.scss'],
 })
-export class XatComponent implements OnInit, AfterViewInit {
+export class XatComponent implements OnInit, AfterViewInit, OnDestroy {
   // public userXat: string = 'Xat general';
   public userXat: Array<{ nomXat: string }> = [{ nomXat: 'Xat General' }];
 
   missatge: string;
   subscription: Subscription;
   subscriptionXats: Subscription;
+  subscriptionllistatXats: Subscription;
 
   xatseleccionat: string = 'Xat General';
   xatsHabititats: Array<any> = [];
@@ -49,19 +50,23 @@ export class XatComponent implements OnInit, AfterViewInit {
     router.events.subscribe((val) => {
       let rutaXat;
       rutaXat = this.router.url.split('/');
-      rutaXat[2] = rutaXat[2].replace('%20', ' ');
-
-      if (this.xatseleccionat != rutaXat[2]) {
-        this.xatseleccionat = rutaXat[2];
-        this.llegirMissatges(rutaXat[2]);
+      //console.log(rutaXat, rutaXat.length);
+      if(rutaXat.length>=3){
+        rutaXat[2] = rutaXat[2].replace('%20', ' ');
+        
+        if (this.xatseleccionat != rutaXat[2]) {
+          this.xatseleccionat = rutaXat[2];
+          this.llegirMissatges(rutaXat[2]);
+        }
       }
     });
   }
 
-  logout(){
-    //console.log(this.nickNameService.getEmail())
-    this.loginService.setStatusDesconectat(this.nickNameService.getEmail());
-    this.router.navigate(['http://localhost:4200/']);
+  async logout(){
+    //console.log(this.nickNameService.getEmail());
+    let result = await this.loginService.setStatusDesconectat(this.nickNameService.getEmail());
+    //this.router.navigate(['http://localhost:4200/']);
+    window.location.reload();
   }
 
   //formbuilders funcions
@@ -91,7 +96,7 @@ export class XatComponent implements OnInit, AfterViewInit {
 
     this.subscriptionXats = this.sockets.crearXat().subscribe((nomXat) => {
       //console.log('Xat creat amb nom: ' + nomXat);
-
+      nomXat= nomXat.trim();
         let nomBuscat = this.userXat.findIndex((xat) => xat.nomXat == nomXat);
         //console.log(nomBuscat);
         if (nomBuscat == -1) {
@@ -103,8 +108,18 @@ export class XatComponent implements OnInit, AfterViewInit {
     
     });
 
+    this.subscriptionllistatXats = this.sockets.llistatXats().subscribe((llistatXats)=>{
+  
+      for(let i=1; i< llistatXats.length; i++){
+        let nomXat = llistatXats[i]['nomxat']
+        this.userXat.push({nomXat:nomXat});
+        this.addXat();
+        this.sockets.missatgesSocket.emit('room', nomXat)
+      }
+    })
+
     //llegir xats ja creats anteriorment publics i privats
-    this.llegirXats();
+    this.peticiollegirXats();
 
     //descarga missatges xat general
     this.llegirMissatges('Xat General');
@@ -115,6 +130,10 @@ export class XatComponent implements OnInit, AfterViewInit {
     this.elementRef.nativeElement
       .querySelector('#botoEnviar')
       .addEventListener('click', this.enviarMissatge.bind(this)); //bind(this) generar link permanent, sense bind(this), s'executar una sola vegada
+  }
+
+  ngOnDestroy(): void {
+    console.log("S'ha destruit")
   }
 
   //funcions
@@ -154,6 +173,7 @@ export class XatComponent implements OnInit, AfterViewInit {
 
   // Cargar missatges de la base de dades
   async llegirMissatges(nomXat) {
+    nomXat= nomXat.trim();
     //console.log(nomXat);
     let missatgesXat = await this.loginService.llegirMissatges(nomXat);
     //console.log(missatgesXat['data']);
@@ -185,6 +205,7 @@ export class XatComponent implements OnInit, AfterViewInit {
 
   //Afegir xat privat
   afegirXat(nomXat: string) {
+    nomXat= nomXat.trim();
     let comprovacioXat = this.userXat.findIndex((xat) => xat.nomXat == nomXat);
     if (comprovacioXat == -1) {
       this.userXat.push({ nomXat: nomXat });
@@ -195,42 +216,39 @@ export class XatComponent implements OnInit, AfterViewInit {
   }
 
   //eliminar xat privat
-  eliminarXat(index: number) {
+  eliminarXat(index: number, nomXat: string) {
     this.userXat.splice(index, 1);
     this.removeXat(index);
+    this.router.navigate(['/xat/' + 'Xat General']);
+    this.sockets.eliminarJugadorXat(nomXat);
   }
 
   //nova Room Xat
   novaRoom() {
-  
+    this.nomRoom=this.nomRoom.trim(); // this.nomRoom es trima per assegurar que no hi ha mes sales nomes amb espais ve del inputbox html
     //comprovar si el xat ja existeix
     let comprovacioXat = this.userXat.findIndex(
-      (xat) => xat.nomXat == this.nomRoom
+      (xat) => xat.nomXat == this.nomRoom 
     );
     if (comprovacioXat == -1) {
           //comprovar si el nom de la sala té més d'un cararcter
       if(this.nomRoom.length <1 || this.nomRoom.replace(/\s/g, '')==''){
+        console.log(`S'ha borrat algun espai o te menys d'un caracter`)
         return
       }
       this.userXat.push({ nomXat: this.nomRoom });
-      this.addXat();
+      this.addXat(); 
+      this.sockets.creadaSalaPublica(this.nomRoom);
     }
-    this.sockets.creadaSalaPublica(this.nomRoom);
-    this.loginService.creacioSala(this.nomRoom);
+    //this.loginService.creacioSala(this.nomRoom); /////////BORRARRRRRRRRRRRRRRR
     this.llegirMissatges(this.nomRoom);
     this.router.navigate(['/xat/' + this.nomRoom]);
   }
 
 //llegir xats ja generats
-async llegirXats(){
-    //cargar totes les sales publiques
-    let llistatXats = await this.loginService.llegirSales(this.nickNameService.nickname)
-    //console.log(llistatXats['data']);
-      for(let i=1; i< llistatXats['data'].length; i++){
-        this.userXat.push({nomXat:llistatXats['data'][i]['nomxat']});
-        this.addXat();
-      }
-   
+peticiollegirXats(){
+  //cargar totes les sales publiques
+    let llistatXats = this.sockets.peticiollegirSales();
 }
 
 }

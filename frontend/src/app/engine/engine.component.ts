@@ -11,7 +11,6 @@ import { EngineService } from './engine.service';
   selector: 'app-engine',
   templateUrl: './engine.component.html',
   styleUrls: ['./engine.component.scss'],
-  providers: [EngineService],
 })
 export class EngineComponent implements OnInit, OnDestroy {
   @ViewChild('rendererCanvas', { static: true })
@@ -24,7 +23,7 @@ export class EngineComponent implements OnInit, OnDestroy {
     this.engServ.animate();
   }
 
-  public ngOnDestroy(): void {
-    //console.log("S'ha borrat enginecomponent")
+  ngOnDestroy(): void {
+    console.log("S'ha borrat enginecomponent")
   }
 }

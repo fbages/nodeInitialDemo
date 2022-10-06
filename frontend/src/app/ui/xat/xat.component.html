@@ -14,7 +14,7 @@
           <li class="nav-item">
             <div id="botonsXats">
               <button class="nav-link" routerLink={{userXat[i].nomXat}} routerLinkActive="active" > {{userXat[i].nomXat}}</button>
-              <button *ngIf="i" type="button" class="btn-close btn-close-white" aria-label="Close" (click)="eliminarXat(i)"></button>            
+              <button *ngIf="i" type="button" class="btn-close btn-close-white" aria-label="Close" (click)="eliminarXat(i,userXat[i].nomXat)"></button>            
             </div>
             <!-- <a class="nav-link active" routerLink={{userXat[i].usuari}}> {{userXat[i].usuari}}</a> -->
           </li>

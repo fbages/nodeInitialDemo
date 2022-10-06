@@ -1,12 +1,12 @@
-const crudService = require('../helpers/crudService');
-const crudServiceJugadors = require('../helpers/crudServiceJugadors');
+const crudService = require('../controllers/crudServiceMissatges');
+const crudServiceJugadors = require('../controllers/crudServiceJugadors');
 
 async function socketsJugadors(io) {
     
     const JugadorsNameSpace = io.of("/jugadors");
     //Conexio i desconexio usuari
     JugadorsNameSpace.on('connection', async (socket) => {
-        console.log('a user connected to jugadors ' + socket.id);
+        //console.log('a user connected to jugadors ' + socket.id);
 
         // nomes index.js
         // socket.on('nouJugador', async (nom, jugadoridsocket, missatgeidsocket, email, password) => {
@@ -33,18 +33,18 @@ async function socketsJugadors(io) {
         })
 
         socket.on('disconnect', async () => {
-            console.log('user disconnected de jugadors, ' + socket.id);
+            //console.log('user disconnected de jugadors, ' + socket.id);
             try {
                 //Enviar a tots els jugadors un emit que aquest jugador s'ha desconectat, aixi el poden borrar del 3D
                 let nomJugador = await crudService.buscarNomAmbSocket(socket.id, 'idsocketjugador');
-                //console.log(nomJugador);
+                //console.log('nomJugador', nomJugador);
                 socket.broadcast.volatile.emit('jugadorDesconecat', nomJugador);
 
                 //canviem a false l'status del jugador, aixi no es pot conectar un altre vegada
-                let jugadorDesconectat = await crudService.statusDesconectat(nomJugador);
+                let jugadorDesconectat = await crudServiceJugadors.statusDesconectat(nomJugador);
 
-            } catch {
-                console.log("No s'ha pogut eliminar");
+            } catch (error){
+                console.log(error);
             }
         });
 

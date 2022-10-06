@@ -369,12 +369,10 @@ export class EngineService {
     });
 
     //Borrar jugador desconectat del array de jugadors
-    this.subscription = this.sockets
-      .getJugadorsDesconectats()
-      .subscribe((jugador) => {
+    this.subscription = this.sockets.getJugadorsDesconectats().subscribe((jugador) => {
         let indexJugador = jugadors.findIndex((item) => item.nom == jugador);
         jugadors.splice(indexJugador, 1);
-        //console.log(indexJugador, jugador, jugadors);
+        console.log(indexJugador, jugador, jugadors);
         let meshDesconectat = this.scene.getMeshByName(jugador);
         meshDesconectat.dispose();
         let labelDesconectat = advancedTexture.getControlByName(jugador);
@@ -568,7 +566,7 @@ export class EngineService {
           0.5
         );
 
-        if (distancia < 0.5) {
+        if (distancia > 50000) { //era < 0.5
           // console.log('Surt menu per fer xat privat');
           button.textBlock.text = 'Petició xat privat amb ' + jugadors[i].nom;
           button.onPointerClickObservable.add(() => {
