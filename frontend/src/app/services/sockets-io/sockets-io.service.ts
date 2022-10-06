@@ -37,7 +37,7 @@ export class SocketsIoService {
     this.password = this.nicknamService.password;
 
     this.missatgesSocket.on('chat message', (msg, jugador, nomXat) => {
-      console.log(msg, jugador, nomXat);
+      //console.log(msg, jugador, nomXat);
       this.missatgeRebutG.next({
         message: msg,
         nomJugador: jugador,
@@ -148,7 +148,7 @@ export class SocketsIoService {
 
   enviarMissatgeGeneral(missatge: string, nomxat: string) {
     if (missatge) {
-      console.log(missatge, nomxat);
+      //console.log(missatge, nomxat);
       this.missatgesSocket.emit('chat message', missatge, nomxat);
     }
   }

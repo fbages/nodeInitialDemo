@@ -62,7 +62,7 @@ async function eliminarXat(nomXatEliminat) {
 
 
 async function afegirJugadorAlXat(email, nomXat) {
-    console.log('Xat seleccionat', nomXat, email);
+    //console.log('Xat seleccionat', nomXat, email);
     let xat = await db.Xats.findOne({ nomxat: nomXat });
     let jug = await db.Jugadors.findOne({ email: email });
     console.log("Afegir jugador al xat", jug);

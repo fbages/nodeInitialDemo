@@ -143,7 +143,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
   onSubmitSign() {
     this.submittedSign = true;
 
-    console.log(this.signForm.status);
+    //console.log(this.signForm.status);
     //console.log(this.googleRegister, this.signForm.get('nomSign'));
     if (
       this.signForm.status == 'VALID' ||
@@ -188,7 +188,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
 
                 //Controla que no estigui ja conectat
                 let resposta = await this.loginService.getStatus(this.signForm.get('emailSign').value);
-                console.log(resposta)
+                //console.log(resposta)
                 if(resposta['data']){
                   this.statusUsuari = true;
                   setTimeout(() => {

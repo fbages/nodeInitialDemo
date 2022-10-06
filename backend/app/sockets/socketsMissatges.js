@@ -11,21 +11,21 @@ function ioMissatges(io) {
         //console.log('a user connected to missatges ' + socket.id);
 
         //unir a les rooms de xat
-        // setTimeout(async () => {
+        setTimeout(async () => {
 
-        //     socket.join('Xat General');
-        //     // console.log(socket.id);
-        //     let jugador = await crudServiceJugadors.buscarJugador( {"idsocketmissatge":socket.id});
-        //     //console.log(jugador);
-        //     let xats = await crudService.buscarXatsAmbId(jugador.id);
+            socket.join('Xat General');
+            // console.log(socket.id);
+            let jugador = await crudServiceJugadors.buscarJugador( {"idsocketmissatge":socket.id});
+            //console.log(jugador);
+            let xats = await crudService.buscarXatsAmbId(jugador.id);
 
-        //     //console.log(xats);
-        //     for (let i = 0; i < xats.length; i++) {
-        //         // console.log(i, xats[i].nomxat)
-        //         socket.join(xats[i].nomxat);
-        //     }
-        //     //  console.log(socket.rooms);
-        // }, 500);
+            //console.log(xats);
+            for (let i = 0; i < xats.length; i++) {
+                // console.log(i, xats[i].nomxat)
+                socket.join(xats[i].nomxat);
+            }
+            //  console.log(socket.rooms);
+        }, 500);
 
         socket.on('llistatXats', async () => {
 
@@ -81,8 +81,9 @@ function ioMissatges(io) {
         //Reenvia la creacio d'una sala publica a la resta d'usuaris
         socket.on('xat public', async (nomXat) => {
             let xat = await crudService.buscarXat(nomXat);
-            //console.log(xat);
+            console.log(xat);
             if(xat == null){   
+                console.log("S'ha creat nou xat")
                 //Crea un xat totalment nou
                 let jugadors = await crudServiceJugadors.llistatJugadors();
                 //console.log(jugadors);
@@ -91,9 +92,11 @@ function ioMissatges(io) {
                 //si afegeix tothom, si un es borrar es nomes ell  
                 socket.broadcast.emit('creat xat public', nomXat);
             } else {
+                console.log("S'ha reenganxat a un vell xat")
                 //Reenganxa un usuari que havia eliminat el xat public
                 let jugador = await crudServiceJugadors.buscarJugador({'idsocketmissatge': socket.id});
                 await crudService.afegirJugadorAlXat(jugador.email,nomXat);
+                socket.join(nomXat);
             }
         })
 
