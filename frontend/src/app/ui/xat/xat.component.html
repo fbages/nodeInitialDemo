@@ -1,0 +1,39 @@
+<div id="xatGlobal">
+  <button type="button" class="btn btn-dark" id="botoLogOut" (click)="logout()">Logout</button>
+<div class="card" id="xatGeneral">
+  <ul id="llistatXats" class="nav nav-pills flex-column">
+      <button class="nav-link" style="padding: 2px"><span><input [(ngModel)]="nomRoom" type="text" style="width:150px; height: 41px;"></span><button  class="btn btn-success" style="margin-top: -5px;
+        padding-top: 6px;
+        margin-left: 3px;
+        margin-bottom: -2px;" (click)="novaRoom()">Create new room</button></button>
+        <!-- <li class="nav-item">
+          <a class="nav-link active" routerLink="general" routerLinkActive="active" >Xat general</a>
+        </li> -->
+        <div *ngFor="let xat of xats.controls; let i=index">
+          <!-- The repeated xats template -->
+          <li class="nav-item">
+            <div id="botonsXats">
+              <button class="nav-link" routerLink={{userXat[i].nomXat}} routerLinkActive="active" > {{userXat[i].nomXat}}</button>
+              <button *ngIf="i" type="button" class="btn-close btn-close-white" aria-label="Close" (click)="eliminarXat(i,userXat[i].nomXat)"></button>            
+            </div>
+            <!-- <a class="nav-link active" routerLink={{userXat[i].usuari}}> {{userXat[i].usuari}}</a> -->
+          </li>
+        </div>
+       
+      </ul>
+
+  <div class="zonatext">
+
+      <router-outlet></router-outlet>
+
+    <div id="escriure">
+      <input id="inputMissatge" type="text"/>
+      <button id="botoEnviar" class="btn btn-warning">Send</button>
+    </div>   
+  </div>
+
+</div>
+
+</div>
+
+

@@ -1,0 +1,207 @@
+/*****************************************************
+ * node_modules imports
+ *****************************************************/
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+
+/*****************************************************
+ * project imports
+ *****************************************************/
+@import 'variables';
+@import 'mixins';
+
+/*****************************************************
+ * styles
+ *****************************************************/
+html, body, app-root, app-game {
+  overflow: hidden;
+  width   : 100%;
+  height  : 100%;
+  margin  : 0;
+  padding : 0;
+}
+
+body {
+  background-color: $mainBgColor;
+  color: $mainTextColor;
+}
+
+.engine-wrapper{
+  position: absolute;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+ // z-index: 0;
+
+  #renderCanvas {
+    width   :  100%;//100%//500px;
+    height  : 100%;//100%//700px;
+    touch-action: none;
+  }
+
+  #renderCanvas:focus {
+    outline: none;
+  }
+}
+
+// .ui-wrapper {
+//   //position: absolute;
+
+//   // * {
+//   //   z-index: 10;
+//   // }
+// }
+
+#uicomponent{
+  display:flex;
+  flex-direction: row;
+  justify-content:space-between;
+}
+
+#general{
+  display:flex;
+  flex-direction: row;
+  justify-content:right;
+  max-height: 95vw;
+  z-index: 2;
+}
+
+.card{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: transparent;
+  min-width: 175px;
+  margin: 0 15px 15px 15px;
+  padding: 15px;
+  border-style: none;
+  pointer-events: none;
+
+}
+
+#xatGlobal {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end
+
+}
+#botoLogOut{
+  width: 100px;
+  margin-top: 14px;
+  margin-right: 30px;
+}
+#xatGeneral {
+  min-height: 90vh;
+  max-height: 90vh;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+}
+
+.zonatext {
+  display: flex;
+  flex-direction:column;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: rgb(44, 44, 44);
+  pointer-events:auto;
+  border-radius: 5px;
+}
+
+.nav-pills .nav-link {
+  background-color: rgb(44, 44, 44);
+  border-radius: 5px 0px 0px 5px;
+  margin: 3px 0px 3px 0px;
+  color: white;
+  pointer-events:auto;
+  // .active{
+  //   color: rgb(230, 171, 9)
+  // }
+}
+.nav-pills .nav-link :active {
+  background-color: rgb(230, 171, 99);
+  border-radius: 5px 0px 0px 5px;
+  margin: 3px 0px 3px 0px;
+  color: black;
+  pointer-events:auto;
+}
+
+
+
+#columnEsquerra{
+  // display:flex;
+  // flex-direction: column;
+  // justify-content: space-between;
+  min-height: 70vh;
+}
+
+#llistatMissatges{
+  height: auto;
+  display:flex;
+  flex-direction: column;
+  //justify-content: flex-end; //no apareix scroll
+   align-items: flex-end;
+   align-content: flex-end;
+   align-self: flex-end;
+  width: 250px;
+  // min-height: 50vh;
+  // height: 78vh;
+  //max-height: 500px;
+  max-height: 77vh;
+  overflow-y: scroll;
+  //overflow: scroll; height: xyz;"
+}
+
+#llistatXats{
+  display:flex;
+  flex-direction: column;
+  align-items:flex-end;
+}
+.cssmissatgesRebuts{
+  width: 250px;
+  text-align: left;
+  align-self: left;
+ color: red;
+ word-wrap: break-word;
+}
+
+.cssmissatgesEnviats{
+  width: 250px;
+  text-align: right;
+  align-self: right;
+  color: green;
+  word-wrap: break-word;
+}
+
+#inputMissatge {
+  margin: 5px;
+  border-radius: 5px;
+  height: 2.5em;
+}
+
+#botoEnviar {
+  margin: 3px 5px 5px 0;
+}
+
+
+// .nav-items{
+//   // .active{
+//     //   color: rgb(230, 171, 9)
+//     // }
+    
+//   }
+  
+  #botonsXats{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(44, 44, 44);
+    border-radius: 10px;
+    margin: 3px -5px 3px 3px;
+    padding-right: 5px;
+    padding-left: 3px;
+    color: white;
+    pointer-events:auto;
+  }
