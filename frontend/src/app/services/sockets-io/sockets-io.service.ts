@@ -37,7 +37,7 @@ export class SocketsIoService {
     this.password = this.nicknamService.password;
 
     this.missatgesSocket.on('chat message', (msg, jugador, nomXat) => {
-      //console.log(msg, jugador, nomXat);
+      console.log(msg, jugador, nomXat);
       this.missatgeRebutG.next({
         message: msg,
         nomJugador: jugador,
@@ -143,6 +143,7 @@ export class SocketsIoService {
   }
 
   sortirXat(nomxat: string) {
+    console.log(`has deixat la sala ${nomxat}`);
     this.missatgesSocket.emit('deixa room', nomxat);
   }
 

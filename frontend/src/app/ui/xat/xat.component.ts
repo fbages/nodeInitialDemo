@@ -102,7 +102,7 @@ export class XatComponent implements OnInit, AfterViewInit, OnDestroy {
         if (nomBuscat == -1) {
           this.userXat.push({ nomXat: nomXat });
           this.addXat();
-          this.llegirMissatges(nomXat);
+          //this.llegirMissatges(nomXat);
           //this.router.navigate(['/xat/' + nomXat]);
         }
     
@@ -217,6 +217,7 @@ export class XatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //eliminar xat privat
   eliminarXat(index: number, nomXat: string) {
+    this.sockets.sortirXat(nomXat);
     this.userXat.splice(index, 1);
     this.removeXat(index);
     this.router.navigate(['/xat/' + 'Xat General']);

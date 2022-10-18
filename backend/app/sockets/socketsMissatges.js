@@ -18,6 +18,7 @@ function ioMissatges(io) {
                 
                 let jugador = await crudServiceJugadors.buscarJugador( {"idsocketmissatge":socket.id});
                 console.log(`Usuari ${jugador.nom} s'ha conectat`);
+                socket.broadcast.emit('chat message', `Jugador ${jugador.nom} conectat`, 'Bot', 'Xat General');
                  
                 //console.log(jugador);
                 let xats = await crudService.buscarXatsAmbId(jugador.id);
@@ -32,6 +33,18 @@ function ioMissatges(io) {
             }
             //  console.log(socket.rooms);
         }, 750);
+
+
+        socket.on('disconnect', async () => {
+         
+            try {
+                let jugador = await crudServiceJugadors.buscarJugador( {"idsocketmissatge":socket.id});
+                console.log(`Usuari ${jugador.nom} s'ha conectat`);
+                socket.broadcast.emit('chat message', `Jugador ${jugador.nom} desconectat`, 'Bot', 'Xat General');               
+            } catch (error){
+                console.log(error);
+            }
+        });
 
         socket.on('llistatXats', async () => {
 
@@ -97,6 +110,10 @@ function ioMissatges(io) {
                 socket.join(nomXat);
                 //si afegeix tothom, si un es borrar es nomes ell  
                 socket.broadcast.emit('creat xat public', nomXat);
+                //informar que s'ha creat un nou xat
+                let jugador = await crudServiceJugadors.buscarJugador( {"idsocketmissatge":socket.id});
+                console.log(`Jugador ${jugador.nom} ha creat una nova sala ${nomXat}`);
+                socket.broadcast.emit('chat message', `Jugador ${jugador.nom} ha creat una nova sala ${nomXat}`, 'Bot', 'Xat General'); 
             } else {
                 console.log("S'ha reenganxat a un vell xat")
                 //Reenganxa un usuari que havia eliminat el xat public
@@ -112,8 +129,11 @@ function ioMissatges(io) {
             socket.join(room);
         });
         //Usuari deixar la sala
-        socket.on('deixa room', (room) => {
+        socket.on('deixa room', async (room) => {
             socket.leave(room)
+            let jugador = await crudServiceJugadors.buscarJugador( {"idsocketmissatge":socket.id});
+            console.log(`Jugador ${jugador.nom} ha deixat la sala ${room}`);
+            socket.broadcast.emit('chat message', `Jugador ${jugador.nom} ha deixat la sala ${room}`, 'Bot', room); 
         })
 
         //Cada usuari té la seva room automaticament, quan algu vulgui parlar amb ell s'afegirà a la room del inicial
